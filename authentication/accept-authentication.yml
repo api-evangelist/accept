@@ -1,0 +1,38 @@
+generated: '2026-07-18'
+method: searched
+source: openapi/accept-midas-openapi-original.yml + docs/guides/authentication.md
+docs: https://github.com/accept-io/midas/blob/main/docs/guides/authentication.md
+summary:
+  types:
+  - http
+  http_scheme: bearer
+  modes:
+  - open
+  - required
+  - oidc
+schemes:
+- name: BearerAuth
+  type: http
+  scheme: bearer
+  description: >-
+    Static bearer token on the Authorization header for all /v1/* routes. Configured via
+    MIDAS_AUTH_TOKENS or midas.yaml auth.tokens as "token|principal-id|role1,role2"
+    (semicolon-separated for multiple; supports ${VAR} expansion). Not required when
+    auth.mode=open (logs "UNSAFE FOR PRODUCTION" — development only).
+  sources:
+  - openapi/accept-midas-openapi-original.yml
+modes:
+- id: open
+  description: No authentication required. Default; logs UNSAFE FOR PRODUCTION at startup. Local development only.
+- id: required
+  description: Enforces bearer-token validation on all governed /v1/* routes.
+- id: oidc
+  description: OIDC/SSO for Explorer browser access only (provider-agnostic — issuer_url, client_id/secret, redirect_url, username_claim, groups_claim, role_mappings). Separate from API auth.
+rbac:
+  note: Bearer principals and OIDC groups map to internal roles.
+  roles:
+  - platform.admin
+  - platform.operator
+  - platform.viewer
+  - governance.approver
+  - governance.reviewer
