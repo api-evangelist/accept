@@ -1,0 +1,49 @@
+generated: '2026-07-18'
+method: derived
+status: candidate
+source: openapi/accept-midas-openapi-original.yml
+note: >-
+  No official/hosted MCP server is published by Accept Labs (searched docs, npm
+  @modelcontextprotocol, and the MCP registry — none found). The tools below are a CANDIDATE
+  surface derived from marquee MIDAS operations, one tool per operationId, for a future MCP
+  wrapper over the MIDAS HTTP API.
+server:
+  name: midas
+  transport: http
+tools:
+- name: evaluate_decision
+  description: Evaluate whether an agent is within authority to perform an action; returns exactly one outcome and one audit envelope.
+  source_operation: openapi/accept-midas-openapi-original.yml#evaluate
+- name: create_review
+  description: Reviewer resolution (approve/reject) of an escalated envelope.
+  source_operation: openapi/accept-midas-openapi-original.yml#createReview
+- name: list_envelopes
+  description: List governance envelopes, optionally filtered by state.
+  source_operation: openapi/accept-midas-openapi-original.yml#listEnvelopes
+- name: get_envelope
+  description: Fetch a single governance envelope by id.
+  source_operation: openapi/accept-midas-openapi-original.yml#getEnvelope
+- name: get_decision_by_request_id
+  description: Retrieve the decision recorded for a given request id (idempotent lookup).
+  source_operation: openapi/accept-midas-openapi-original.yml#getDecisionByRequestId
+- name: list_escalations
+  description: List envelopes awaiting review.
+  source_operation: openapi/accept-midas-openapi-original.yml#listEscalations
+- name: get_evidence_integrity
+  description: Verify the tamper-evident integrity of an envelope's hash chain.
+  source_operation: openapi/accept-midas-openapi-original.yml#getEvidenceEnvelopeIntegrity
+- name: get_evidence_packet
+  description: Retrieve the full evidence packet for an envelope.
+  source_operation: openapi/accept-midas-openapi-original.yml#getEvidenceEnvelopePacket
+- name: plan_bundle
+  description: Dry-run a control-plane YAML bundle apply.
+  source_operation: openapi/accept-midas-openapi-original.yml#planBundle
+- name: apply_bundle
+  description: Apply a control-plane YAML bundle (surfaces/profiles/grants).
+  source_operation: openapi/accept-midas-openapi-original.yml#applyBundle
+- name: get_authority_graph
+  description: Return the authority graph projection.
+  source_operation: openapi/accept-midas-openapi-original.yml#getAuthorityGraph
+- name: get_context_graph
+  description: Return the strategic context graph projection.
+  source_operation: openapi/accept-midas-openapi-original.yml#getContextGraph

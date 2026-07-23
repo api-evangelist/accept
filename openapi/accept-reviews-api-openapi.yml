@@ -1,0 +1,106 @@
+openapi: 3.1.0
+info:
+  title: MIDAS Agents Reviews API
+  version: 1.1.0-rc.1
+  description: 'Authority governance engine for autonomous decisions. Every evaluation produces exactly one outcome and one tamper-evident audit envelope.
+
+    '
+servers:
+- url: http://localhost:8080
+  description: Local development
+security:
+- BearerAuth: []
+tags:
+- name: Reviews
+paths:
+  /v1/reviews:
+    post:
+      operationId: createReview
+      summary: Resolve an escalated decision
+      description: 'Resolves a pending escalation by approving or rejecting the decision. The envelope must be in the awaiting_review state. Transitions the envelope to closed.
+
+        '
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ReviewRequest'
+      responses:
+        '200':
+          description: Review recorded
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ReviewResponse'
+        '400':
+          description: Invalid request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '401':
+          description: Unauthenticated
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '403':
+          description: Insufficient role (requires platform.admin or governance.reviewer)
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '404':
+          description: Envelope not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+      tags:
+      - Reviews
+components:
+  schemas:
+    ReviewResponse:
+      type: object
+      required:
+      - envelope_id
+      - status
+      properties:
+        envelope_id:
+          type: string
+        status:
+          type: string
+    Error:
+      type: object
+      required:
+      - error
+      properties:
+        error:
+          type: string
+    ReviewRequest:
+      type: object
+      required:
+      - envelope_id
+      - decision
+      - reviewer
+      properties:
+        envelope_id:
+          type: string
+        decision:
+          type: string
+          enum:
+          - approve
+          - reject
+        reviewer:
+          type: string
+          description: Reviewer identifier.
+        notes:
+          type: string
+  securitySchemes:
+    BearerAuth:
+      type: http
+      scheme: bearer
+      description: 'Static bearer token. Configured via MIDAS_AUTH_TOKENS or midas.yaml auth.tokens. Not required when auth.mode=open (development only).
+
+        '

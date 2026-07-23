@@ -1,0 +1,32 @@
+generated: '2026-07-18'
+method: searched
+source: docs/getting-started.md + docs/guides/authentication.md + docs/guides/quickstart-first-evaluation.md
+note: >-
+  MIDAS is self-hosted open-source software; the "sandbox" is a local development instance,
+  not a hosted test tenant. All values below are published verbatim in the docs — none invented.
+run:
+  docker: docker compose up --build
+  go: go run ./cmd/midas
+  default_port: 8080
+  explorer_ui: http://localhost:8080/explorer
+  explorer_default_credentials: demo / demo
+dev_auth:
+  mode: open
+  env: MIDAS_AUTH_MODE=open
+  note: No authentication required; logs "UNSAFE FOR PRODUCTION" at startup. Development only.
+required_auth_example:
+  env:
+  - MIDAS_AUTH_MODE=required
+  - MIDAS_AUTH_TOKENS="my-secret-token|user:admin|platform.admin"
+  header: Authorization Bearer my-secret-token
+seed:
+  command: midas init quickstart
+  description: Applies a curated structural skeleton (surfaces/profiles/grants) to Postgres so /v1/evaluate can be exercised immediately.
+health_checks:
+- http://localhost:8080/healthz
+- http://localhost:8080/readyz
+example_evaluate_values:
+  request_source: svc:payments
+  surface_id: payments-gateway
+  agent_id: agent-payments-prod
+  request_id: auto-generated (UUID) if omitted

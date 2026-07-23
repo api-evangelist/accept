@@ -1,0 +1,28 @@
+generated: '2026-07-18'
+method: searched
+source: github.com/accept-io/midas (cmd/midas, docs/getting-started.md)
+name: midas
+description: First-party MIDAS server + operational CLI (Go). The binary both serves the API and provides bootstrap/config subcommands.
+install:
+- method: go
+  command: go run ./cmd/midas
+- method: docker
+  command: docker compose up --build
+- method: source
+  command: go build ./cmd/midas
+binary_ref: packages/accept-packages.yml
+commands:
+- name: (serve)
+  description: Default — start the MIDAS HTTP API + Explorer on port 8080.
+- group: init
+  commands:
+  - name: init quickstart
+    description: Apply a curated structural skeleton (surfaces/profiles/grants) to Postgres for immediate evaluation.
+- group: config
+  commands:
+  - name: config init
+    description: Generate a starter midas.yaml configuration.
+  - name: config validate
+    description: Validate a midas.yaml configuration.
+related:
+- cmd/midas-loadtest — load-testing harness for /v1/evaluate throughput.

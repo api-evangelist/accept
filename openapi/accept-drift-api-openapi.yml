@@ -1,0 +1,1528 @@
+openapi: 3.1.0
+info:
+  title: MIDAS Agents Drift API
+  version: 1.1.0-rc.1
+  description: 'Authority governance engine for autonomous decisions. Every evaluation produces exactly one outcome and one tamper-evident audit envelope.
+
+    '
+servers:
+- url: http://localhost:8080
+  description: Local development
+security:
+- BearerAuth: []
+tags:
+- name: Drift
+paths:
+  /v1/drift/analytics:
+    get:
+      operationId: getDriftAnalytics
+      summary: Get node-scoped Drift Analytics read model data
+      parameters:
+      - name: node_kind
+        in: query
+        required: true
+        schema:
+          $ref: '#/components/schemas/DriftTargetEntityKind'
+      - name: node_id
+        in: query
+        required: true
+        schema:
+          type: string
+      - name: range
+        in: query
+        required: false
+        schema:
+          type: string
+          default: 30d
+      responses:
+        '200':
+          description: Node-scoped drift analytics read model
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/DriftAnalyticsResponse'
+        '400':
+          description: Invalid node selector
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '401':
+          description: Unauthenticated
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '403':
+          description: Insufficient role (requires platform.viewer or above)
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '501':
+          description: Drift analytics reader not configured
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+      tags:
+      - Drift
+  /v1/drift/definitions/{id}:
+    get:
+      operationId: getDriftDefinition
+      summary: Get the latest version of a DriftDefinition by ID
+      parameters:
+      - name: id
+        in: path
+        required: true
+        schema:
+          type: string
+      responses:
+        '200':
+          description: Drift definition
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/DriftDefinition'
+        '401':
+          description: Unauthenticated
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '403':
+          description: Insufficient role (requires platform.viewer or above)
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '404':
+          description: Drift definition not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '500':
+          description: Repository error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '501':
+          description: Drift definition reader not configured
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+      tags:
+      - Drift
+  /v1/drift/definitions/{id}/versions:
+    get:
+      operationId: listDriftDefinitionVersions
+      summary: List all versions of a DriftDefinition
+      parameters:
+      - name: id
+        in: path
+        required: true
+        schema:
+          type: string
+      responses:
+        '200':
+          description: Versions list
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/DriftDefinitionListResponse'
+        '401':
+          description: Unauthenticated
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '403':
+          description: Insufficient role (requires platform.viewer or above)
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '404':
+          description: Drift definition not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '500':
+          description: Repository error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '501':
+          description: Drift definition reader not configured
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+      tags:
+      - Drift
+  /v1/drift/definitions/{id}/versions/{version}:
+    get:
+      operationId: getDriftDefinitionVersion
+      summary: Get a specific DriftDefinition revision
+      parameters:
+      - name: id
+        in: path
+        required: true
+        schema:
+          type: string
+      - name: version
+        in: path
+        required: true
+        schema:
+          type: integer
+          minimum: 1
+      responses:
+        '200':
+          description: Drift definition version
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/DriftDefinition'
+        '400':
+          description: Version path segment is not a positive integer
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '401':
+          description: Unauthenticated
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '403':
+          description: Insufficient role (requires platform.viewer or above)
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '404':
+          description: Drift definition or version not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '500':
+          description: Repository error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '501':
+          description: Drift definition reader not configured
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+      tags:
+      - Drift
+  /v1/drift/definitions/{id}/series:
+    get:
+      operationId: listDriftSeriesByDefinition
+      summary: List DriftSeries for a DriftDefinition
+      parameters:
+      - name: id
+        in: path
+        required: true
+        schema:
+          type: string
+      responses:
+        '200':
+          description: Series list
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/DriftSeriesListResponse'
+        '401':
+          description: Unauthenticated
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '403':
+          description: Insufficient role (requires platform.viewer or above)
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '500':
+          description: Repository error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '501':
+          description: Drift series reader not configured
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+      tags:
+      - Drift
+  /v1/drift/definitions/{id}/observations:
+    get:
+      operationId: listDriftObservationsByDefinition
+      summary: List DriftObservations for a DriftDefinition
+      parameters:
+      - name: id
+        in: path
+        required: true
+        schema:
+          type: string
+      responses:
+        '200':
+          description: Observations list
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/DriftObservationListResponse'
+        '401':
+          description: Unauthenticated
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '403':
+          description: Insufficient role (requires platform.viewer or above)
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '500':
+          description: Repository error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '501':
+          description: Drift observation reader not configured
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+      tags:
+      - Drift
+  /v1/drift/series/{id}:
+    get:
+      operationId: getDriftSeries
+      summary: Get a DriftSeries by ID
+      parameters:
+      - name: id
+        in: path
+        required: true
+        schema:
+          type: string
+      responses:
+        '200':
+          description: Drift series
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/DriftSeries'
+        '401':
+          description: Unauthenticated
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '403':
+          description: Insufficient role (requires platform.viewer or above)
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '404':
+          description: Drift series not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '500':
+          description: Repository error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '501':
+          description: Drift series reader not configured
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+      tags:
+      - Drift
+  /v1/drift/series/{id}/points:
+    get:
+      operationId: listDriftSeriesPoints
+      summary: List DriftSeriesPoints for a series
+      parameters:
+      - name: id
+        in: path
+        required: true
+        schema:
+          type: string
+      - name: from_window
+        in: query
+        required: false
+        schema:
+          type: string
+          format: date-time
+        description: Inclusive lower bound on window_start; RFC3339.
+      - name: limit
+        in: query
+        required: false
+        schema:
+          type: integer
+          minimum: 1
+          maximum: 500
+          default: 100
+      responses:
+        '200':
+          description: Points list
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/DriftSeriesPointListResponse'
+        '400':
+          description: Invalid query parameter (limit out of range or from_window not RFC3339)
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '401':
+          description: Unauthenticated
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '403':
+          description: Insufficient role (requires platform.viewer or above)
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '500':
+          description: Repository error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '501':
+          description: Drift series point reader not configured
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+      tags:
+      - Drift
+  /v1/drift/series/{id}/observations:
+    get:
+      operationId: listDriftObservationsBySeries
+      summary: List DriftObservations for a series
+      parameters:
+      - name: id
+        in: path
+        required: true
+        schema:
+          type: string
+      responses:
+        '200':
+          description: Observations list
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/DriftObservationListResponse'
+        '401':
+          description: Unauthenticated
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '403':
+          description: Insufficient role (requires platform.viewer or above)
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '500':
+          description: Repository error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '501':
+          description: Drift observation reader not configured
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+      tags:
+      - Drift
+  /v1/drift/series/{id}/annotations:
+    get:
+      operationId: listDriftAnnotationsBySeries
+      summary: List DriftAnnotations attached to a series
+      parameters:
+      - name: id
+        in: path
+        required: true
+        schema:
+          type: string
+      responses:
+        '200':
+          description: Annotations list
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/DriftAnnotationListResponse'
+        '401':
+          description: Unauthenticated
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '403':
+          description: Insufficient role (requires platform.viewer or above)
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '500':
+          description: Repository error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '501':
+          description: Drift annotation reader not configured
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+      tags:
+      - Drift
+  /v1/drift/series-points/{id}:
+    get:
+      operationId: getDriftSeriesPoint
+      summary: Get a DriftSeriesPoint by ID
+      parameters:
+      - name: id
+        in: path
+        required: true
+        schema:
+          type: string
+      responses:
+        '200':
+          description: Drift series point
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/DriftSeriesPoint'
+        '401':
+          description: Unauthenticated
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '403':
+          description: Insufficient role (requires platform.viewer or above)
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '404':
+          description: Drift series point not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '500':
+          description: Repository error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '501':
+          description: Drift series point reader not configured
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+      tags:
+      - Drift
+  /v1/drift/observations/{id}:
+    get:
+      operationId: getDriftObservation
+      summary: Get a DriftObservation by ID
+      parameters:
+      - name: id
+        in: path
+        required: true
+        schema:
+          type: string
+      responses:
+        '200':
+          description: Drift observation
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/DriftObservation'
+        '401':
+          description: Unauthenticated
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '403':
+          description: Insufficient role (requires platform.viewer or above)
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '404':
+          description: Drift observation not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '500':
+          description: Repository error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '501':
+          description: Drift observation reader not configured
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+      tags:
+      - Drift
+  /v1/drift/observations/{id}/annotations:
+    get:
+      operationId: listDriftAnnotationsByObservation
+      summary: List DriftAnnotations attached to an observation
+      parameters:
+      - name: id
+        in: path
+        required: true
+        schema:
+          type: string
+      responses:
+        '200':
+          description: Annotations list
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/DriftAnnotationListResponse'
+        '401':
+          description: Unauthenticated
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '403':
+          description: Insufficient role (requires platform.viewer or above)
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '500':
+          description: Repository error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '501':
+          description: Drift annotation reader not configured
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+      tags:
+      - Drift
+  /v1/drift/annotations/{id}:
+    get:
+      operationId: getDriftAnnotation
+      summary: Get a DriftAnnotation by ID
+      parameters:
+      - name: id
+        in: path
+        required: true
+        schema:
+          type: string
+      responses:
+        '200':
+          description: Drift annotation
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/DriftAnnotation'
+        '401':
+          description: Unauthenticated
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '403':
+          description: Insufficient role (requires platform.viewer or above)
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '404':
+          description: Drift annotation not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '500':
+          description: Repository error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '501':
+          description: Drift annotation reader not configured
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+      tags:
+      - Drift
+  /v1/drift/entities/{kind}/{entity_id}/observations:
+    get:
+      operationId: listDriftObservationsByEntity
+      summary: List DriftObservations for a governed entity target
+      parameters:
+      - name: kind
+        in: path
+        required: true
+        schema:
+          $ref: '#/components/schemas/DriftTargetEntityKind'
+      - name: entity_id
+        in: path
+        required: true
+        schema:
+          type: string
+      responses:
+        '200':
+          description: Observations list
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/DriftObservationListResponse'
+        '400':
+          description: Invalid target entity kind
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '401':
+          description: Unauthenticated
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '403':
+          description: Insufficient role (requires platform.viewer or above)
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '500':
+          description: Repository error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '501':
+          description: Drift observation reader not configured
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+      tags:
+      - Drift
+components:
+  schemas:
+    DriftThresholdDirection:
+      type: string
+      enum:
+      - ascending
+      - descending
+    DriftAnalyticsObservedPoint:
+      type: object
+      required:
+      - t
+      - value
+      properties:
+        t:
+          type: string
+          format: date-time
+        value:
+          type: number
+          format: double
+        status:
+          type: string
+        magnitude:
+          type: number
+          format: double
+    DriftPointComputationMode:
+      type: string
+      description: 'Computation provenance for a series point. Backfill state lives on this enum; it is not encoded on detector_status.
+
+        '
+      enum:
+      - realtime
+      - backfilled
+      - corrected
+      - imported
+    DriftAnalyticsResponse:
+      type: object
+      required:
+      - node
+      - range
+      - chart
+      - provenance
+      - sourceClassification
+      - dataAvailable
+      properties:
+        node:
+          type: object
+          required:
+          - kind
+          - id
+          properties:
+            kind:
+              $ref: '#/components/schemas/DriftTargetEntityKind'
+            id:
+              type: string
+        range:
+          type: object
+          required:
+          - key
+          - label
+          properties:
+            key:
+              type: string
+            label:
+              type: string
+            from:
+              type: string
+              format: date-time
+            to:
+              type: string
+              format: date-time
+        chart:
+          type: object
+          required:
+          - observed
+          - expected
+          - watch
+          - breach
+          - yDomain
+          properties:
+            metricId:
+              type: string
+            driftType:
+              $ref: '#/components/schemas/DriftType'
+            seriesId:
+              type: string
+            observed:
+              type: array
+              items:
+                $ref: '#/components/schemas/DriftAnalyticsObservedPoint'
+            expected:
+              type: array
+              items:
+                $ref: '#/components/schemas/DriftAnalyticsPoint'
+            watch:
+              type: array
+              items:
+                $ref: '#/components/schemas/DriftAnalyticsPoint'
+            breach:
+              type: array
+              items:
+                $ref: '#/components/schemas/DriftAnalyticsPoint'
+            currentValue:
+              type: number
+              format: double
+            currentStatus:
+              type: string
+            yDomain:
+              type: object
+              required:
+              - min
+              - max
+              properties:
+                min:
+                  type: number
+                  format: double
+                max:
+                  type: number
+                  format: double
+        provenance:
+          type: object
+          required:
+          - envelopeIds
+          - pointIds
+          - observationIds
+          - annotationIds
+          - profileRefs
+          - policyRefs
+          - verificationStatus
+          properties:
+            envelopeIds:
+              type: array
+              items:
+                type: string
+            pointIds:
+              type: array
+              items:
+                type: string
+            observationIds:
+              type: array
+              items:
+                type: string
+            annotationIds:
+              type: array
+              items:
+                type: string
+            profileRefs:
+              type: array
+              items:
+                type: string
+            policyRefs:
+              type: array
+              items:
+                type: string
+            verificationStatus:
+              type: string
+              enum:
+              - not_requested
+              - not_verified
+        sourceClassification:
+          type: object
+          required:
+          - selectedNode
+          - observedSeries
+          - expectedBaseline
+          - thresholds
+          - status
+          - provenance
+          - compositeScore
+          - contributionValues
+          - contributionWeights
+          - graphOverlay
+          properties:
+            selectedNode:
+              type: string
+              enum:
+              - backend
+            observedSeries:
+              type: string
+              enum:
+              - backend
+              - unavailable
+            expectedBaseline:
+              type: string
+              enum:
+              - backend
+              - unavailable
+            thresholds:
+              type: string
+              enum:
+              - backend
+              - unavailable
+            status:
+              type: string
+              enum:
+              - backend
+              - unavailable
+            provenance:
+              type: string
+              enum:
+              - backend_refs
+              - not_available
+            compositeScore:
+              type: string
+              enum:
+              - not_available
+            contributionValues:
+              type: string
+              enum:
+              - not_available
+            contributionWeights:
+              type: string
+              enum:
+              - not_available
+            graphOverlay:
+              type: string
+              enum:
+              - not_implemented
+        projectionAsOf:
+          type: string
+          format: date-time
+        dataAvailable:
+          type: boolean
+    DriftDefinitionListResponse:
+      type: object
+      required:
+      - drift_definitions
+      properties:
+        drift_definitions:
+          type: array
+          items:
+            $ref: '#/components/schemas/DriftDefinition'
+    DriftBaselineStrategy:
+      type: string
+      description: 'V1 baseline strategies. champion_challenger and seasonality_aware are deferred to V2 and MUST NOT appear here.
+
+        '
+      enum:
+      - rolling
+      - fixed_governed
+      - previous_equivalent
+      - since_last_governed_change
+      - manually_pinned
+    DriftOrigin:
+      type: string
+      enum:
+      - manual
+      - inferred
+      - auto_instrumented
+    DriftObservationListResponse:
+      type: object
+      required:
+      - drift_observations
+      properties:
+        drift_observations:
+          type: array
+          items:
+            $ref: '#/components/schemas/DriftObservation'
+    DriftAnnotationStatus:
+      type: string
+      enum:
+      - active
+      - superseded
+    DriftAnalyticsPoint:
+      type: object
+      required:
+      - t
+      - value
+      properties:
+        t:
+          type: string
+          format: date-time
+        value:
+          type: number
+          format: double
+    DriftSeries:
+      type: object
+      description: One time-ordered stream for a (definition revision, metric, cadence) tuple.
+      required:
+      - id
+      - definition_id
+      - definition_version
+      - metric_id
+      - cadence
+      - status
+      - continuity_group_id
+      - created_at
+      - updated_at
+      properties:
+        id:
+          type: string
+        definition_id:
+          type: string
+        definition_version:
+          type: integer
+          minimum: 1
+        metric_id:
+          type: string
+        cadence:
+          $ref: '#/components/schemas/DriftCadence'
+        status:
+          $ref: '#/components/schemas/DriftStatusBand'
+        continuity_group_id:
+          type: string
+        previous_series_id:
+          type: string
+        superseded_by_series_id:
+          type: string
+        cutover_at:
+          type: string
+          format: date-time
+          nullable: true
+        sealed_at:
+          type: string
+          format: date-time
+          nullable: true
+        created_at:
+          type: string
+          format: date-time
+        updated_at:
+          type: string
+          format: date-time
+    DriftCadence:
+      type: string
+      enum:
+      - minute
+      - hour
+      - day
+      - week
+    DriftAnnotationTargetRef:
+      type: object
+      required:
+      - kind
+      - id
+      properties:
+        kind:
+          $ref: '#/components/schemas/DriftAnnotationTargetKind'
+        id:
+          type: string
+    DriftAnnotation:
+      type: object
+      description: Operator commentary against a series or observation.
+      required:
+      - id
+      - target
+      - annotation_type
+      - body
+      - reference_envelope_ids
+      - status
+      - author_id
+      - created_at
+      - updated_at
+      properties:
+        id:
+          type: string
+        target:
+          $ref: '#/components/schemas/DriftAnnotationTargetRef'
+        annotation_type:
+          $ref: '#/components/schemas/DriftAnnotationType'
+        body:
+          type: string
+        suppression_until:
+          type: string
+          format: date-time
+          nullable: true
+        reference_envelope_ids:
+          type: array
+          items:
+            type: string
+        status:
+          $ref: '#/components/schemas/DriftAnnotationStatus'
+        superseded_by_id:
+          type: string
+        author_id:
+          type: string
+        created_at:
+          type: string
+          format: date-time
+        updated_at:
+          type: string
+          format: date-time
+    DriftAnnotationListResponse:
+      type: object
+      required:
+      - drift_annotations
+      properties:
+        drift_annotations:
+          type: array
+          items:
+            $ref: '#/components/schemas/DriftAnnotation'
+    LifecycleStatus:
+      type: string
+      description: 'Canonical lifecycle posture for versioned governance resources (Surface, Profile, FailModePolicy, EscalationTarget). Every governed configuration entity in MIDAS follows the same draft -> review -> active -> deprecated -> retired progression. Only `active` versions participate in runtime resolution.
+
+        '
+      enum:
+      - draft
+      - review
+      - active
+      - deprecated
+      - retired
+    DriftAnnotationType:
+      type: string
+      enum:
+      - known_business_change
+      - suppression
+      - remediation_note
+      - acknowledgement
+    DriftMetricDefinition:
+      type: object
+      description: Embedded metric inside a DriftDefinition revision.
+      required:
+      - metric_id
+      - drift_type
+      - baseline_strategy
+      - window_seconds
+      - cadence
+      - threshold_direction
+      - warning_threshold
+      - breached_threshold
+      properties:
+        metric_id:
+          type: string
+        drift_type:
+          $ref: '#/components/schemas/DriftType'
+        baseline_strategy:
+          $ref: '#/components/schemas/DriftBaselineStrategy'
+        baseline_window_seconds:
+          type: integer
+          minimum: 0
+        window_seconds:
+          type: integer
+          minimum: 1
+        cadence:
+          $ref: '#/components/schemas/DriftCadence'
+        warning_threshold:
+          type: number
+        breached_threshold:
+          type: number
+        threshold_direction:
+          $ref: '#/components/schemas/DriftThresholdDirection'
+        governance_expectation_ref:
+          type: string
+        governance_expectation_ver:
+          type: integer
+          minimum: 0
+        description:
+          type: string
+    DriftSeriesPoint:
+      type: object
+      description: 'Append-only window summary. summary_stats and baseline_stats are opaque JSON objects whose internal shape is detector- specific. Backfill state is encoded on computation_mode + backfill_run_id, NOT on status.
+
+        '
+      required:
+      - id
+      - series_id
+      - window_start
+      - window_end
+      - sample_count
+      - summary_stats
+      - baseline_stats
+      - magnitude
+      - status
+      - computation_mode
+      - computed_at
+      - source_window_complete
+      - provenance_envelope_ids
+      - created_at
+      properties:
+        id:
+          type: string
+        series_id:
+          type: string
+        window_start:
+          type: string
+          format: date-time
+        window_end:
+          type: string
+          format: date-time
+        sample_count:
+          type: integer
+          minimum: 0
+        summary_stats:
+          type: object
+          description: Detector-specific summary stats; opaque object whose internal shape is detector-specific.
+          additionalProperties: true
+        baseline_stats:
+          type: object
+          description: Detector-specific baseline stats; opaque object whose internal shape is detector-specific.
+          additionalProperties: true
+        baseline_window_id:
+          type: string
+        magnitude:
+          type: number
+        status:
+          $ref: '#/components/schemas/DriftStatusBand'
+        computation_mode:
+          $ref: '#/components/schemas/DriftPointComputationMode'
+        computed_at:
+          type: string
+          format: date-time
+        backfill_run_id:
+          type: string
+        source_window_complete:
+          type: boolean
+        provenance_envelope_ids:
+          type: array
+          items:
+            type: string
+        created_at:
+          type: string
+          format: date-time
+    DriftSeriesPointListResponse:
+      type: object
+      required:
+      - drift_series_points
+      properties:
+        drift_series_points:
+          type: array
+          items:
+            $ref: '#/components/schemas/DriftSeriesPoint'
+    DriftDefinition:
+      type: object
+      description: 'Governed, versioned drift specification. Composite (id, version) identity. Apply persists Status=''review''; activation lives in a future approval-endpoint tranche.
+
+        '
+      required:
+      - id
+      - version
+      - name
+      - status
+      - effective_date
+      - business_owner
+      - technical_owner
+      - target
+      - metrics
+      - origin
+      - managed
+      - created_at
+      - updated_at
+      properties:
+        id:
+          type: string
+        version:
+          type: integer
+          minimum: 1
+        name:
+          type: string
+        description:
+          type: string
+        status:
+          $ref: '#/components/schemas/DriftDefinitionStatus'
+        effective_date:
+          type: string
+          format: date-time
+        effective_until:
+          type: string
+          format: date-time
+          nullable: true
+        retired_at:
+          type: string
+          format: date-time
+          nullable: true
+        business_owner:
+          type: string
+        technical_owner:
+          type: string
+        target:
+          $ref: '#/components/schemas/DriftTargetRef'
+        metrics:
+          type: array
+          items:
+            $ref: '#/components/schemas/DriftMetricDefinition'
+        origin:
+          $ref: '#/components/schemas/DriftOrigin'
+        managed:
+          type: boolean
+        replaces:
+          type: string
+        successor_definition_id:
+          type: string
+        successor_version:
+          type: integer
+          minimum: 0
+        created_at:
+          type: string
+          format: date-time
+        updated_at:
+          type: string
+          format: date-time
+        created_by:
+          type: string
+        approved_by:
+          type: string
+        approved_at:
+          type: string
+          format: date-time
+          nullable: true
+    DriftStatusBand:
+      type: string
+      description: 'Five-band status used by DriftSeries, DriftSeriesPoint, and DriftObservation.detector_status. The split into unknown_insufficient_data and unknown_detector_error is deliberate; there is no single ''unknown'' value.
+
+        '
+      enum:
+      - healthy
+      - warning
+      - breached
+      - unknown_insufficient_data
+      - unknown_detector_error
+    DriftTargetRef:
+      type: object
+      description: Discriminated reference to a governed entity.
+      required:
+      - kind
+      - id
+      properties:
+        kind:
+          $ref: '#/components/schemas/DriftTargetEntityKind'
+        id:
+          type: string
+    DriftDefinitionStatus:
+      description: 'Lifecycle state of a DriftDefinition. Delegates to the canonical LifecycleStatus posture.
+
+        '
+      allOf:
+      - $ref: '#/components/schemas/LifecycleStatus'
+    DriftObservation:
+      type: object
+      description: 'Audit-chain-bearing detector result. The observation itself does not mutate runtime state; future FailModePolicy resolvers may consume it as evidence input.
+
+        '
+      required:
+      - id
+      - definition_id
+      - definition_version
+      - series_id
+      - point_id
+      - target
+      - drift_type
+      - magnitude
+      - detector_status
+      - operator_status
+      - observed_window_start
+      - observed_window_end
+      - detected_at
+      - emitted_at
+      - backfilled
+      - evidence_envelope_ids
+      - created_at
+      - updated_at
+      properties:
+        id:
+          type: string
+        definition_id:
+          type: string
+        definition_version:
+          type: integer
+          minimum: 1
+        series_id:
+          type: string
+        point_id:
+          type: string
+        target:
+          $ref: '#/components/schemas/DriftTargetRef'
+        drift_type:
+          $ref: '#/components/schemas/DriftType'
+        magnitude:
+          type: number
+        detector_status:
+          $ref: '#/components/schemas/DriftStatusBand'
+        operator_status:
+          $ref: '#/components/schemas/DriftObservationOperatorStatus'
+        baseline_window_id:
+          type: string
+        observed_window_start:
+          type: string
+          format: date-time
+        observed_window_end:
+          type: string
+          format: date-time
+        detected_at:
+          type: string
+          format: date-time
+        emitted_at:
+          type: string
+          format: date-time
+        backfilled:
+          type: boolean
+        backfill_run_id:
+          type: string
+        evidence_envelope_ids:
+          type: array
+          items:
+            type: string
+        related_fail_mode_policy_id:
+          type: string
+        related_governance_exp_ref:
+          type: string
+        correction_of:
+          type: string
+        created_at:
+          type: string
+          format: date-time
+        updated_at:
+          type: string
+          format: date-time
+    DriftAnnotationTargetKind:
+      type: string
+      enum:
+      - series
+      - observation
+    DriftType:
+      type: string
+      description: 'V1 drift taxonomy. Population, data, prediction, performance, and concept drift are deferred to V2 and MUST NOT appear here.
+
+        '
+      enum:
+      - invocation
+      - outcome
+      - confidence
+      - latency
+      - evidence
+      - authority
+      - policy
+      - coverage
+      - process_path
+    Error:
+      type: object
+      required:
+      - error
+      properties:
+        error:
+          type: string
+    DriftSeriesListResponse:
+      type: object
+      required:
+      - drift_series
+      properties:
+        drift_series:
+          type: array
+          items:
+            $ref: '#/components/schemas/DriftSeries'
+    DriftTargetEntityKind:
+      type: string
+      description: 'The nine governed entity kinds a DriftDefinition may target.
+
+        '
+      enum:
+      - business_service
+      - capability
+      - process
+      - decision_surface
+      - ai_system
+      - ai_system_binding
+      - agent
+      - authority_profile
+      - authority_grant
+    DriftObservationOperatorStatus:
+      type: string
+      enum:
+      - open
+      - triaged
+      - resolved
+      - accepted
+      - superseded
+  securitySchemes:
+    BearerAuth:
+      type: http
+      scheme: bearer
+      description: 'Static bearer token. Configured via MIDAS_AUTH_TOKENS or midas.yaml auth.tokens. Not required when auth.mode=open (development only).
+
+        '

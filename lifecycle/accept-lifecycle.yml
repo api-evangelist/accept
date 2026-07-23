@@ -1,0 +1,30 @@
+generated: '2026-07-18'
+method: searched
+source: github.com/accept-io/midas (CHANGELOG.md, SECURITY.md, ROADMAP.md, OpenAPI)
+versioning:
+  api_scheme: uri-path
+  api_current: v1
+  release_scheme: semver
+  release_current: 1.1.0-rc.1
+  changelog: https://github.com/accept-io/midas/blob/main/CHANGELOG.md
+supported_versions:
+  note: from SECURITY.md
+  versions:
+  - version: 1.1.0-rc.1
+    status: current release candidate (evaluation phase)
+  - version: 1.0.x
+    status: historical early releases, no longer actively maintained
+  - version: '<1.0'
+    status: unsupported
+deprecation:
+  api_policy: null
+  sunset_header: false
+  note: >-
+    No API-level deprecation policy or RFC 8594 Sunset header. "Deprecation" in MIDAS is a
+    domain lifecycle state for governed entities (surfaces/profiles), surfaced via the
+    surface.deprecated event and deprecateSurface/deprecateProfile operations, signalling
+    consumers to migrate to a successor (successor_surface_id).
+roadmap: https://github.com/accept-io/midas/blob/main/ROADMAP.md
+status_page: null
+sla: null
+deprecated_operations: []

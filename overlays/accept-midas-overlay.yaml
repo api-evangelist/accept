@@ -1,0 +1,18 @@
+overlay: 1.0.0
+info:
+  title: API Evangelist enhancements for MIDAS API
+  version: 1.0.0
+extends: openapi/accept-midas-openapi-original.yml
+actions:
+- target: $.info
+  update:
+    x-apievangelist-enriched: '2026-07-18'
+    x-apievangelist-provider: accept
+    x-apievangelist-idempotency: request_id (body); duplicate request_source+request_id with a differing payload returns 409
+    x-apievangelist-pagination: opaque cursor (next_cursor) + limit + order on evidence/audit endpoints
+    x-apievangelist-error-envelope: '{"error": "..."}'
+- target: $.servers
+  description: The published localhost dev server plus the hosted MIDAS instance the vendor operates.
+  update:
+  - url: https://midas.accept.io
+    description: Hosted MIDAS instance (Accept Labs)

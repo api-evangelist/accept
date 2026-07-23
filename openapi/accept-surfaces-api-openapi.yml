@@ -1,0 +1,410 @@
+openapi: 3.1.0
+info:
+  title: MIDAS Agents Surfaces API
+  version: 1.1.0-rc.1
+  description: 'Authority governance engine for autonomous decisions. Every evaluation produces exactly one outcome and one tamper-evident audit envelope.
+
+    '
+servers:
+- url: http://localhost:8080
+  description: Local development
+security:
+- BearerAuth: []
+tags:
+- name: Surfaces
+paths:
+  /v1/surfaces/{id}:
+    get:
+      operationId: getSurface
+      summary: Get a decision surface
+      description: 'Returns the latest version of a surface by default. Append /versions to list all versions. Append /impact to see profiles, grants, and agents linked to this surface.
+
+        '
+      parameters:
+      - name: id
+        in: path
+        required: true
+        schema:
+          type: string
+      responses:
+        '200':
+          description: Surface found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Surface'
+        '401':
+          description: Unauthenticated
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '403':
+          description: Insufficient role (requires platform.viewer or above)
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '404':
+          description: Surface not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+      tags:
+      - Surfaces
+  /v1/surfaces/{id}/versions:
+    get:
+      operationId: listSurfaceVersions
+      summary: List all versions of a decision surface
+      description: 'Returns the full version history for a surface, ordered by version ascending. Returns 404 when no surface with that ID exists. Requires platform.viewer or above.
+
+        '
+      parameters:
+      - name: id
+        in: path
+        required: true
+        schema:
+          type: string
+      responses:
+        '200':
+          description: Version history list
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/SurfaceVersionItem'
+        '401':
+          description: Unauthenticated
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '403':
+          description: Insufficient role (requires platform.viewer or above)
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '404':
+          description: Surface not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+      tags:
+      - Surfaces
+  /v1/surfaces/{id}/impact:
+    get:
+      operationId: getSurfaceImpact
+      summary: Get the dependency graph for a decision surface
+      description: 'Returns the full impact graph for a surface: all linked profiles, all grants referencing those profiles, and all distinct agents referenced by those grants. Includes aggregate counts and deterministic operator warnings. All array sections are always present (never null). Requires platform.viewer or above.
+
+        '
+      parameters:
+      - name: id
+        in: path
+        required: true
+        schema:
+          type: string
+      responses:
+        '200':
+          description: Impact graph
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SurfaceImpact'
+        '401':
+          description: Unauthenticated
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '403':
+          description: Insufficient role (requires platform.viewer or above)
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '404':
+          description: Surface not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+      tags:
+      - Surfaces
+  /v1/surfaces/{id}/recovery:
+    get:
+      operationId: getSurfaceRecovery
+      summary: Get recovery analysis for a decision surface
+      description: 'Returns a read-only recovery analysis: version history state, active/latest version distinction, successor links, and deterministic recommended next actions. Requires platform.viewer or above.
+
+        '
+      parameters:
+      - name: id
+        in: path
+        required: true
+        schema:
+          type: string
+      responses:
+        '200':
+          description: Recovery analysis
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SurfaceRecovery'
+        '401':
+          description: Unauthenticated
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '403':
+          description: Insufficient role (requires platform.viewer or above)
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '404':
+          description: Surface not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+      tags:
+      - Surfaces
+components:
+  schemas:
+    SurfaceVersionItem:
+      type: object
+      description: A single entry in the surface version history list.
+      properties:
+        version:
+          type: integer
+        status:
+          $ref: '#/components/schemas/LifecycleStatus'
+        effective_from:
+          type: string
+          format: date-time
+        approved_at:
+          type: string
+          format: date-time
+          nullable: true
+        approved_by:
+          type: string
+        created_at:
+          type: string
+          format: date-time
+        updated_at:
+          type: string
+          format: date-time
+    SurfaceRecovery:
+      type: object
+      description: Read-only recovery analysis for a decision surface.
+      properties:
+        surface_id:
+          type: string
+        latest_version:
+          type: integer
+        latest_status:
+          type: string
+        active_version:
+          type: integer
+          nullable: true
+          description: Null when no version is currently effective.
+        active_status:
+          type: string
+          nullable: true
+          description: Null when no version is currently effective.
+        successor_surface_id:
+          type: string
+        deprecation_reason:
+          type: string
+        version_count:
+          type: integer
+        warnings:
+          type: array
+          items:
+            type: string
+        recommended_next_actions:
+          type: array
+          items:
+            type: string
+    Error:
+      type: object
+      required:
+      - error
+      properties:
+        error:
+          type: string
+    SurfaceImpact:
+      type: object
+      description: 'Full dependency graph for a decision surface — all linked profiles, grants, and distinct agents. All array sections are always present (never null). Warnings are deterministic based on active-count thresholds.
+
+        '
+      properties:
+        surface:
+          type: object
+          properties:
+            id:
+              type: string
+            name:
+              type: string
+            status:
+              type: string
+            version:
+              type: integer
+            domain:
+              type: string
+            business_owner:
+              type: string
+            technical_owner:
+              type: string
+            approved_by:
+              type: string
+            approved_at:
+              type: string
+              format: date-time
+              nullable: true
+            deprecation_reason:
+              type: string
+            successor_surface_id:
+              type: string
+        profiles:
+          type: array
+          items:
+            type: object
+            properties:
+              id:
+                type: string
+              name:
+                type: string
+              status:
+                type: string
+              version:
+                type: integer
+              policy_reference:
+                type: string
+              fail_mode:
+                type: string
+                enum:
+                - open
+                - closed
+                description: 'Narrow runtime fail-mode for the policy-evaluator-error sub-case on this profile. The only currently runtime- effective fail-mode field; see the AuthorityProfile schema description for full semantics and the audit-payload caveat.
+
+                  '
+              escalation_mode:
+                type: string
+                enum:
+                - auto
+                - manual
+        grants:
+          type: array
+          items:
+            type: object
+            properties:
+              id:
+                type: string
+              agent_id:
+                type: string
+              profile_id:
+                type: string
+              status:
+                type: string
+              granted_by:
+                type: string
+              effective_from:
+                type: string
+                format: date-time
+              effective_until:
+                type: string
+                format: date-time
+                nullable: true
+        agents:
+          type: array
+          items:
+            type: object
+            properties:
+              id:
+                type: string
+              name:
+                type: string
+              type:
+                type: string
+              owner:
+                type: string
+              operational_state:
+                type: string
+                enum:
+                - active
+                - suspended
+                - revoked
+        summary:
+          type: object
+          properties:
+            profile_count:
+              type: integer
+            grant_count:
+              type: integer
+            agent_count:
+              type: integer
+            active_profile_count:
+              type: integer
+            active_grant_count:
+              type: integer
+            active_agent_count:
+              type: integer
+        warnings:
+          type: array
+          items:
+            type: string
+          description: Operator warnings. Empty array when none apply.
+    Surface:
+      type: object
+      properties:
+        id:
+          type: string
+        name:
+          type: string
+        status:
+          $ref: '#/components/schemas/LifecycleStatus'
+        version:
+          type: integer
+        domain:
+          type: string
+        business_owner:
+          type: string
+        technical_owner:
+          type: string
+        effective_from:
+          type: string
+          format: date-time
+        approved_by:
+          type: string
+        approved_at:
+          type: string
+          format: date-time
+        deprecation_reason:
+          type: string
+        successor_surface_id:
+          type: string
+    LifecycleStatus:
+      type: string
+      description: 'Canonical lifecycle posture for versioned governance resources (Surface, Profile, FailModePolicy, EscalationTarget). Every governed configuration entity in MIDAS follows the same draft -> review -> active -> deprecated -> retired progression. Only `active` versions participate in runtime resolution.
+
+        '
+      enum:
+      - draft
+      - review
+      - active
+      - deprecated
+      - retired
+  securitySchemes:
+    BearerAuth:
+      type: http
+      scheme: bearer
+      description: 'Static bearer token. Configured via MIDAS_AUTH_TOKENS or midas.yaml auth.tokens. Not required when auth.mode=open (development only).
+
+        '

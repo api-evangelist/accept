@@ -1,0 +1,1528 @@
+openapi: 3.1.0
+info:
+  title: MIDAS Agents Controlplane API
+  version: 1.1.0-rc.1
+  description: 'Authority governance engine for autonomous decisions. Every evaluation produces exactly one outcome and one tamper-evident audit envelope.
+
+    '
+servers:
+- url: http://localhost:8080
+  description: Local development
+security:
+- BearerAuth: []
+tags:
+- name: Controlplane
+paths:
+  /v1/controlplane/apply:
+    post:
+      operationId: applyBundle
+      summary: Apply a control-plane configuration bundle
+      description: 'Applies a YAML bundle of surface, profile, grant, and agent documents. All resources in the bundle are validated before any are persisted. Surfaces are created in review state and must be approved separately. Requires platform.admin role.
+
+        '
+      requestBody:
+        required: true
+        content:
+          application/yaml:
+            schema:
+              type: string
+              description: 'Multi-document YAML stream of control-plane resources. Profile spec.authority.consequence_threshold.type accepts monetary (canonical amount/currency threshold), financial (compatibility alias persisted as the Postgres storage value), or risk_rating.
+
+                '
+      responses:
+        '200':
+          description: Bundle applied (may contain per-resource validation errors)
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                  created:
+                    type: integer
+                  updated:
+                    type: integer
+                  errors:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        kind:
+                          type: string
+                        id:
+                          type: string
+                        field:
+                          type: string
+                        message:
+                          type: string
+        '400':
+          description: Invalid YAML or bundle-level validation failure
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '401':
+          description: Unauthenticated
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '403':
+          description: Insufficient role (requires platform.admin)
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+      tags:
+      - Controlplane
+  /v1/controlplane/plan:
+    post:
+      operationId: planBundle
+      summary: Preview a control-plane bundle without applying it
+      description: 'Validates and plans a YAML bundle, returning the projected changes without persisting anything. Useful for CI/CD dry-run workflows. Requires platform.admin role.
+
+        '
+      requestBody:
+        required: true
+        content:
+          application/yaml:
+            schema:
+              type: string
+              description: 'Multi-document YAML stream of control-plane resources. Profile spec.authority.consequence_threshold.type accepts monetary (canonical amount/currency threshold), financial (compatibility alias persisted as the Postgres storage value), or risk_rating.
+
+                '
+      responses:
+        '200':
+          description: Plan computed
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                  planned:
+                    type: integer
+                  errors:
+                    type: array
+                    items:
+                      type: object
+        '400':
+          description: Invalid YAML
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '401':
+          description: Unauthenticated
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '403':
+          description: Insufficient role (requires platform.admin)
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+      tags:
+      - Controlplane
+  /v1/controlplane/audit:
+    get:
+      operationId: listControlAudit
+      summary: List control-plane audit events
+      description: Returns the audit trail of control-plane operations (apply, approve, deprecate).
+      responses:
+        '200':
+          description: Audit event list
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  type: object
+                  properties:
+                    id:
+                      type: string
+                    event_type:
+                      type: string
+                    resource_kind:
+                      type: string
+                    resource_id:
+                      type: string
+                    actor:
+                      type: string
+                    occurred_at:
+                      type: string
+                      format: date-time
+        '401':
+          description: Unauthenticated
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '403':
+          description: Insufficient role (requires platform.viewer or above)
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+      tags:
+      - Controlplane
+  /v1/controlplane/surfaces/{id}/approve:
+    post:
+      operationId: approveSurface
+      summary: Approve a surface in review state
+      description: 'Transitions a surface from review to active. Enforces maker-checker: the approver must not be the same principal who submitted the surface. Requires platform.admin or governance.approver role.
+
+        '
+      parameters:
+      - name: id
+        in: path
+        required: true
+        schema:
+          type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ApproveSurfaceRequest'
+      responses:
+        '200':
+          description: Surface approved
+          content:
+            application/json:
+              schema:
+                type: object
+                required:
+                - surface_id
+                - status
+                - approved_by
+                properties:
+                  surface_id:
+                    type: string
+                  status:
+                    type: string
+                    example: active
+                  approved_by:
+                    type: string
+        '400':
+          description: Invalid request or approval policy violation
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '401':
+          description: Unauthenticated
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '403':
+          description: Insufficient role or approval policy denied
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '404':
+          description: Surface not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '409':
+          description: Surface is not in review state
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+      tags:
+      - Controlplane
+  /v1/controlplane/surfaces/{id}/deprecate:
+    post:
+      operationId: deprecateSurface
+      summary: Deprecate an active surface
+      description: 'Transitions a surface from active to deprecated. Deprecated surfaces remain usable for existing grants but signal pending migration. Requires platform.admin role.
+
+        '
+      parameters:
+      - name: id
+        in: path
+        required: true
+        schema:
+          type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/DeprecateSurfaceRequest'
+      responses:
+        '200':
+          description: Surface deprecated
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  surface_id:
+                    type: string
+                  status:
+                    type: string
+                    example: deprecated
+                  deprecation_reason:
+                    type: string
+                  successor_surface_id:
+                    type: string
+        '400':
+          description: Invalid request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '401':
+          description: Unauthenticated
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '403':
+          description: Insufficient role (requires platform.admin)
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '404':
+          description: Surface not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+      tags:
+      - Controlplane
+  /v1/controlplane/profiles/{id}/approve:
+    post:
+      operationId: approveProfile
+      summary: Approve a profile version in review state
+      description: 'Transitions a specific profile version from review to active. Requires platform.admin or governance.approver role.
+
+        '
+      parameters:
+      - name: id
+        in: path
+        required: true
+        schema:
+          type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ApproveProfileRequest'
+      responses:
+        '200':
+          description: Profile approved
+          content:
+            application/json:
+              schema:
+                type: object
+                required:
+                - profile_id
+                - version
+                - status
+                - approved_by
+                properties:
+                  profile_id:
+                    type: string
+                  version:
+                    type: integer
+                  status:
+                    type: string
+                  approved_by:
+                    type: string
+        '400':
+          description: Invalid request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '401':
+          description: Unauthenticated
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '403':
+          description: Insufficient role
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '404':
+          description: Profile not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+      tags:
+      - Controlplane
+  /v1/controlplane/expectations/{id}/approve:
+    post:
+      operationId: approveGovernanceExpectation
+      summary: Approve a GovernanceExpectation version in review state
+      description: 'Transitions a specific GovernanceExpectation version from review to active. After approval the matcher (#53) considers the expectation when emitting GOVERNANCE_CONDITION_DETECTED runtime audit events. Requires platform.admin or governance.approver role.
+
+        '
+      parameters:
+      - name: id
+        in: path
+        required: true
+        schema:
+          type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ApproveGovernanceExpectationRequest'
+      responses:
+        '200':
+          description: GovernanceExpectation approved
+          content:
+            application/json:
+              schema:
+                type: object
+                required:
+                - expectation_id
+                - version
+                - status
+                - approved_by
+                properties:
+                  expectation_id:
+                    type: string
+                  version:
+                    type: integer
+                  status:
+                    type: string
+                  approved_by:
+                    type: string
+        '400':
+          description: Invalid request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '401':
+          description: Unauthenticated
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '403':
+          description: Insufficient role
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '404':
+          description: GovernanceExpectation not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '409':
+          description: Expectation is not in review state
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+      tags:
+      - Controlplane
+  /v1/controlplane/profiles/{id}/deprecate:
+    post:
+      operationId: deprecateProfile
+      summary: Deprecate a profile version
+      description: Requires platform.admin role.
+      parameters:
+      - name: id
+        in: path
+        required: true
+        schema:
+          type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/DeprecateProfileRequest'
+      responses:
+        '200':
+          description: Profile deprecated
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  profile_id:
+                    type: string
+                  version:
+                    type: integer
+                  status:
+                    type: string
+        '400':
+          description: Invalid request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '401':
+          description: Unauthenticated
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '403':
+          description: Insufficient role (requires platform.admin)
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '404':
+          description: Profile not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+      tags:
+      - Controlplane
+  /v1/controlplane/fail_mode_policies/{id}/approve:
+    post:
+      operationId: approveFailModePolicy
+      summary: Approve a FailModePolicy version in review state
+      description: 'Transitions a specific FailModePolicy version from review to active. Requires platform.admin or governance.approver role (permission `fail_mode_policy:approve`). Mirrors the AuthorityProfile approval lifecycle.
+
+        '
+      parameters:
+      - name: id
+        in: path
+        required: true
+        schema:
+          type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ApproveFailModePolicyRequest'
+      responses:
+        '200':
+          description: FailModePolicy approved
+          content:
+            application/json:
+              schema:
+                type: object
+                required:
+                - policy_id
+                - version
+                - status
+                - approved_by
+                properties:
+                  policy_id:
+                    type: string
+                  version:
+                    type: integer
+                  status:
+                    type: string
+                  approved_by:
+                    type: string
+        '400':
+          description: Invalid request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '401':
+          description: Unauthenticated
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '403':
+          description: Insufficient permission (requires fail_mode_policy:approve)
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '404':
+          description: FailModePolicy not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '409':
+          description: FailModePolicy is not in review state
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+      tags:
+      - Controlplane
+  /v1/controlplane/fail_mode_policies/{id}/deprecate:
+    post:
+      operationId: deprecateFailModePolicy
+      summary: Deprecate an active FailModePolicy version
+      description: 'Transitions a specific FailModePolicy version from active to deprecated. The operator-supplied reason is captured in the control-audit record only — failmode.FailModePolicy has no DeprecationReason field on the persisted row. Requires platform.admin role (permission `fail_mode_policy:deprecate`, admin-only by deliberate maker-checker boundary).
+
+        '
+      parameters:
+      - name: id
+        in: path
+        required: true
+        schema:
+          type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/DeprecateFailModePolicyRequest'
+      responses:
+        '200':
+          description: FailModePolicy deprecated
+          content:
+            application/json:
+              schema:
+                type: object
+                required:
+                - policy_id
+                - version
+                - status
+                properties:
+                  policy_id:
+                    type: string
+                  version:
+                    type: integer
+                  status:
+                    type: string
+        '400':
+          description: Invalid request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '401':
+          description: Unauthenticated
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '403':
+          description: Insufficient permission (requires fail_mode_policy:deprecate)
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '404':
+          description: FailModePolicy not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '409':
+          description: FailModePolicy is not in active state
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+      tags:
+      - Controlplane
+  /v1/controlplane/drift_definitions/{id}/submit:
+    post:
+      operationId: submitDriftDefinition
+      summary: Submit a DriftDefinition revision for review
+      description: 'Transitions a specific DriftDefinition revision from draft to review. Requires platform.operator or platform.admin role (permission `drift_definition:submit`).
+
+        '
+      parameters:
+      - name: id
+        in: path
+        required: true
+        schema:
+          type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/SubmitDriftDefinitionRequest'
+      responses:
+        '200':
+          description: DriftDefinition transitioned to review
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/DriftDefinition'
+        '400':
+          description: Invalid request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '401':
+          description: Unauthenticated
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '403':
+          description: Insufficient permission (requires drift_definition:submit)
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '404':
+          description: DriftDefinition not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '409':
+          description: DriftDefinition is not in draft state
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '501':
+          description: Approval service not configured
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+      tags:
+      - Controlplane
+  /v1/controlplane/drift_definitions/{id}/approve:
+    post:
+      operationId: approveDriftDefinition
+      summary: Approve a DriftDefinition revision in review state
+      description: 'Transitions a specific DriftDefinition revision from review to active. Maker-checker is enforced at the service layer: the approver must not equal the revision''s `created_by` field (case-insensitive trim). Requires governance.approver or platform.admin role (permission `drift_definition:approve`).
+
+        '
+      parameters:
+      - name: id
+        in: path
+        required: true
+        schema:
+          type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ApproveDriftDefinitionRequest'
+      responses:
+        '200':
+          description: DriftDefinition approved
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/DriftDefinition'
+        '400':
+          description: Invalid request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '401':
+          description: Unauthenticated
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '403':
+          description: Insufficient permission or maker-checker violation
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '404':
+          description: DriftDefinition not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '409':
+          description: DriftDefinition is not in review state
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '501':
+          description: Approval service not configured
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+      tags:
+      - Controlplane
+  /v1/controlplane/drift_definitions/{id}/reject:
+    post:
+      operationId: rejectDriftDefinition
+      summary: Reject a DriftDefinition revision back to draft
+      description: 'Transitions a specific DriftDefinition revision from review back to draft. Approved_by and approved_at are not modified (review-state revisions have neither set). The operator-supplied reason is captured in the control-audit record only. Requires governance.approver or platform.admin role (permission `drift_definition:reject`).
+
+        '
+      parameters:
+      - name: id
+        in: path
+        required: true
+        schema:
+          type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/RejectDriftDefinitionRequest'
+      responses:
+        '200':
+          description: DriftDefinition transitioned to draft
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/DriftDefinition'
+        '400':
+          description: Invalid request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '401':
+          description: Unauthenticated
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '403':
+          description: Insufficient permission (requires drift_definition:reject)
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '404':
+          description: DriftDefinition not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '409':
+          description: DriftDefinition is not in review state
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '501':
+          description: Approval service not configured
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+      tags:
+      - Controlplane
+  /v1/controlplane/drift_definitions/{id}/deprecate:
+    post:
+      operationId: deprecateDriftDefinition
+      summary: Deprecate an active DriftDefinition revision
+      description: 'Transitions a specific DriftDefinition revision from active to deprecated. Successor information is optional; when supplied it is persisted on the row''s `successor_definition_id` and `successor_version` fields. The operator-supplied reason is captured in the control-audit record only. Requires platform.admin role (permission `drift_definition:deprecate`). Cross-version atomic deprecation (auto-deprecate prior active when activating a new revision) is intentionally NOT performed — operators must call this endpoint explicitly.
+
+        '
+      parameters:
+      - name: id
+        in: path
+        required: true
+        schema:
+          type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/DeprecateDriftDefinitionRequest'
+      responses:
+        '200':
+          description: DriftDefinition deprecated
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/DriftDefinition'
+        '400':
+          description: Invalid request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '401':
+          description: Unauthenticated
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '403':
+          description: Insufficient permission (requires drift_definition:deprecate)
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '404':
+          description: DriftDefinition not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '409':
+          description: DriftDefinition is not in active state
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '501':
+          description: Approval service not configured
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+      tags:
+      - Controlplane
+  /v1/controlplane/drift_definitions/{id}/retire:
+    post:
+      operationId: retireDriftDefinition
+      summary: Retire a DriftDefinition revision
+      description: 'Transitions a DriftDefinition revision to retired. Allowed source states: draft, review, active, deprecated. Retired is terminal — already-retired revisions are rejected with 409. Requires platform.admin role (permission `drift_definition:retire`).
+
+        '
+      parameters:
+      - name: id
+        in: path
+        required: true
+        schema:
+          type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/RetireDriftDefinitionRequest'
+      responses:
+        '200':
+          description: DriftDefinition retired
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/DriftDefinition'
+        '400':
+          description: Invalid request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '401':
+          description: Unauthenticated
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '403':
+          description: Insufficient permission (requires drift_definition:retire)
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '404':
+          description: DriftDefinition not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '409':
+          description: DriftDefinition is already retired (terminal)
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '501':
+          description: Approval service not configured
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+      tags:
+      - Controlplane
+  /v1/controlplane/grants/{id}/suspend:
+    post:
+      operationId: suspendGrant
+      summary: Suspend an active grant
+      description: 'Suspends an active authority grant, preventing the associated agent from being authorized on the linked profile. Reversible via reinstate. Requires platform.admin role.
+
+        '
+      parameters:
+      - name: id
+        in: path
+        required: true
+        schema:
+          type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+              - suspended_by
+              properties:
+                suspended_by:
+                  type: string
+                reason:
+                  type: string
+      responses:
+        '200':
+          description: Grant suspended
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GrantLifecycleResponse'
+        '400':
+          description: Invalid request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '401':
+          description: Unauthenticated
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '403':
+          description: Insufficient role (requires platform.admin)
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '404':
+          description: Grant not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+      tags:
+      - Controlplane
+  /v1/controlplane/grants/{id}/revoke:
+    post:
+      operationId: revokeGrant
+      summary: Revoke a grant permanently
+      description: 'Permanently revokes an authority grant. This is irreversible. Requires platform.admin role.
+
+        '
+      parameters:
+      - name: id
+        in: path
+        required: true
+        schema:
+          type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+              - revoked_by
+              properties:
+                revoked_by:
+                  type: string
+                reason:
+                  type: string
+      responses:
+        '200':
+          description: Grant revoked
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GrantLifecycleResponse'
+        '400':
+          description: Invalid request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '401':
+          description: Unauthenticated
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '403':
+          description: Insufficient role (requires platform.admin)
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '404':
+          description: Grant not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+      tags:
+      - Controlplane
+  /v1/controlplane/grants/{id}/reinstate:
+    post:
+      operationId: reinstateGrant
+      summary: Reinstate a suspended grant
+      description: 'Reactivates a suspended grant, restoring the agent''s authority. Only suspended grants can be reinstated; revoked grants cannot. Requires platform.admin role.
+
+        '
+      parameters:
+      - name: id
+        in: path
+        required: true
+        schema:
+          type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+              - reinstated_by
+              properties:
+                reinstated_by:
+                  type: string
+      responses:
+        '200':
+          description: Grant reinstated
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GrantLifecycleResponse'
+        '400':
+          description: Invalid request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '401':
+          description: Unauthenticated
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '403':
+          description: Insufficient role (requires platform.admin)
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '404':
+          description: Grant not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+      tags:
+      - Controlplane
+components:
+  schemas:
+    DriftThresholdDirection:
+      type: string
+      enum:
+      - ascending
+      - descending
+    ApproveSurfaceRequest:
+      type: object
+      required:
+      - approver_id
+      properties:
+        approver_id:
+          type: string
+        approver_name:
+          type: string
+        submitted_by:
+          type: string
+          description: ID of the principal who submitted the surface for review.
+    DriftBaselineStrategy:
+      type: string
+      description: 'V1 baseline strategies. champion_challenger and seasonality_aware are deferred to V2 and MUST NOT appear here.
+
+        '
+      enum:
+      - rolling
+      - fixed_governed
+      - previous_equivalent
+      - since_last_governed_change
+      - manually_pinned
+    DriftOrigin:
+      type: string
+      enum:
+      - manual
+      - inferred
+      - auto_instrumented
+    ApproveProfileRequest:
+      type: object
+      required:
+      - version
+      - approved_by
+      properties:
+        version:
+          type: integer
+          minimum: 1
+        approved_by:
+          type: string
+    RetireDriftDefinitionRequest:
+      type: object
+      description: 'DriftDefinition retirement request. Allowed source states: draft, review, active, deprecated. Retired is terminal.
+
+        '
+      required:
+      - version
+      properties:
+        version:
+          type: integer
+          minimum: 1
+        retired_by:
+          type: string
+        reason:
+          type: string
+    DriftCadence:
+      type: string
+      enum:
+      - minute
+      - hour
+      - day
+      - week
+    DeprecateProfileRequest:
+      type: object
+      required:
+      - version
+      - deprecated_by
+      properties:
+        version:
+          type: integer
+          minimum: 1
+        deprecated_by:
+          type: string
+    RejectDriftDefinitionRequest:
+      type: object
+      required:
+      - version
+      properties:
+        version:
+          type: integer
+          minimum: 1
+        rejected_by:
+          type: string
+        reason:
+          type: string
+    ApproveGovernanceExpectationRequest:
+      type: object
+      required:
+      - version
+      - approved_by
+      properties:
+        version:
+          type: integer
+          minimum: 1
+        approved_by:
+          type: string
+    LifecycleStatus:
+      type: string
+      description: 'Canonical lifecycle posture for versioned governance resources (Surface, Profile, FailModePolicy, EscalationTarget). Every governed configuration entity in MIDAS follows the same draft -> review -> active -> deprecated -> retired progression. Only `active` versions participate in runtime resolution.
+
+        '
+      enum:
+      - draft
+      - review
+      - active
+      - deprecated
+      - retired
+    ApproveDriftDefinitionRequest:
+      type: object
+      required:
+      - version
+      properties:
+        version:
+          type: integer
+          minimum: 1
+        approved_by:
+          type: string
+          description: Optional body fallback when the authenticated principal is not present.
+    DriftMetricDefinition:
+      type: object
+      description: Embedded metric inside a DriftDefinition revision.
+      required:
+      - metric_id
+      - drift_type
+      - baseline_strategy
+      - window_seconds
+      - cadence
+      - threshold_direction
+      - warning_threshold
+      - breached_threshold
+      properties:
+        metric_id:
+          type: string
+        drift_type:
+          $ref: '#/components/schemas/DriftType'
+        baseline_strategy:
+          $ref: '#/components/schemas/DriftBaselineStrategy'
+        baseline_window_seconds:
+          type: integer
+          minimum: 0
+        window_seconds:
+          type: integer
+          minimum: 1
+        cadence:
+          $ref: '#/components/schemas/DriftCadence'
+        warning_threshold:
+          type: number
+        breached_threshold:
+          type: number
+        threshold_direction:
+          $ref: '#/components/schemas/DriftThresholdDirection'
+        governance_expectation_ref:
+          type: string
+        governance_expectation_ver:
+          type: integer
+          minimum: 0
+        description:
+          type: string
+    DeprecateSurfaceRequest:
+      type: object
+      required:
+      - deprecated_by
+      - reason
+      properties:
+        deprecated_by:
+          type: string
+        reason:
+          type: string
+        successor_id:
+          type: string
+          description: Optional successor surface ID.
+    DriftDefinition:
+      type: object
+      description: 'Governed, versioned drift specification. Composite (id, version) identity. Apply persists Status=''review''; activation lives in a future approval-endpoint tranche.
+
+        '
+      required:
+      - id
+      - version
+      - name
+      - status
+      - effective_date
+      - business_owner
+      - technical_owner
+      - target
+      - metrics
+      - origin
+      - managed
+      - created_at
+      - updated_at
+      properties:
+        id:
+          type: string
+        version:
+          type: integer
+          minimum: 1
+        name:
+          type: string
+        description:
+          type: string
+        status:
+          $ref: '#/components/schemas/DriftDefinitionStatus'
+        effective_date:
+          type: string
+          format: date-time
+        effective_until:
+          type: string
+          format: date-time
+          nullable: true
+        retired_at:
+          type: string
+          format: date-time
+          nullable: true
+        business_owner:
+          type: string
+        technical_owner:
+          type: string
+        target:
+          $ref: '#/components/schemas/DriftTargetRef'
+        metrics:
+          type: array
+          items:
+            $ref: '#/components/schemas/DriftMetricDefinition'
+        origin:
+          $ref: '#/components/schemas/DriftOrigin'
+        managed:
+          type: boolean
+        replaces:
+          type: string
+        successor_definition_id:
+          type: string
+        successor_version:
+          type: integer
+          minimum: 0
+        created_at:
+          type: string
+          format: date-time
+        updated_at:
+          type: string
+          format: date-time
+        created_by:
+          type: string
+        approved_by:
+          type: string
+        approved_at:
+          type: string
+          format: date-time
+          nullable: true
+    ApproveFailModePolicyRequest:
+      type: object
+      required:
+      - version
+      - approved_by
+      properties:
+        version:
+          type: integer
+          minimum: 1
+        approved_by:
+          type: string
+    DriftTargetRef:
+      type: object
+      description: Discriminated reference to a governed entity.
+      required:
+      - kind
+      - id
+      properties:
+        kind:
+          $ref: '#/components/schemas/DriftTargetEntityKind'
+        id:
+          type: string
+    SubmitDriftDefinitionRequest:
+      type: object
+      required:
+      - version
+      properties:
+        version:
+          type: integer
+          minimum: 1
+        submitted_by:
+          type: string
+          description: Optional body fallback when the authenticated principal is not present.
+        reason:
+          type: string
+    DriftDefinitionStatus:
+      description: 'Lifecycle state of a DriftDefinition. Delegates to the canonical LifecycleStatus posture.
+
+        '
+      allOf:
+      - $ref: '#/components/schemas/LifecycleStatus'
+    DeprecateFailModePolicyRequest:
+      type: object
+      description: 'FailModePolicy has no DeprecationReason field on the persisted row; the operator-supplied reason is captured in the control-audit record only.
+
+        '
+      required:
+      - version
+      - deprecated_by
+      properties:
+        version:
+          type: integer
+          minimum: 1
+        deprecated_by:
+          type: string
+        reason:
+          type: string
+    DriftType:
+      type: string
+      description: 'V1 drift taxonomy. Population, data, prediction, performance, and concept drift are deferred to V2 and MUST NOT appear here.
+
+        '
+      enum:
+      - invocation
+      - outcome
+      - confidence
+      - latency
+      - evidence
+      - authority
+      - policy
+      - coverage
+      - process_path
+    Error:
+      type: object
+      required:
+      - error
+      properties:
+        error:
+          type: string
+    GrantLifecycleResponse:
+      type: object
+      required:
+      - grant_id
+      - status
+      - agent_id
+      properties:
+        grant_id:
+          type: string
+        status:
+          type: string
+          enum:
+          - active
+          - suspended
+          - revoked
+        agent_id:
+          type: string
+    DriftTargetEntityKind:
+      type: string
+      description: 'The nine governed entity kinds a DriftDefinition may target.
+
+        '
+      enum:
+      - business_service
+      - capability
+      - process
+      - decision_surface
+      - ai_system
+      - ai_system_binding
+      - agent
+      - authority_profile
+      - authority_grant
+    DeprecateDriftDefinitionRequest:
+      type: object
+      description: 'DriftDefinition deprecation request. Successor information is optional; when supplied it is persisted on the row''s successor_definition_id and successor_version fields. The operator-supplied reason is captured in the control-audit record only.
+
+        '
+      required:
+      - version
+      properties:
+        version:
+          type: integer
+          minimum: 1
+        deprecated_by:
+          type: string
+        reason:
+          type: string
+        successor_definition_id:
+          type: string
+        successor_version:
+          type: integer
+          minimum: 0
+  securitySchemes:
+    BearerAuth:
+      type: http
+      scheme: bearer
+      description: 'Static bearer token. Configured via MIDAS_AUTH_TOKENS or midas.yaml auth.tokens. Not required when auth.mode=open (development only).
+
+        '

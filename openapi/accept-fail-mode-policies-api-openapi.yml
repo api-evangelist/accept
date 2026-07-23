@@ -1,0 +1,344 @@
+openapi: 3.1.0
+info:
+  title: MIDAS Agents Fail Mode Policies API
+  version: 1.1.0-rc.1
+  description: 'Authority governance engine for autonomous decisions. Every evaluation produces exactly one outcome and one tamper-evident audit envelope.
+
+    '
+servers:
+- url: http://localhost:8080
+  description: Local development
+security:
+- BearerAuth: []
+tags:
+- name: Fail Mode Policies
+paths:
+  /v1/fail_mode_policies/{id}:
+    get:
+      operationId: getFailModePolicy
+      summary: Get the latest version of a FailModePolicy by ID
+      description: 'Returns the highest-numbered FailModePolicy version for the given id regardless of lifecycle status. Read-only; the runtime resolver remains evidence-only and rule contents do not influence outcome computation.
+
+        '
+      parameters:
+      - name: id
+        in: path
+        required: true
+        schema:
+          type: string
+      responses:
+        '200':
+          description: FailModePolicy
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/FailModePolicy'
+        '401':
+          description: Unauthenticated
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '403':
+          description: Insufficient role (requires platform.viewer or above)
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '404':
+          description: FailModePolicy not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '500':
+          description: Repository error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '501':
+          description: FailModePolicy reader not configured
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+      tags:
+      - Fail Mode Policies
+  /v1/fail_mode_policies/{id}/versions:
+    get:
+      operationId: listFailModePolicyVersions
+      summary: List all versions of a FailModePolicy
+      description: 'Returns every persisted revision of the FailModePolicy id in descending version order. 404 when the id is unknown.
+
+        '
+      parameters:
+      - name: id
+        in: path
+        required: true
+        schema:
+          type: string
+      responses:
+        '200':
+          description: Versions list
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/FailModePolicyListResponse'
+        '401':
+          description: Unauthenticated
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '403':
+          description: Insufficient role (requires platform.viewer or above)
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '404':
+          description: FailModePolicy not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '500':
+          description: Repository error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '501':
+          description: FailModePolicy reader not configured
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+      tags:
+      - Fail Mode Policies
+  /v1/fail_mode_policies/{id}/versions/{version}:
+    get:
+      operationId: getFailModePolicyVersion
+      summary: Get a specific FailModePolicy revision
+      description: 'Returns the exact (id, version) revision. 404 when the pair does not exist. The runtime resolver remains evidence-only.
+
+        '
+      parameters:
+      - name: id
+        in: path
+        required: true
+        schema:
+          type: string
+      - name: version
+        in: path
+        required: true
+        schema:
+          type: integer
+          minimum: 1
+      responses:
+        '200':
+          description: FailModePolicy version
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/FailModePolicy'
+        '400':
+          description: Version path segment is not a positive integer
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '401':
+          description: Unauthenticated
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '403':
+          description: Insufficient role (requires platform.viewer or above)
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '404':
+          description: FailModePolicy or version not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '500':
+          description: Repository error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '501':
+          description: FailModePolicy reader not configured
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+      tags:
+      - Fail Mode Policies
+components:
+  schemas:
+    FailModePolicy:
+      type: object
+      description: 'Governed, versioned fail-mode policy resource. Lifecycle mirrors AuthorityProfile — review-forced apply, approval transitions to active, deprecation transitions to deprecated. The persisted version is planner-authored at apply time; lifecycle.version on the apply document is informational. See docs/operations/runtime-readiness.md §11 for the operator-facing narrow-fail-mode summary.
+
+        '
+      required:
+      - id
+      - version
+      - name
+      - status
+      - effective_date
+      - business_owner
+      - technical_owner
+      - rules
+      - origin
+      - managed
+      - created_at
+      - updated_at
+      properties:
+        id:
+          type: string
+        version:
+          type: integer
+        name:
+          type: string
+        description:
+          type: string
+        status:
+          $ref: '#/components/schemas/LifecycleStatus'
+        effective_date:
+          type: string
+          format: date-time
+        effective_until:
+          type: string
+          format: date-time
+          nullable: true
+        retired_at:
+          type: string
+          format: date-time
+          nullable: true
+        business_owner:
+          type: string
+        technical_owner:
+          type: string
+        rules:
+          type: array
+          items:
+            $ref: '#/components/schemas/FailModePolicyRule'
+        origin:
+          type: string
+          enum:
+          - manual
+          - inferred
+        managed:
+          type: boolean
+        replaces:
+          type: string
+        successor_policy_id:
+          type: string
+        successor_version:
+          type: integer
+        created_at:
+          type: string
+          format: date-time
+        updated_at:
+          type: string
+          format: date-time
+        created_by:
+          type: string
+        approved_by:
+          type: string
+        approved_at:
+          type: string
+          format: date-time
+          nullable: true
+    Error:
+      type: object
+      required:
+      - error
+      properties:
+        error:
+          type: string
+    FailModePolicyListResponse:
+      type: object
+      description: 'Versions list wrapper for FailModePolicy GET endpoints. The array always serialises non-null (empty list when the resource is unknown is mapped to 404 by the handler).
+
+        '
+      required:
+      - fail_mode_policies
+      properties:
+        fail_mode_policies:
+          type: array
+          items:
+            $ref: '#/components/schemas/FailModePolicy'
+    LifecycleStatus:
+      type: string
+      description: 'Canonical lifecycle posture for versioned governance resources (Surface, Profile, FailModePolicy, EscalationTarget). Every governed configuration entity in MIDAS follows the same draft -> review -> active -> deprecated -> retired progression. Only `active` versions participate in runtime resolution.
+
+        '
+      enum:
+      - draft
+      - review
+      - active
+      - deprecated
+      - retired
+    FailModePolicyRule:
+      type: object
+      description: 'A single rule binding a correctness class to a three-axis runtime-degradation posture (D29b): permitted_mode (Axis A), enforcement_state (Axis B), and outcome (Axis C). Validation enforces a per-posture matrix of permitted (enforcement_state, outcome) combinations; the runtime continues to record the resolved policy as evidence only and does not enforce rule contents in this tranche.
+
+        '
+      required:
+      - correctness_class
+      - permitted_mode
+      properties:
+        correctness_class:
+          type: string
+          enum:
+          - governance_integrity
+          - persistence
+          - input
+          - resource
+          - consistency
+        permitted_mode:
+          type: string
+          enum:
+          - closed
+          - soft
+          - open
+          - not_applicable
+        enforcement_state:
+          type: string
+          enum:
+          - evidence_only
+          - dry_run
+          - enforced
+          default: evidence_only
+          description: 'D29b declares the policy posture and intended enforcement state. The runtime currently records this declaration as evidence only and does not enforce it.
+
+            '
+        outcome:
+          type: string
+          enum:
+          - deny
+          - escalate
+          - permit_with_evidence
+          - manual_review
+          description: 'Intended outcome for future dry-run or enforced modes. D29b stores and validates this declaration only; runtime enforcement is not enabled by this schema change.
+
+            '
+        reason:
+          type: string
+          description: Optional free-form note explaining the rule.
+  securitySchemes:
+    BearerAuth:
+      type: http
+      scheme: bearer
+      description: 'Static bearer token. Configured via MIDAS_AUTH_TOKENS or midas.yaml auth.tokens. Not required when auth.mode=open (development only).
+
+        '

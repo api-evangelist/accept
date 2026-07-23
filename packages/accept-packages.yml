@@ -1,0 +1,18 @@
+generated: '2026-07-18'
+method: searched
+source: https://pkg.go.dev/github.com/accept-io/midas
+note: >-
+  MIDAS is consumed primarily over its HTTP API (POST /v1/evaluate); Accept Labs does not
+  publish a dedicated client SDK on any registry. The Go module below is the engine/runtime
+  itself, importable via `go get`, and is first-party. No npm/PyPI/NuGet/RubyGems client
+  libraries were found. No SDKs pointer is emitted because there is no standalone client SDK.
+packages:
+- language: go
+  registry: pkg.go.dev
+  name: github.com/accept-io/midas
+  url: https://pkg.go.dev/github.com/accept-io/midas
+  install: go get github.com/accept-io/midas
+  official: true
+  kind: engine
+  versions: [v1.0.0, v1.0.1, v1.0.2, v1.0.3, v1.1.0-rc.1]
+  latest: v1.1.0-rc.1

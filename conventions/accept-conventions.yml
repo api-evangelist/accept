@@ -1,0 +1,39 @@
+generated: '2026-07-18'
+method: searched
+source: openapi/accept-midas-openapi-original.yml + docs/api/http-api.md
+authentication:
+  style: HTTP bearer token (Authorization header); RBAC roles; OIDC for Explorer only
+  ref: authentication/accept-authentication.yml
+idempotency:
+  supported: true
+  mechanism: body field
+  key: request_id
+  scope: per request_source (idempotent by request_id within a source)
+  behavior: >-
+    request_id is a caller-supplied idempotency key, auto-generated (UUID) if omitted. A
+    duplicate (request_source, request_id) with a differing payload is rejected with HTTP 409.
+  operations: [evaluate]
+pagination:
+  style: opaque-cursor
+  scheme_name: D30j
+  params:
+    cursor: opaque next_cursor token, passed back verbatim (must not be decoded/modified)
+    limit: page size (admin-audit max 500, default 50)
+    order: asc | desc — a cursor is bound to the order direction it was issued for; replaying a desc cursor against an asc query returns 400
+  response_fields:
+    next_cursor: opaque continuation token; pagination stops when absent
+  applies_to: evidence audit-event / search endpoints, admin-audit
+content_negotiation:
+  request_response_default: application/json
+  control_plane_accepts: [application/yaml, application/x-yaml, text/yaml]
+error_envelope:
+  media_type: application/json
+  shape: '{"error": "..."}'
+  ref: errors/accept-problem-types.yml
+versioning:
+  api: uri-path (/v1)
+  ref: lifecycle/accept-lifecycle.yml
+rate_limiting:
+  documented: false
+request_tracing:
+  documented: false

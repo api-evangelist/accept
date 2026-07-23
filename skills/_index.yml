@@ -1,0 +1,16 @@
+generated: '2026-07-18'
+method: generated
+source: openapi/accept-midas-openapi-original.yml + conventions/accept-conventions.yml + errors/accept-problem-types.yml
+skills:
+- file: accept-evaluate-decision.md
+  name: Evaluate an agent decision with MIDAS
+  api: openapi/accept-midas-openapi-original.yml
+  operations: [evaluate, getDecisionByRequestId, getEnvelope, listEscalations, createReview]
+- file: accept-verify-evidence.md
+  name: Verify MIDAS decision evidence
+  api: openapi/accept-midas-openapi-original.yml
+  operations: [getEvidenceEnvelopeIntegrity, getEvidenceEnvelopeAuditEvents, getEvidenceEnvelopePacket, searchEvidenceAuditEvents]
+- file: accept-apply-control-plane.md
+  name: Apply a MIDAS control-plane bundle
+  api: openapi/accept-midas-openapi-original.yml
+  operations: [planBundle, applyBundle, listControlAudit, getSurface, listProfiles]

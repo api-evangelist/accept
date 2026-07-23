@@ -1,0 +1,188 @@
+openapi: 3.1.0
+info:
+  title: MIDAS Agents Evaluate API
+  version: 1.1.0-rc.1
+  description: 'Authority governance engine for autonomous decisions. Every evaluation produces exactly one outcome and one tamper-evident audit envelope.
+
+    '
+servers:
+- url: http://localhost:8080
+  description: Local development
+security:
+- BearerAuth: []
+tags:
+- name: Evaluate
+paths:
+  /v1/evaluate:
+    post:
+      operationId: evaluate
+      summary: Evaluate a decision request
+      description: 'Evaluates whether an agent is within authority to perform an action on a governed decision surface. Produces exactly one outcome and one tamper-evident audit envelope. Idempotent by request_id within a source.
+
+        '
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/EvaluateRequest'
+      responses:
+        '200':
+          description: Evaluation complete
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/EvaluateResponse'
+        '400':
+          description: Invalid request (missing required fields, invalid confidence value, etc.)
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '401':
+          description: Unauthenticated (auth.mode=required and no valid token provided)
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '403':
+          description: Insufficient role (requires platform.operator or platform.admin)
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '500':
+          description: Internal error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+      tags:
+      - Evaluate
+components:
+  schemas:
+    Consequence:
+      type: object
+      required:
+      - type
+      properties:
+        type:
+          type: string
+          enum:
+          - monetary
+          - risk_rating
+        amount:
+          type: number
+          description: Monetary amount. Required when type=monetary.
+        currency:
+          type: string
+          description: ISO 4217 currency code. Required when type=monetary.
+        risk_rating:
+          type: string
+          enum:
+          - low
+          - medium
+          - high
+          - critical
+          description: Risk rating value. Required when type=risk_rating.
+    EvaluateRequest:
+      type: object
+      required:
+      - surface_id
+      - agent_id
+      - confidence
+      properties:
+        surface_id:
+          type: string
+          description: ID of the governed decision surface.
+        agent_id:
+          type: string
+          description: ID of the acting agent.
+        confidence:
+          type: number
+          format: float
+          minimum: 0
+          maximum: 1
+          description: Agent's confidence in the decision (0.0–1.0).
+        consequence:
+          $ref: '#/components/schemas/Consequence'
+        context:
+          type: object
+          additionalProperties: true
+          description: Key-value pairs satisfying the surface's required context keys.
+        request_id:
+          type: string
+          description: Caller-supplied idempotency key. Auto-generated if omitted.
+        request_source:
+          type: string
+          description: Logical source system identifier. Defaults to "api".
+        process_id:
+          type: string
+          description: 'Process ID for evaluation. Required in enforced structural mode;
+
+            optional in permissive mode (the default).
+
+
+            MIDAS validates that the process exists, that the surface exists
+
+            (latest version), and that the surface belongs to this process.
+
+            The request fails with 400 if any validation fails.
+
+            '
+    Error:
+      type: object
+      required:
+      - error
+      properties:
+        error:
+          type: string
+    EvaluateResponse:
+      type: object
+      required:
+      - outcome
+      - reason
+      - audit_status
+      properties:
+        outcome:
+          type: string
+          enum:
+          - accept
+          - escalate
+          - reject
+          - request_clarification
+        reason:
+          type: string
+          description: Typed reason code (e.g. WITHIN_AUTHORITY, CONFIDENCE_BELOW_THRESHOLD).
+        envelope_id:
+          type: string
+          description: ID of the persisted governance envelope. Omitted on simulation.
+        explanation:
+          type: string
+          description: Human-readable explanation of the outcome.
+        policy_mode:
+          type: string
+          description: Active policy evaluator mode (e.g. noop).
+        policy_reference:
+          type: string
+          description: Policy bundle reference used during evaluation.
+        policy_skipped:
+          type: boolean
+          description: True when no policy was attached to the profile.
+        simulated:
+          type: boolean
+          description: True when the result was produced by the non-persistent simulate path.
+        audit_status:
+          type: string
+          enum:
+          - recorded
+          description: 'Mandatory audit-record marker on successful /v1/evaluate responses (D27i-c chunk 3). Constrained to the single value "recorded" in F1 — the governed evaluate path always persists a tamper-evident audit envelope. Failure responses do not carry this field. The Explorer success path emits "explorer_recorded" but is not part of the v1 public contract; OpenAPI coverage of /explorer is a future tranche.
+
+            '
+  securitySchemes:
+    BearerAuth:
+      type: http
+      scheme: bearer
+      description: 'Static bearer token. Configured via MIDAS_AUTH_TOKENS or midas.yaml auth.tokens. Not required when auth.mode=open (development only).
+
+        '

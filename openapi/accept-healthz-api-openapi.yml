@@ -1,0 +1,49 @@
+openapi: 3.1.0
+info:
+  title: MIDAS Agents Healthz API
+  version: 1.1.0-rc.1
+  description: 'Authority governance engine for autonomous decisions. Every evaluation produces exactly one outcome and one tamper-evident audit envelope.
+
+    '
+servers:
+- url: http://localhost:8080
+  description: Local development
+security:
+- BearerAuth: []
+tags:
+- name: Healthz
+paths:
+  /healthz:
+    get:
+      operationId: getHealth
+      summary: Liveness check
+      description: Returns 200 when the server is running. Does not verify store connectivity.
+      security: []
+      responses:
+        '200':
+          description: Server is alive
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: string
+                    example: ok
+                  service:
+                    type: string
+                    example: midas
+                  policy_mode:
+                    type: string
+                  policy_evaluator:
+                    type: string
+      tags:
+      - Healthz
+components:
+  securitySchemes:
+    BearerAuth:
+      type: http
+      scheme: bearer
+      description: 'Static bearer token. Configured via MIDAS_AUTH_TOKENS or midas.yaml auth.tokens. Not required when auth.mode=open (development only).
+
+        '

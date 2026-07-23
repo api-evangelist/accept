@@ -1,0 +1,336 @@
+openapi: 3.1.0
+info:
+  title: MIDAS Agents Escalation Targets API
+  version: 1.1.0-rc.1
+  description: 'Authority governance engine for autonomous decisions. Every evaluation produces exactly one outcome and one tamper-evident audit envelope.
+
+    '
+servers:
+- url: http://localhost:8080
+  description: Local development
+security:
+- BearerAuth: []
+tags:
+- name: Escalation Targets
+paths:
+  /v1/escalation_targets:
+    get:
+      operationId: listEscalationTargets
+      summary: List the latest version of every escalation target
+      description: 'Returns one row per logical escalation target id (the latest version of each), sorted by id ascending. The array always serialises non-null (empty list when no targets exist). Read-only; D31k-impl-1 does not introduce write endpoints.
+
+        '
+      responses:
+        '200':
+          description: Escalation targets list
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/EscalationTargetListResponse'
+        '401':
+          description: Unauthenticated
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '403':
+          description: Insufficient role (requires platform.viewer or above)
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '500':
+          description: Repository error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '501':
+          description: EscalationTarget reader not configured
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+      tags:
+      - Escalation Targets
+  /v1/escalation_targets/{id}:
+    get:
+      operationId: getEscalationTarget
+      summary: Get the latest version of an EscalationTarget by ID
+      description: 'Returns the highest-numbered EscalationTarget version for the given id regardless of lifecycle status. Read-only.
+
+        '
+      parameters:
+      - name: id
+        in: path
+        required: true
+        schema:
+          type: string
+      responses:
+        '200':
+          description: EscalationTarget
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/EscalationTarget'
+        '401':
+          description: Unauthenticated
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '403':
+          description: Insufficient role (requires platform.viewer or above)
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '404':
+          description: EscalationTarget not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '500':
+          description: Repository error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '501':
+          description: EscalationTarget reader not configured
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+      tags:
+      - Escalation Targets
+  /v1/escalation_targets/{id}/versions:
+    get:
+      operationId: listEscalationTargetVersions
+      summary: List every persisted version of an EscalationTarget
+      description: 'Returns every revision of the EscalationTarget id in descending version order. 404 when the id is unknown.
+
+        '
+      parameters:
+      - name: id
+        in: path
+        required: true
+        schema:
+          type: string
+      responses:
+        '200':
+          description: Versions list
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/EscalationTargetListResponse'
+        '401':
+          description: Unauthenticated
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '403':
+          description: Insufficient role (requires platform.viewer or above)
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '404':
+          description: EscalationTarget not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '500':
+          description: Repository error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '501':
+          description: EscalationTarget reader not configured
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+      tags:
+      - Escalation Targets
+  /v1/escalation_targets/{id}/versions/{version}:
+    get:
+      operationId: getEscalationTargetVersion
+      summary: Get a specific EscalationTarget revision
+      description: 'Returns the exact (id, version) revision. 404 when the pair does not exist.
+
+        '
+      parameters:
+      - name: id
+        in: path
+        required: true
+        schema:
+          type: string
+      - name: version
+        in: path
+        required: true
+        schema:
+          type: integer
+          minimum: 1
+      responses:
+        '200':
+          description: EscalationTarget version
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/EscalationTarget'
+        '400':
+          description: Version path segment is not a positive integer
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '401':
+          description: Unauthenticated
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '403':
+          description: Insufficient role (requires platform.viewer or above)
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '404':
+          description: EscalationTarget or version not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '500':
+          description: Repository error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '501':
+          description: EscalationTarget reader not configured
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+      tags:
+      - Escalation Targets
+components:
+  schemas:
+    EscalationTargetKind:
+      type: string
+      description: 'Discriminator for the EscalationTarget Handle field. role = identity role name (e.g. governance.approver); agent = registered agent id; surface = decision surface id; external = external system or URI identifier. Cross-context existence is not enforced at the repository layer.
+
+        '
+      enum:
+      - role
+      - agent
+      - surface
+      - external
+    EscalationTargetListResponse:
+      type: object
+      description: 'List wrapper for EscalationTarget GET endpoints. The array always serialises non-null (empty list when no targets exist).
+
+        '
+      required:
+      - escalation_targets
+      properties:
+        escalation_targets:
+          type: array
+          items:
+            $ref: '#/components/schemas/EscalationTarget'
+    Error:
+      type: object
+      required:
+      - error
+      properties:
+        error:
+          type: string
+    EscalationTargetStatus:
+      description: 'Lifecycle state of an EscalationTarget version. Delegates to the canonical LifecycleStatus posture. Only `active` versions participate in runtime escalation resolution.
+
+        '
+      allOf:
+      - $ref: '#/components/schemas/LifecycleStatus'
+    LifecycleStatus:
+      type: string
+      description: 'Canonical lifecycle posture for versioned governance resources (Surface, Profile, FailModePolicy, EscalationTarget). Every governed configuration entity in MIDAS follows the same draft -> review -> active -> deprecated -> retired progression. Only `active` versions participate in runtime resolution.
+
+        '
+      enum:
+      - draft
+      - review
+      - active
+      - deprecated
+      - retired
+    EscalationTarget:
+      type: object
+      description: 'Governed, versioned escalation target. Composite (id, version) primary key. The runtime escalation-target resolver picks the highest active version whose effective window covers the moment of escalation, mirroring FailModePolicy resolution.
+
+        '
+      required:
+      - id
+      - version
+      - name
+      - kind
+      - handle
+      - status
+      - effective_date
+      - created_at
+      - updated_at
+      properties:
+        id:
+          type: string
+        version:
+          type: integer
+        name:
+          type: string
+        description:
+          type: string
+        kind:
+          $ref: '#/components/schemas/EscalationTargetKind'
+        handle:
+          type: string
+          description: 'Kind-specific identifier. For role, the role name; for agent, the agent id; for surface, the surface id; for external, the external system/URI identifier.
+
+            '
+        status:
+          $ref: '#/components/schemas/EscalationTargetStatus'
+        effective_date:
+          type: string
+          format: date-time
+        effective_until:
+          type: string
+          format: date-time
+          nullable: true
+        business_owner:
+          type: string
+        technical_owner:
+          type: string
+        created_at:
+          type: string
+          format: date-time
+        updated_at:
+          type: string
+          format: date-time
+        created_by:
+          type: string
+        approved_by:
+          type: string
+        approved_at:
+          type: string
+          format: date-time
+          nullable: true
+  securitySchemes:
+    BearerAuth:
+      type: http
+      scheme: bearer
+      description: 'Static bearer token. Configured via MIDAS_AUTH_TOKENS or midas.yaml auth.tokens. Not required when auth.mode=open (development only).
+
+        '

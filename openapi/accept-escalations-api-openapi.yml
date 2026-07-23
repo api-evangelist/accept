@@ -1,0 +1,194 @@
+openapi: 3.1.0
+info:
+  title: MIDAS Agents Escalations API
+  version: 1.1.0-rc.1
+  description: 'Authority governance engine for autonomous decisions. Every evaluation produces exactly one outcome and one tamper-evident audit envelope.
+
+    '
+servers:
+- url: http://localhost:8080
+  description: Local development
+security:
+- BearerAuth: []
+tags:
+- name: Escalations
+paths:
+  /v1/escalations:
+    get:
+      operationId: listEscalations
+      summary: List pending escalations
+      description: 'Returns all envelopes in the awaiting_review state — the operator''s pending escalation queue. Use POST /v1/reviews to resolve them.
+
+        '
+      responses:
+        '200':
+          description: List of escalated envelopes awaiting review
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Envelope'
+        '401':
+          description: Unauthenticated
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '403':
+          description: Insufficient role (requires platform.viewer or above)
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+      tags:
+      - Escalations
+components:
+  schemas:
+    ResolvedCapabilitySnapshot:
+      type: object
+      description: 'Point-in-time snapshot of one Capability in the BusinessService''s enabling set at evaluation time. The set as a whole is captured as a JSONB array on the envelope; individual entries retain the historical Capability ID even if the live row is later renamed or deleted.
+
+        '
+      properties:
+        id:
+          type: string
+        name:
+          type: string
+        origin:
+          type: string
+        managed:
+          type: boolean
+        replaces:
+          type: string
+        status:
+          type: string
+          enum:
+          - active
+          - deprecated
+    Envelope:
+      type: object
+      description: Tamper-evident governance record for a single evaluation.
+      properties:
+        id:
+          type: string
+        state:
+          type: string
+          enum:
+          - received
+          - evaluating
+          - outcome_recorded
+          - escalated
+          - awaiting_review
+          - closed
+        surface_id:
+          type: string
+        agent_id:
+          type: string
+        request_id:
+          type: string
+        request_source:
+          type: string
+        confidence:
+          type: number
+        outcome:
+          type: string
+        reason_code:
+          type: string
+        explanation:
+          type: string
+        profile_id:
+          type: string
+        grant_id:
+          type: string
+        surface_version:
+          type: integer
+        first_event_hash:
+          type: string
+        final_event_hash:
+          type: string
+        resolved:
+          type: object
+          description: 'Resolved facts captured at evaluation time. Currently exposes the service-led structural context added by ADR-0001; existing authority-chain fields remain at the top level for backwards compatibility.
+
+            '
+          properties:
+            structure:
+              $ref: '#/components/schemas/ResolvedStructure'
+        created_at:
+          type: string
+          format: date-time
+        closed_at:
+          type: string
+          format: date-time
+    Error:
+      type: object
+      required:
+      - error
+      properties:
+        error:
+          type: string
+    ResolvedBusinessServiceSnapshot:
+      type: object
+      description: 'Point-in-time snapshot of the BusinessService that owned the resolved Process at evaluation time. See ADR-0001.
+
+        '
+      properties:
+        id:
+          type: string
+        origin:
+          type: string
+        managed:
+          type: boolean
+        replaces:
+          type: string
+        status:
+          type: string
+          enum:
+          - active
+          - deprecated
+    ResolvedProcessSnapshot:
+      type: object
+      description: 'Point-in-time snapshot of the Process the resolved Surface belonged to at evaluation time. Captured as evidence on the envelope per ADR-0001; not derived from live joins after the envelope is written.
+
+        '
+      properties:
+        id:
+          type: string
+        origin:
+          type: string
+          description: Always "manual" in v1.
+        managed:
+          type: boolean
+        replaces:
+          type: string
+          description: ID of a previously-superseded Process; empty string when none.
+        status:
+          type: string
+          enum:
+          - active
+          - deprecated
+    ResolvedStructure:
+      type: object
+      description: 'Service-led structural context resolved at evaluation time: the Process the Surface belongs to, the BusinessService that owns the Process, and the set of Capabilities enabling the BusinessService at the moment the decision was recorded. Empty enabling_capabilities arrays are valid and are serialised as `[]` (never `null`). Per ADR-0001.
+
+        '
+      properties:
+        process:
+          $ref: '#/components/schemas/ResolvedProcessSnapshot'
+        business_service:
+          $ref: '#/components/schemas/ResolvedBusinessServiceSnapshot'
+        enabling_capabilities:
+          type: array
+          items:
+            $ref: '#/components/schemas/ResolvedCapabilitySnapshot'
+          description: 'Capabilities enabling this BusinessService at evaluation time, sorted by id ascending for deterministic byte-level evidence.
+
+            '
+  securitySchemes:
+    BearerAuth:
+      type: http
+      scheme: bearer
+      description: 'Static bearer token. Configured via MIDAS_AUTH_TOKENS or midas.yaml auth.tokens. Not required when auth.mode=open (development only).
+
+        '

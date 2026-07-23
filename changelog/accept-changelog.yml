@@ -1,0 +1,34 @@
+generated: '2026-07-18'
+method: searched
+source: https://github.com/accept-io/midas/blob/main/CHANGELOG.md
+scheme: keep-a-changelog + semver
+current_version: 1.1.0-rc.1
+entries:
+- version: 1.1.0-rc.1
+  date: '2026-05-25'
+  status: release candidate
+  breaking:
+  - Inference subsystem removed; explicit structural configuration now required.
+  - process_id now required on /v1/evaluate requests (enforced structural mode).
+  - OpenAPI outcome enum corrected to [accept, escalate, reject, request_clarification].
+  - OpenAPI Grant.status enum corrected; spec-only "expired" value removed.
+  additions:
+  - Runtime Evidence API (four read-only endpoints).
+  - Governance Coverage read model and projection.
+  - AI Systems catalogue with versioning and lifecycle endpoints.
+  - FailModePolicy with hierarchical resolution and three enforcement states.
+  - Drift Definitions with detector lifecycle endpoints.
+  - Authority Graph workbench (canvas-edge tab pattern).
+  - Strategic Context graph now default for Explorer services; Cytoscape bundled (no CDN).
+  - In-app User Guide at /help/.
+- version: 1.0.0
+  date: '2026-03-28'
+  status: first public release
+  additions:
+  - Runtime governance engine with six-step evaluation pipeline.
+  - Hash-chained audit trail with tamper-evident integrity verification.
+  - Operational envelope with full lifecycle state machine.
+  - Control plane with YAML bundle apply and approval workflow.
+  - OIDC integration with role mapping from external groups.
+  - Explorer UI sandbox and headless deployment mode.
+  - PostgreSQL persistence and in-memory store options.

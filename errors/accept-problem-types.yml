@@ -1,0 +1,46 @@
+generated: '2026-07-18'
+method: derived
+source: openapi/accept-midas-openapi-original.yml + docs/api/http-api.md
+format: custom-json
+envelope:
+  media_type: application/json
+  schema: '{"error": string}'
+  note: All error responses include an {"error":"..."} body. Authority outcomes (accept/escalate/reject/request_clarification) are returned as HTTP 200, not errors.
+problems:
+- status: 400
+  title: Bad request
+  meaning: Malformed input, missing required fields, validation failure, or invalid query parameters (e.g. non-numeric/oversize limit, unparseable since/until, order-mismatched cursor).
+- status: 401
+  title: Unauthorized
+  meaning: Missing or invalid bearer token (when auth.mode=required).
+- status: 403
+  title: Forbidden
+  meaning: Authenticated principal lacks the required role for the route.
+- status: 404
+  title: Not found
+  meaning: Resource (envelope, surface, profile, grant, decision) does not exist.
+- status: 409
+  title: Conflict
+  meaning: Duplicate idempotent request (same request_source+request_id, differing payload) or entity in the wrong state for the operation.
+- status: 413
+  title: Payload too large
+  meaning: Request body exceeds the configured size limit.
+- status: 415
+  title: Unsupported media type
+  meaning: Unsupported Content-Type (control-plane accepts application/yaml, application/x-yaml, text/yaml; others JSON).
+- status: 500
+  title: Internal server error
+  meaning: Server error or unconfigured dependency (orchestrator, approval service).
+- status: 501
+  title: Not implemented
+  meaning: Feature not configured/enabled (control plane, introspection/evidence service, admin-audit).
+- status: 503
+  title: Service unavailable
+  meaning: Readiness probe failing (/readyz) — a dependency is not yet ready.
+decision_reason_codes:
+  note: reason_code values that accompany evaluation outcomes (not HTTP errors).
+  codes:
+  - WITHIN_AUTHORITY
+  - CONFIDENCE_BELOW_THRESHOLD
+  - CONSEQUENCE_EXCEEDS_LIMIT
+  - POLICY_DENY

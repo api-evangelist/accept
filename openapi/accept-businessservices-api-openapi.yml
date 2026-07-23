@@ -1,0 +1,323 @@
+openapi: 3.1.0
+info:
+  title: MIDAS Agents Businessservices API
+  version: 1.1.0-rc.1
+  description: 'Authority governance engine for autonomous decisions. Every evaluation produces exactly one outcome and one tamper-evident audit envelope.
+
+    '
+servers:
+- url: http://localhost:8080
+  description: Local development
+security:
+- BearerAuth: []
+tags:
+- name: Businessservices
+paths:
+  /v1/businessservices:
+    get:
+      operationId: listBusinessServices
+      summary: List all business services
+      description: 'Returns all registered business services wrapped in a `business_services` envelope. No pagination — returns the full list. Requires platform.viewer or above.
+
+        '
+      responses:
+        '200':
+          description: Business service list (envelope shape)
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/BusinessServicesResponse'
+        '401':
+          description: Unauthenticated
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '403':
+          description: Insufficient role (requires platform.viewer or above)
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '501':
+          description: Structural service not configured
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+              example:
+                error: structural service not configured
+      tags:
+      - Businessservices
+  /v1/businessservices/{id}:
+    get:
+      operationId: getBusinessServiceById
+      summary: Get a business service by ID
+      description: 'Returns a single business service by its unique identifier. Requires platform.viewer or above.
+
+        '
+      parameters:
+      - name: id
+        in: path
+        required: true
+        schema:
+          type: string
+        description: Unique business service identifier.
+      responses:
+        '200':
+          description: Business service found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/BusinessService'
+        '401':
+          description: Unauthenticated
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '403':
+          description: Insufficient role (requires platform.viewer or above)
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '404':
+          description: Business service not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+              example:
+                error: business service not found
+        '501':
+          description: Structural service not configured
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+              example:
+                error: structural service not configured
+      tags:
+      - Businessservices
+  /v1/businessservices/{id}/relationships:
+    get:
+      operationId: listBusinessServiceRelationships
+      summary: List business-service relationships
+      description: 'Returns the directed BusinessServiceRelationship rows for the queried service, partitioned by direction. `outgoing` rows are those where the queried service is the source; `incoming` rows are those where it is the target. Both arrays are always present (never null) so callers can iterate without nil checks. Requires platform.viewer or above. See Epic 1, PR 1 (Service-Centric AI Governance Map).
+
+        '
+      parameters:
+      - name: id
+        in: path
+        required: true
+        schema:
+          type: string
+        description: Business service identifier.
+      responses:
+        '200':
+          description: Relationships partitioned by direction.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/BusinessServiceRelationshipsResponse'
+        '401':
+          description: Unauthenticated
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '403':
+          description: Insufficient role (requires platform.viewer or above)
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '404':
+          description: Business service not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '500':
+          description: Repository error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '501':
+          description: BSR reader or structural service not configured
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+      tags:
+      - Businessservices
+components:
+  schemas:
+    BusinessServiceRelationshipsResponse:
+      type: object
+      description: 'Top-level response shape for GET /v1/businessservices/{id}/relationships. Outgoing rows are those where the queried service is the source; incoming rows are those where it is the target. Both arrays are always present (never null).
+
+        '
+      required:
+      - business_service_id
+      - outgoing
+      - incoming
+      properties:
+        business_service_id:
+          type: string
+        outgoing:
+          type: array
+          items:
+            $ref: '#/components/schemas/BusinessServiceRelationship'
+        incoming:
+          type: array
+          items:
+            $ref: '#/components/schemas/BusinessServiceRelationship'
+    ExternalRef:
+      type: object
+      description: 'Structured reference to an entity in an external system (ServiceNow, LeanIX, GitHub, internal catalogues, custom). MIDAS records the reference but never validates the source_system against an enum and never resolves the reference by calling the external system. source_system and source_id must either both be present or both be absent — the consistency rule is enforced by a CHECK constraint on each consuming table. Wire-format nullability: the parent response renders `external_ref: null` when no external reference is recorded.
+
+        '
+      required:
+      - source_system
+      - source_id
+      properties:
+        source_system:
+          type: string
+          description: 'Caller-asserted label identifying the external system that
+
+            produced this reference. Vendor-neutral; MIDAS does not
+
+            validate or resolve this value.
+
+            '
+        source_id:
+          type: string
+          description: Identifier of the entity in the source system.
+        source_url:
+          type: string
+          description: Optional deep link to the entity in the source system.
+        source_version:
+          type: string
+          description: Optional version label assigned by the source system.
+        last_synced_at:
+          type: string
+          format: date-time
+          description: Optional timestamp of the last sync from the source system.
+    Error:
+      type: object
+      required:
+      - error
+      properties:
+        error:
+          type: string
+    BusinessServicesResponse:
+      type: object
+      description: 'Envelope wrapping the GET /v1/businessservices list payload. The `business_services` array is always present (never null); empty store returns []. The envelope shape replaced the previous bare array when the live Explorer Business-Service selector landed.
+
+        '
+      required:
+      - business_services
+      properties:
+        business_services:
+          type: array
+          items:
+            $ref: '#/components/schemas/BusinessService'
+    BusinessService:
+      type: object
+      description: 'A business service grouping for processes (V2 structural layer). Mirrors the businessServiceResponse wire format.
+
+        '
+      properties:
+        id:
+          type: string
+          description: Unique business service identifier.
+        name:
+          type: string
+          description: Human-readable business service name.
+        description:
+          type: string
+          description: Optional description. Omitted when empty.
+        service_type:
+          type: string
+          description: Service classification (e.g. customer_facing, internal).
+        regulatory_scope:
+          type: string
+          description: Regulatory scope marker. Omitted when empty.
+        status:
+          type: string
+          enum:
+          - active
+          - inactive
+          - deprecated
+        owner_id:
+          type: string
+          description: 'Optional owner identifier (team, person, or organisational unit). Omitted when empty. Surfaced on detail and list responses for operator triage (added with the live BS selector).
+
+            '
+        created_at:
+          type: string
+          format: date-time
+        updated_at:
+          type: string
+          format: date-time
+        external_ref:
+          allOf:
+          - $ref: '#/components/schemas/ExternalRef'
+          nullable: true
+          description: 'Optional structured reference to an external system. Always present in the response; rendered as null when no external reference is recorded (Epic 1, PR 3).
+
+            '
+        fail_mode_policy_id:
+          type: string
+          description: 'Optional default FailModePolicy identifier for this business service (D27j-impl-2). When set, processes/surfaces under this BusinessService inherit this policy unless the surface declares its own override. Validated at apply time: must reference a FailModePolicy whose status is `active` at the time of apply. Omitted when no default is configured. In this tranche the resolver records the policy as observability metadata only — it does not affect outcomes or appear in the /v1/evaluate response.
+
+            '
+    BusinessServiceRelationship:
+      type: object
+      description: 'A directed link between two BusinessServices (Epic 1, PR 1). The junction has no lifecycle of its own; description is the only mutable field.
+
+        '
+      required:
+      - id
+      - source_business_service_id
+      - target_business_service_id
+      - relationship_type
+      - created_at
+      properties:
+        id:
+          type: string
+          description: Synthetic relationship identifier.
+        source_business_service_id:
+          type: string
+        target_business_service_id:
+          type: string
+        relationship_type:
+          type: string
+          enum:
+          - depends_on
+          - supports
+          - part_of
+        description:
+          type: string
+          description: Optional. Omitted when empty.
+        created_at:
+          type: string
+          format: date-time
+        created_by:
+          type: string
+          description: Optional. Actor that created the row.
+        external_ref:
+          allOf:
+          - $ref: '#/components/schemas/ExternalRef'
+          nullable: true
+          description: Optional structured external reference. See ExternalRef (Epic 1, PR 3).
+  securitySchemes:
+    BearerAuth:
+      type: http
+      scheme: bearer
+      description: 'Static bearer token. Configured via MIDAS_AUTH_TOKENS or midas.yaml auth.tokens. Not required when auth.mode=open (development only).
+
+        '

@@ -1,0 +1,304 @@
+openapi: 3.1.0
+info:
+  title: MIDAS Agents Profiles API
+  version: 1.1.0-rc.1
+  description: 'Authority governance engine for autonomous decisions. Every evaluation produces exactly one outcome and one tamper-evident audit envelope.
+
+    '
+servers:
+- url: http://localhost:8080
+  description: Local development
+security:
+- BearerAuth: []
+tags:
+- name: Profiles
+paths:
+  /v1/profiles:
+    get:
+      operationId: listProfiles
+      summary: List authority profiles by surface
+      description: Returns all profiles attached to the given surface. surface_id is required.
+      parameters:
+      - name: surface_id
+        in: query
+        required: true
+        description: Surface ID to filter profiles by. Required.
+        schema:
+          type: string
+      responses:
+        '200':
+          description: Profile list
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Profile'
+        '401':
+          description: Unauthenticated
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '403':
+          description: Insufficient role (requires platform.viewer or above)
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+      tags:
+      - Profiles
+  /v1/profiles/{id}:
+    get:
+      operationId: getProfile
+      summary: Get an authority profile
+      description: 'Returns the latest active version of a profile. Append /versions to list all versions.
+
+        '
+      parameters:
+      - name: id
+        in: path
+        required: true
+        schema:
+          type: string
+      responses:
+        '200':
+          description: Profile found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Profile'
+        '401':
+          description: Unauthenticated
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '403':
+          description: Insufficient role
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '404':
+          description: Profile not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+      tags:
+      - Profiles
+  /v1/profiles/{id}/versions:
+    get:
+      operationId: listProfileVersions
+      summary: List all versions of an authority profile
+      description: 'Returns all versions of a profile, ordered by version descending (latest first). Returns 404 when no profile with that logical ID exists. Requires platform.viewer or above.
+
+        '
+      parameters:
+      - name: id
+        in: path
+        required: true
+        schema:
+          type: string
+      responses:
+        '200':
+          description: Profile version list
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Profile'
+        '401':
+          description: Unauthenticated
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '403':
+          description: Insufficient role (requires platform.viewer or above)
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '404':
+          description: Profile not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+      tags:
+      - Profiles
+  /v1/profiles/{id}/recovery:
+    get:
+      operationId: getProfileRecovery
+      summary: Get recovery analysis for an authority profile
+      description: 'Returns a read-only recovery analysis: version history state, active/latest version distinction, active grant counts, and deterministic recommended next actions. Requires platform.viewer or above.
+
+        '
+      parameters:
+      - name: id
+        in: path
+        required: true
+        schema:
+          type: string
+      responses:
+        '200':
+          description: Recovery analysis
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ProfileRecovery'
+        '401':
+          description: Unauthenticated
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '403':
+          description: Insufficient role (requires platform.viewer or above)
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '404':
+          description: Profile not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+      tags:
+      - Profiles
+components:
+  schemas:
+    ProfileRecovery:
+      type: object
+      description: Read-only recovery analysis for an authority profile.
+      properties:
+        profile_id:
+          type: string
+        surface_id:
+          type: string
+        latest_version:
+          type: integer
+        latest_status:
+          type: string
+        active_version:
+          type: integer
+          nullable: true
+          description: Null when no version is currently effective.
+        active_status:
+          type: string
+          nullable: true
+          description: Null when no version is currently effective.
+        version_count:
+          type: integer
+        versions:
+          type: array
+          items:
+            type: object
+            properties:
+              version:
+                type: integer
+              status:
+                type: string
+              effective_from:
+                type: string
+                format: date-time
+        active_grant_count:
+          type: integer
+          description: 'Number of active grants linked to this profile. -1 when the grant repository is not available.
+
+            '
+        capability_note:
+          type: string
+          description: Human-readable description of the profile lifecycle behaviour.
+        warnings:
+          type: array
+          items:
+            type: string
+        recommended_next_actions:
+          type: array
+          items:
+            type: string
+    Error:
+      type: object
+      required:
+      - error
+      properties:
+        error:
+          type: string
+    LifecycleStatus:
+      type: string
+      description: 'Canonical lifecycle posture for versioned governance resources (Surface, Profile, FailModePolicy, EscalationTarget). Every governed configuration entity in MIDAS follows the same draft -> review -> active -> deprecated -> retired progression. Only `active` versions participate in runtime resolution.
+
+        '
+      enum:
+      - draft
+      - review
+      - active
+      - deprecated
+      - retired
+    Profile:
+      type: object
+      properties:
+        id:
+          type: string
+        version:
+          type: integer
+        surface_id:
+          type: string
+        name:
+          type: string
+        description:
+          type: string
+        status:
+          $ref: '#/components/schemas/LifecycleStatus'
+        effective_date:
+          type: string
+          format: date-time
+        confidence_threshold:
+          type: number
+        escalation_mode:
+          type: string
+          enum:
+          - auto
+          - manual
+        escalation_target_id:
+          type: string
+          description: 'Optional logical id of an EscalationTarget that should receive escalations produced under this profile (D31k-impl-1). Empty means no explicit target — the orchestrator preserves its existing escalation behaviour. The active version is resolved at runtime by the EscalationTarget repository; no FK is enforced at the SQL layer. Complementary to escalation_mode (auto / manual): mode describes the behaviour at escalation time, target describes the destination.
+
+            '
+        fail_mode:
+          type: string
+          enum:
+          - open
+          - closed
+          description: 'Narrow runtime fail-mode for the policy-evaluator-error sub-case on this profile. The only currently runtime-effective fail-mode field. "open" skips the policy step on evaluator error (the canonically-audited narrow exception); "closed" escalates with ReasonPolicyError. No other failure path consults this value. Future broader fail-mode posture is governed by the FailModePolicy entity (planned). The `open` path''s audit-event payload currently records `allowed:true`; explicit degradation encoding is part of the FailModePolicy migration. See docs/operations/runtime-readiness.md §11.
+
+            '
+        policy_reference:
+          type: string
+        required_context_keys:
+          type: array
+          items:
+            type: string
+        approved_by:
+          type: string
+        approved_at:
+          type: string
+          format: date-time
+        created_at:
+          type: string
+          format: date-time
+        updated_at:
+          type: string
+          format: date-time
+  securitySchemes:
+    BearerAuth:
+      type: http
+      scheme: bearer
+      description: 'Static bearer token. Configured via MIDAS_AUTH_TOKENS or midas.yaml auth.tokens. Not required when auth.mode=open (development only).
+
+        '

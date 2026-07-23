@@ -1,0 +1,140 @@
+openapi: 3.1.0
+info:
+  title: MIDAS Agents Grants API
+  version: 1.1.0-rc.1
+  description: 'Authority governance engine for autonomous decisions. Every evaluation produces exactly one outcome and one tamper-evident audit envelope.
+
+    '
+servers:
+- url: http://localhost:8080
+  description: Local development
+security:
+- BearerAuth: []
+tags:
+- name: Grants
+paths:
+  /v1/grants:
+    get:
+      operationId: listGrants
+      summary: List authority grants
+      description: 'Returns grants filtered by agent or profile. Exactly one of agent_id or profile_id must be provided. Providing neither or both returns 400.
+
+        '
+      parameters:
+      - name: agent_id
+        in: query
+        required: false
+        description: Filter grants by agent ID. Mutually exclusive with profile_id.
+        schema:
+          type: string
+      - name: profile_id
+        in: query
+        required: false
+        description: Filter grants by profile ID. Mutually exclusive with agent_id.
+        schema:
+          type: string
+      responses:
+        '200':
+          description: Grant list
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Grant'
+        '401':
+          description: Unauthenticated
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '403':
+          description: Insufficient role (requires platform.viewer or above)
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+      tags:
+      - Grants
+  /v1/grants/{id}:
+    get:
+      operationId: getGrant
+      summary: Get an authority grant
+      parameters:
+      - name: id
+        in: path
+        required: true
+        schema:
+          type: string
+      responses:
+        '200':
+          description: Grant found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Grant'
+        '401':
+          description: Unauthenticated
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '403':
+          description: Insufficient role
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '404':
+          description: Grant not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+      tags:
+      - Grants
+components:
+  schemas:
+    Error:
+      type: object
+      required:
+      - error
+      properties:
+        error:
+          type: string
+    Grant:
+      type: object
+      properties:
+        id:
+          type: string
+        agent_id:
+          type: string
+        profile_id:
+          type: string
+        status:
+          type: string
+          enum:
+          - active
+          - suspended
+          - revoked
+        granted_by:
+          type: string
+        effective_from:
+          type: string
+          format: date-time
+        effective_until:
+          type: string
+          format: date-time
+        created_at:
+          type: string
+          format: date-time
+        updated_at:
+          type: string
+          format: date-time
+  securitySchemes:
+    BearerAuth:
+      type: http
+      scheme: bearer
+      description: 'Static bearer token. Configured via MIDAS_AUTH_TOKENS or midas.yaml auth.tokens. Not required when auth.mode=open (development only).
+
+        '

@@ -1,0 +1,21 @@
+generated: '2026-07-17'
+method: probed
+source: live DNS/TLS/HTTP probes of apis.yml + OpenAPI hosts
+hosts:
+- host: www.accept.io
+  https: true
+  tls_version: TLSv1.3
+  cert_expires: Aug 25 14:54:27 2026 GMT
+  hsts: true
+  hsts_max_age: 31536000
+- host: midas.accept.io
+  https: true
+  tls_version: TLSv1.3
+  cert_expires: Sep 30 23:59:59 2026 GMT
+  hsts: null
+domains:
+- domain: accept.io
+  dnssec: false
+  caa: []
+  spf: true
+  dmarc: false

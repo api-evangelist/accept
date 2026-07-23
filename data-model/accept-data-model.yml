@@ -1,0 +1,94 @@
+generated: '2026-07-18'
+method: derived
+source: openapi/accept-midas-openapi-original.yml
+note: Entity-relationship graph derived from OpenAPI component schemas ($ref links and *_id reference fields).
+entities:
+- name: Surface
+  description: A governed decision surface (versioned); the unit an agent is evaluated against.
+- name: Profile
+  description: Authority profile binding a surface to operational boundaries and an escalation target.
+- name: Agent
+  description: An autonomous actor whose actions are evaluated.
+- name: Grant
+  description: Grants an agent authority under a profile; has suspend/revoke/reinstate lifecycle.
+- name: Envelope
+  description: Tamper-evident audit envelope produced by every evaluation; hash-chained.
+- name: Process
+  description: Business process context binding capabilities to surfaces.
+- name: Capability
+  description: Business capability node (hierarchical).
+- name: BusinessService
+  description: Business service owning capabilities and fail-mode policy.
+- name: AISystem
+  description: Catalogued AI system (versioned) bound to surfaces/capabilities.
+- name: EscalationTarget
+  description: Destination for escalated decisions (versioned).
+- name: FailModePolicy
+  description: Hierarchical fail-mode enforcement policy (versioned).
+- name: DriftDefinition
+  description: Behavioural drift detector definition with lifecycle.
+relationships:
+- from: Profile
+  to: Surface
+  type: belongs_to
+  via: surface_id
+- from: Profile
+  to: EscalationTarget
+  type: has_one
+  via: escalation_target_id
+- from: Grant
+  to: Agent
+  type: belongs_to
+  via: agent_id
+- from: Grant
+  to: Profile
+  type: belongs_to
+  via: profile_id
+- from: Envelope
+  to: Surface
+  type: belongs_to
+  via: surface_id
+- from: Envelope
+  to: Agent
+  type: belongs_to
+  via: agent_id
+- from: Envelope
+  to: Profile
+  type: belongs_to
+  via: profile_id
+- from: Envelope
+  to: Grant
+  type: belongs_to
+  via: grant_id
+- from: Surface
+  to: Surface
+  type: has_one
+  via: successor_surface_id
+- from: Process
+  to: Capability
+  type: belongs_to
+  via: capability_id
+- from: Capability
+  to: Capability
+  type: belongs_to
+  via: parent_capability_id
+- from: BusinessService
+  to: FailModePolicy
+  type: has_one
+  via: fail_mode_policy_id
+- from: FailModePolicy
+  to: FailModePolicy
+  type: has_one
+  via: successor_policy_id
+- from: EvaluateRequest
+  to: Surface
+  type: references
+  via: surface_id
+- from: EvaluateRequest
+  to: Agent
+  type: references
+  via: agent_id
+- from: EvaluateRequest
+  to: Process
+  type: references
+  via: process_id

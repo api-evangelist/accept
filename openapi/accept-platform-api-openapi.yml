@@ -1,0 +1,219 @@
+openapi: 3.1.0
+info:
+  title: MIDAS Agents Platform API
+  version: 1.1.0-rc.1
+  description: 'Authority governance engine for autonomous decisions. Every evaluation produces exactly one outcome and one tamper-evident audit envelope.
+
+    '
+servers:
+- url: http://localhost:8080
+  description: Local development
+security:
+- BearerAuth: []
+tags:
+- name: Platform
+paths:
+  /v1/platform/admin-audit:
+    get:
+      operationId: listAdminAudit
+      summary: List platform-administrative audit events
+      description: 'Returns the append-only platform-administrative audit trail covering apply invocations, password changes, and bootstrap admin creation. Records are returned in descending occurred_at order (newest first). Requires platform.admin role — more restrictive than /v1/controlplane/audit because the trail includes password and bootstrap events. See Issue #41.
+
+        '
+      parameters:
+      - name: action
+        in: query
+        required: false
+        schema:
+          type: string
+          enum:
+          - apply.invoked
+          - password.changed
+          - bootstrap.admin_created
+        description: Constrain results to a single action enum value.
+      - name: outcome
+        in: query
+        required: false
+        schema:
+          type: string
+          enum:
+          - success
+          - failure
+        description: Constrain results to success or failure.
+      - name: actor_id
+        in: query
+        required: false
+        schema:
+          type: string
+        description: Constrain results to records emitted for a specific actor.
+      - name: target_type
+        in: query
+        required: false
+        schema:
+          type: string
+        description: Constrain results to a specific target type.
+      - name: target_id
+        in: query
+        required: false
+        schema:
+          type: string
+        description: Constrain results to a specific target ID.
+      - name: limit
+        in: query
+        required: false
+        schema:
+          type: integer
+          minimum: 1
+          maximum: 500
+        description: Cap the number of records returned. Values outside [1, 500] yield 400.
+      responses:
+        '200':
+          description: Admin-audit entries
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AdminAuditListResponse'
+        '400':
+          description: Invalid query parameter (e.g. non-positive or out-of-range limit)
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+              example:
+                error: limit must be a positive integer
+        '401':
+          description: Unauthenticated
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '403':
+          description: Insufficient role (requires platform.admin)
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '501':
+          description: Admin-audit not configured
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+              example:
+                error: admin-audit not configured
+      tags:
+      - Platform
+components:
+  schemas:
+    AdminAuditEntry:
+      type: object
+      required:
+      - id
+      - occurred_at
+      - action
+      - outcome
+      - actor_type
+      properties:
+        id:
+          type: string
+        occurred_at:
+          type: string
+          format: date-time
+        action:
+          type: string
+          enum:
+          - apply.invoked
+          - password.changed
+          - bootstrap.admin_created
+        outcome:
+          type: string
+          enum:
+          - success
+          - failure
+        actor_type:
+          type: string
+          enum:
+          - user
+          - system
+        actor_id:
+          type: string
+          description: Principal ID or system identifier. Omitted when unknown.
+        target_type:
+          type: string
+          description: Open-set target kind (e.g. bundle, user, platform, process). Omitted when unset.
+        target_id:
+          type: string
+          description: Resource identifier. Omitted when unset.
+        request_id:
+          type: string
+          description: HTTP request correlation ID. Omitted for non-HTTP events.
+        client_ip:
+          type: string
+          description: Best-effort client IP. Omitted for non-HTTP events.
+        required_permission:
+          type: string
+          description: Authz permission the request was gated on. Omitted for non-permission-gated events.
+        details:
+          $ref: '#/components/schemas/AdminAuditDetails'
+    AdminAuditListResponse:
+      type: object
+      required:
+      - entries
+      properties:
+        entries:
+          type: array
+          items:
+            $ref: '#/components/schemas/AdminAuditEntry'
+    Error:
+      type: object
+      required:
+      - error
+      properties:
+        error:
+          type: string
+    AdminAuditDetails:
+      type: object
+      description: 'Action-specific structured context. All fields are optional and present only when the emitting action populated them. Never carries secret material.
+
+        '
+      properties:
+        bundle_bytes:
+          type: integer
+        created_count:
+          type: integer
+        conflict_count:
+          type: integer
+        unchanged_count:
+          type: integer
+        error_count:
+          type: integer
+        from_capability_id:
+          type: string
+        from_process_id:
+          type: string
+        to_capability_id:
+          type: string
+        to_process_id:
+          type: string
+        surfaces_migrated:
+          type: integer
+        older_than_days:
+          type: integer
+        processes_deleted:
+          type: array
+          items:
+            type: string
+        capabilities_deleted:
+          type: array
+          items:
+            type: string
+        error:
+          type: string
+          description: Human-readable failure message; never secret.
+  securitySchemes:
+    BearerAuth:
+      type: http
+      scheme: bearer
+      description: 'Static bearer token. Configured via MIDAS_AUTH_TOKENS or midas.yaml auth.tokens. Not required when auth.mode=open (development only).
+
+        '

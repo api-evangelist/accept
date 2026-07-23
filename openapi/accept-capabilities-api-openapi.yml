@@ -1,0 +1,497 @@
+openapi: 3.1.0
+info:
+  title: MIDAS Agents Capabilities API
+  version: 1.1.0-rc.1
+  description: 'Authority governance engine for autonomous decisions. Every evaluation produces exactly one outcome and one tamper-evident audit envelope.
+
+    '
+servers:
+- url: http://localhost:8080
+  description: Local development
+security:
+- BearerAuth: []
+tags:
+- name: Capabilities
+paths:
+  /v1/capabilities:
+    get:
+      operationId: listCapabilities
+      summary: List all capabilities
+      description: 'Returns all registered capabilities. No pagination — returns the full list. Requires platform.viewer or above.
+
+        '
+      responses:
+        '200':
+          description: Capability list
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Capability'
+        '401':
+          description: Unauthenticated
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '403':
+          description: Insufficient role (requires platform.viewer or above)
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+      tags:
+      - Capabilities
+  /v1/capabilities/{id}:
+    get:
+      operationId: getCapabilityById
+      summary: Get a capability by ID
+      description: 'Returns a single capability by its unique identifier. Requires platform.viewer or above.
+
+        '
+      parameters:
+      - name: id
+        in: path
+        required: true
+        schema:
+          type: string
+        description: Unique capability identifier.
+      responses:
+        '200':
+          description: Capability found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Capability'
+        '401':
+          description: Unauthenticated
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '403':
+          description: Insufficient role (requires platform.viewer or above)
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '404':
+          description: Capability not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+              example:
+                error: capability not found
+      tags:
+      - Capabilities
+  /v1/capabilities/{id}/children:
+    get:
+      operationId: listCapabilityChildren
+      summary: List direct child capabilities of a parent capability
+      description: 'Returns the direct children of the parent capability — i.e. the capabilities whose `parent_capability_id` equals the path id. Recursive descendants are NOT returned; a caller that wants the full subtree walks the hierarchy itself. Requires platform.viewer or above (Phase 3A).
+
+        '
+      parameters:
+      - name: id
+        in: path
+        required: true
+        schema:
+          type: string
+        description: Parent capability identifier.
+      responses:
+        '200':
+          description: 'Children list. Always returns the envelope shape with the `capabilities` array present (empty when the parent has no children).
+
+            '
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CapabilityChildrenResponse'
+        '401':
+          description: Unauthenticated
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '403':
+          description: Insufficient role (requires platform.viewer or above)
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '404':
+          description: Parent capability not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+              example:
+                error: capability not found
+        '501':
+          description: Structural service not configured
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+      tags:
+      - Capabilities
+  /v1/capabilities/{id}/businessservices:
+    get:
+      operationId: listCapabilityBusinessServices
+      summary: List Business Services that use a capability
+      description: 'Returns the Business Services linked to the capability through the canonical BusinessServiceCapability M:N junction. Direct links only — Business Services are NOT inferred through Processes, Surfaces, or AI bindings (Phase 3B). Requires platform.viewer or above.
+
+        '
+      parameters:
+      - name: id
+        in: path
+        required: true
+        schema:
+          type: string
+        description: Capability identifier.
+      responses:
+        '200':
+          description: 'Linked Business Services. Always returns the envelope shape with the `business_services` array present (empty when the capability has no BSC links).
+
+            '
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CapabilityBusinessServicesResponse'
+        '401':
+          description: Unauthenticated
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '403':
+          description: Insufficient role (requires platform.viewer or above)
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '404':
+          description: Capability not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+              example:
+                error: capability not found
+        '501':
+          description: BSC or BS reader not configured
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+      tags:
+      - Capabilities
+  /v1/capabilities/{id}/ai-bindings:
+    get:
+      operationId: listCapabilityAIBindings
+      summary: List AI System bindings scoped directly to a capability
+      description: 'Returns the AI System bindings whose `capability_id` matches the path id. Direct Capability scope only — bindings that reference the capability indirectly (e.g. via a Process whose BS is BSC-linked to the capability) are NOT inferred. Each binding renders with the same shape as the items in GET /v1/aisystems/{id}/bindings (Phase 3C). Requires platform.viewer or above.
+
+        '
+      parameters:
+      - name: id
+        in: path
+        required: true
+        schema:
+          type: string
+        description: Capability identifier.
+      responses:
+        '200':
+          description: 'Capability-scoped AI bindings. Always returns the envelope shape with the `bindings` array present (empty when the capability has no direct Capability-scoped bindings).
+
+            '
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CapabilityAIBindingsResponse'
+        '401':
+          description: Unauthenticated
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '403':
+          description: Insufficient role (requires platform.viewer or above)
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '404':
+          description: Capability not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+              example:
+                error: capability not found
+        '501':
+          description: AI System binding reader not configured
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+      tags:
+      - Capabilities
+components:
+  schemas:
+    CapabilityBusinessServicesResponse:
+      type: object
+      description: 'Envelope for the reverse Capability → BusinessService lookup (GET /v1/capabilities/{id}/businessservices, Phase 3B). Both keys are always present. The `business_services` array contains the Business Services directly linked to the capability via the canonical BusinessServiceCapability M:N junction. Business Services are NOT inferred through Processes, Surfaces, or AI bindings. The array is empty when the capability has no BSC links. Dangling links (BSC row whose business_service_id resolves to a deleted BS) are silently skipped, matching governancemap''s read-service convention.
+
+        '
+      required:
+      - capability_id
+      - business_services
+      properties:
+        capability_id:
+          type: string
+          description: The capability identifier.
+        business_services:
+          type: array
+          items:
+            $ref: '#/components/schemas/BusinessService'
+    Capability:
+      type: object
+      description: 'A business capability (Phase 1 wire-complete shape). The persisted record holds hierarchy (parent_capability_id), lifecycle (origin, managed, replaces), audit (created_by), and external-system metadata (external_ref) in addition to the original identity/status/timestamp fields. Mirrors the capabilityResponse wire format. Field nullability conventions match aiSystemResponse: parent_capability_id and replaces are rendered as null (not omitted) when empty so callers can distinguish "absent" from "empty string".
+
+        '
+      properties:
+        id:
+          type: string
+          description: Unique capability identifier.
+        name:
+          type: string
+          description: Human-readable capability name.
+        description:
+          type: string
+          description: Optional description. Omitted when empty.
+        status:
+          type: string
+          enum:
+          - active
+          - inactive
+          - deprecated
+        owner:
+          type: string
+          description: Owner identifier. Omitted when not set.
+        parent_capability_id:
+          type: string
+          nullable: true
+          description: 'Optional parent capability for the hierarchical model. Always present in the response; rendered as null when the capability is a root (no parent).
+
+            '
+        origin:
+          type: string
+          enum:
+          - manual
+          - inferred
+          description: 'Lifecycle provenance: `manual` for operator-applied resources, `inferred` for system-discovered. Always present.
+
+            '
+        managed:
+          type: boolean
+          description: 'Lifecycle ownership flag: `true` means the record is fully under operator control. `manual` resources are always managed=true (DB CHECK enforces). Always present.
+
+            '
+        replaces:
+          type: string
+          nullable: true
+          description: 'Optional capability_id this record supersedes when promoting an inferred resource. Always present in the response; rendered as null when the capability replaces nothing.
+
+            '
+        created_at:
+          type: string
+          format: date-time
+        updated_at:
+          type: string
+          format: date-time
+        created_by:
+          type: string
+          description: 'Optional actor that created the row (e.g. "operator:alice", "service-account:ci-bot"). Omitted when empty. Populated by the control-plane apply path from the actor passed to svc.Apply; absent for capabilities created outside that path (seed fixtures, hand-rolled SQL inserts).
+
+            '
+        external_ref:
+          allOf:
+          - $ref: '#/components/schemas/ExternalRef'
+          nullable: true
+          description: 'Optional structured reference to an external system. Always present in the response; rendered as null when no external reference is recorded. See ExternalRef (Epic 1, PR 3 — Phase 0B-2 extended the pattern to Capability).
+
+            '
+    ExternalRef:
+      type: object
+      description: 'Structured reference to an entity in an external system (ServiceNow, LeanIX, GitHub, internal catalogues, custom). MIDAS records the reference but never validates the source_system against an enum and never resolves the reference by calling the external system. source_system and source_id must either both be present or both be absent — the consistency rule is enforced by a CHECK constraint on each consuming table. Wire-format nullability: the parent response renders `external_ref: null` when no external reference is recorded.
+
+        '
+      required:
+      - source_system
+      - source_id
+      properties:
+        source_system:
+          type: string
+          description: 'Caller-asserted label identifying the external system that
+
+            produced this reference. Vendor-neutral; MIDAS does not
+
+            validate or resolve this value.
+
+            '
+        source_id:
+          type: string
+          description: Identifier of the entity in the source system.
+        source_url:
+          type: string
+          description: Optional deep link to the entity in the source system.
+        source_version:
+          type: string
+          description: Optional version label assigned by the source system.
+        last_synced_at:
+          type: string
+          format: date-time
+          description: Optional timestamp of the last sync from the source system.
+    CapabilityChildrenResponse:
+      type: object
+      description: 'Envelope for the children read endpoint (GET /v1/capabilities/{id}/children, Phase 3A). Both keys are always present. The `capabilities` array contains direct children only — recursive descendants are NOT returned. The array is empty when the parent has no children.
+
+        '
+      required:
+      - capability_id
+      - capabilities
+      properties:
+        capability_id:
+          type: string
+          description: The parent capability identifier.
+        capabilities:
+          type: array
+          items:
+            $ref: '#/components/schemas/Capability'
+    Error:
+      type: object
+      required:
+      - error
+      properties:
+        error:
+          type: string
+    BusinessService:
+      type: object
+      description: 'A business service grouping for processes (V2 structural layer). Mirrors the businessServiceResponse wire format.
+
+        '
+      properties:
+        id:
+          type: string
+          description: Unique business service identifier.
+        name:
+          type: string
+          description: Human-readable business service name.
+        description:
+          type: string
+          description: Optional description. Omitted when empty.
+        service_type:
+          type: string
+          description: Service classification (e.g. customer_facing, internal).
+        regulatory_scope:
+          type: string
+          description: Regulatory scope marker. Omitted when empty.
+        status:
+          type: string
+          enum:
+          - active
+          - inactive
+          - deprecated
+        owner_id:
+          type: string
+          description: 'Optional owner identifier (team, person, or organisational unit). Omitted when empty. Surfaced on detail and list responses for operator triage (added with the live BS selector).
+
+            '
+        created_at:
+          type: string
+          format: date-time
+        updated_at:
+          type: string
+          format: date-time
+        external_ref:
+          allOf:
+          - $ref: '#/components/schemas/ExternalRef'
+          nullable: true
+          description: 'Optional structured reference to an external system. Always present in the response; rendered as null when no external reference is recorded (Epic 1, PR 3).
+
+            '
+        fail_mode_policy_id:
+          type: string
+          description: 'Optional default FailModePolicy identifier for this business service (D27j-impl-2). When set, processes/surfaces under this BusinessService inherit this policy unless the surface declares its own override. Validated at apply time: must reference a FailModePolicy whose status is `active` at the time of apply. Omitted when no default is configured. In this tranche the resolver records the policy as observability metadata only — it does not affect outcomes or appear in the /v1/evaluate response.
+
+            '
+    CapabilityAIBindingsResponse:
+      type: object
+      description: 'Envelope for the Capability-scoped AI bindings endpoint (GET /v1/capabilities/{id}/ai-bindings, Phase 3C). Both keys are always present. The `bindings` array contains the AI System bindings whose `capability_id` matches the path id — direct Capability scope only. Bindings that reference the capability indirectly (e.g. via a Process whose BS is BSC-linked) are NOT inferred. Each binding uses the same shape as items in AISystemBindingsResponse, so consumers can share the AISystemBinding model across both endpoints.
+
+        '
+      required:
+      - capability_id
+      - bindings
+      properties:
+        capability_id:
+          type: string
+          description: The capability identifier.
+        bindings:
+          type: array
+          items:
+            $ref: '#/components/schemas/AISystemBinding'
+    AISystemBinding:
+      type: object
+      description: 'Immediate-apply junction linking an AI system (optionally pinned to a specific version) to one or more existing MIDAS context entities (BusinessService, Capability, Process, DecisionSurface). At least one of business_service_id, capability_id, process_id, or surface_id is set; unset fields are returned as JSON null rather than empty strings.
+
+        '
+      required:
+      - id
+      - ai_system_id
+      - created_at
+      properties:
+        id:
+          type: string
+        ai_system_id:
+          type: string
+        ai_system_version:
+          type: integer
+          nullable: true
+          minimum: 1
+        business_service_id:
+          type: string
+          nullable: true
+        capability_id:
+          type: string
+          nullable: true
+        process_id:
+          type: string
+          nullable: true
+        surface_id:
+          type: string
+          nullable: true
+        role:
+          type: string
+        description:
+          type: string
+        created_at:
+          type: string
+          format: date-time
+        created_by:
+          type: string
+        external_ref:
+          allOf:
+          - $ref: '#/components/schemas/ExternalRef'
+          nullable: true
+          description: Optional structured external reference. See ExternalRef (Epic 1, PR 3).
+  securitySchemes:
+    BearerAuth:
+      type: http
+      scheme: bearer
+      description: 'Static bearer token. Configured via MIDAS_AUTH_TOKENS or midas.yaml auth.tokens. Not required when auth.mode=open (development only).
+
+        '

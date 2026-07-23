@@ -1,0 +1,40 @@
+generated: '2026-07-18'
+method: derived
+source: openapi/accept-midas-openapi-original.yml + docs/guides/authentication.md + docs/api/http-api.md
+note: >-
+  Standards conformance for the MIDAS API. OIDC applies to Explorer (browser) SSO only; the
+  /v1/* API uses static bearer tokens, so there is no OAuth2 authorization-code surface. Error
+  responses use a simple {"error": string} envelope, not RFC 9457 problem+json. No published
+  security compliance program (SOC 2 / ISO 27001 / PCI / HIPAA / FedRAMP) — the SECURITY.md
+  documents only responsible disclosure + CycloneDX SBOM, so no Compliance pointer is emitted.
+standards:
+- id: openid-connect
+  conforms: true
+  evidence: OIDC/SSO for Explorer browser access (issuer_url, JWKS, groups_claim, role_mappings) per docs/guides/authentication.md
+- id: oauth2
+  conforms: false
+  evidence: API auth is static HTTP bearer tokens + RBAC roles, not OAuth2 flows
+- id: rfc9457-problem-details
+  conforms: false
+  evidence: error responses use {"error":"..."} JSON envelope, content-type application/json (not application/problem+json)
+- id: rfc8594-sunset-header
+  conforms: false
+  evidence: no Sunset/Deprecation header support documented; surface deprecation is a domain lifecycle state
+- id: cursor-pagination
+  conforms: true
+  evidence: opaque next_cursor + limit + order on evidence/audit-event endpoints (D30j)
+- id: idempotency
+  conforms: true
+  evidence: request_id idempotency key on POST /v1/evaluate; duplicate request_source+request_id with differing payload returns 409
+- id: semantic-versioning
+  conforms: true
+  evidence: releases follow semver (v1.0.0 .. v1.1.0-rc.1)
+- id: keep-a-changelog
+  conforms: true
+  evidence: CHANGELOG.md follows Keep a Changelog format
+- id: cyclonedx-sbom
+  conforms: true
+  evidence: SECURITY.md states SBOM available in CycloneDX format
+- id: apache-2.0
+  conforms: true
+  evidence: LICENSE is Apache-2.0

@@ -1,0 +1,119 @@
+asyncapi: 3.0.0
+info:
+  title: MIDAS External Event Contract
+  version: v1
+  description: >-
+    External event contract for MIDAS decision governance. Events are written to a
+    transactional outbox in the same Postgres transaction as domain state changes, then
+    dispatched to Kafka by a background dispatcher (at-least-once delivery; consumers must
+    dedupe on event_id). Two external event types are defined. Modelled by API Evangelist
+    from docs/events.md and docs/examples/events/ (schema contract), not published by the
+    vendor as AsyncAPI.
+  contact:
+    name: Accept Labs
+    url: https://www.accept.io
+  license:
+    name: Apache-2.0
+  x-apievangelist-generated: '2026-07-18'
+  x-apievangelist-method: searched
+  x-apievangelist-source: https://github.com/accept-io/midas/blob/main/docs/events.md
+servers:
+  kafka:
+    host: your-kafka-broker:9092
+    protocol: kafka
+    description: Kafka broker(s) configured via MIDAS_KAFKA_BROKERS; enabled when MIDAS_DISPATCHER_ENABLED=true.
+channels:
+  decisions:
+    address: midas.decisions
+    description: Decision lifecycle events. Partition key is {request_source}:{request_id}.
+    messages:
+      outcomeRecorded:
+        $ref: '#/components/messages/DecisionOutcomeRecorded'
+      envelopeClosed:
+        $ref: '#/components/messages/DecisionEnvelopeClosed'
+operations:
+  receiveOutcomeRecorded:
+    action: receive
+    channel:
+      $ref: '#/channels/decisions'
+    messages:
+    - $ref: '#/channels/decisions/messages/outcomeRecorded'
+  receiveEnvelopeClosed:
+    action: receive
+    channel:
+      $ref: '#/channels/decisions'
+    messages:
+    - $ref: '#/channels/decisions/messages/envelopeClosed'
+components:
+  messages:
+    DecisionOutcomeRecorded:
+      name: decision.outcome_recorded
+      title: Decision outcome recorded
+      summary: Emitted when an evaluation produces a terminal outcome (accept, escalate, reject, request_clarification).
+      contentType: application/json
+      payload:
+        $ref: '#/components/schemas/EventEnvelope'
+      examples:
+      - name: outcomeRecorded
+        payload:
+          schema_version: v1
+          event_id: 7f3a2b1e-0c4d-4e5f-9a8b-1c2d3e4f5a6b
+          type: decision.outcome_recorded
+          occurred_at: '2025-11-15T14:32:00.123Z'
+          envelope_id: e1b2c3d4-5678-90ab-cdef-1234567890ab
+          payload:
+            request_source: svc:payments
+            request_id: req-abc-001
+            surface_id: payments-gateway
+            agent_id: agent-payments-prod
+            outcome: accept
+            reason_code: WITHIN_AUTHORITY
+    DecisionEnvelopeClosed:
+      name: decision.envelope_closed
+      title: Decision envelope closed
+      summary: Emitted when a governance envelope reaches closed state; includes an optional review object for escalated envelopes.
+      contentType: application/json
+      payload:
+        $ref: '#/components/schemas/EventEnvelope'
+      examples:
+      - name: envelopeClosed
+        payload:
+          schema_version: v1
+          event_id: b9c8d7e6-f5a4-3210-9876-fedcba987654
+          type: decision.envelope_closed
+          occurred_at: '2025-11-15T16:45:12.500Z'
+          envelope_id: f2e3d4c5-6789-01bc-defa-234567890abc
+          payload:
+            request_source: svc:payments
+            request_id: req-def-002
+            final_outcome: escalate
+            closed_at: '2025-11-15T16:45:12.500Z'
+            review:
+              decision: APPROVED
+              reviewer_id: human:alice
+              reviewer_kind: human
+              notes: Action reviewed and approved by on-call engineer
+  schemas:
+    EventEnvelope:
+      type: object
+      required: [schema_version, event_id, type, occurred_at, envelope_id, payload]
+      properties:
+        schema_version:
+          type: string
+          const: v1
+        event_id:
+          type: string
+          format: uuid
+          description: Deduplication key; consumers must be idempotent on this value.
+        type:
+          type: string
+          enum: [decision.outcome_recorded, decision.envelope_closed]
+        occurred_at:
+          type: string
+          format: date-time
+        envelope_id:
+          type: string
+          format: uuid
+        payload:
+          type: object
+          additionalProperties: true

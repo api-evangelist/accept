@@ -1,24 +1,485 @@
 aid: accept
 name: Accept
-description: 'Accept is a company surfaced as a portfolio company of kleiner-perkins and added to the
-  API Evangelist network as a stub for enrichment. Sector: enterprise. This profile is a lead awaiting
-  the enrichment pipeline.'
+description: >-
+  Accept Labs is the company behind MIDAS, an open-source authority-governance engine for
+  autonomous decisions. MIDAS evaluates every agent or AI-system action against explicit
+  authority, operational boundaries, and execution context before the action occurs, then
+  produces exactly one outcome (accept, escalate, reject, or request_clarification) and one
+  tamper-evident audit envelope. The platform is Apache-2.0 Go software with a runtime
+  evaluation API (POST /v1/evaluate), a YAML control-plane for surfaces/profiles/grants, an
+  evidence and integrity API, drift detection, an Explorer UI, and OIDC/local IAM. It is
+  positioned for enterprise teams governing what automated actors are authorised to decide.
+accessModel:
+  pricing: unknown
+  onboarding: self-serve
+  trial: false
+  try_now: false
+  public: false
+  label: Self-serve signup
+  confidence: medium
+  source:
+  - authentication
+  generated: '2026-07-22'
+  method: derived
+image: https://github.com/accept-io.png
 url: https://raw.githubusercontent.com/api-evangelist/accept/refs/heads/main/apis.yml
 x-type: company
 x-source: vc-portfolio
 x-backed-by:
 - kleiner-perkins
-x-tier: stub
+x-tier: enriched
 x-tier-reason: portfolio-lead
 specificationVersion: '0.20'
 created: '2026-07-17'
-modified: '2026-07-17'
+modified: '2026-07-18'
 tags:
 - Company
 - Enterprise
-apis: []
+- Governance
+- AI Agents
+- Authority
+- Decision Governance
+- Audit
+- Open Source
 maintainers:
 - FN: Kin Lane
   email: kin@apievangelist.com
 - FN: APIs.json
   email: info@apis.io
+apis:
+- aid: accept:accept-agents-api
+  name: Accept Agents API
+  description: The Agents API from Accept — 1 operation(s) for agents.
+  humanURL: https://www.accept.io
+  baseURL: https://midas.accept.io
+  tags:
+  - Agents
+  properties:
+  - type: OpenAPI
+    url: openapi/accept-agents-api-openapi.yml
+  - type: APIReference
+    url: https://github.com/accept-io/midas/blob/main/docs/api/http-api.md
+  - type: AsyncAPI
+    url: asyncapi/accept-midas-asyncapi.yml
+  - type: DataModel
+    url: data-model/accept-data-model.yml
+- aid: accept:accept-aisystems-api
+  name: Accept Aisystems API
+  description: The Aisystems API from Accept — 5 operation(s) for aisystems.
+  humanURL: https://www.accept.io
+  baseURL: https://midas.accept.io
+  tags:
+  - Aisystems
+  properties:
+  - type: OpenAPI
+    url: openapi/accept-aisystems-api-openapi.yml
+  - type: APIReference
+    url: https://github.com/accept-io/midas/blob/main/docs/api/http-api.md
+  - type: AsyncAPI
+    url: asyncapi/accept-midas-asyncapi.yml
+  - type: DataModel
+    url: data-model/accept-data-model.yml
+- aid: accept:accept-businessservices-api
+  name: Accept Businessservices API
+  description: The Businessservices API from Accept — 3 operation(s) for businessservices.
+  humanURL: https://www.accept.io
+  baseURL: https://midas.accept.io
+  tags:
+  - Businessservices
+  properties:
+  - type: OpenAPI
+    url: openapi/accept-businessservices-api-openapi.yml
+  - type: APIReference
+    url: https://github.com/accept-io/midas/blob/main/docs/api/http-api.md
+  - type: AsyncAPI
+    url: asyncapi/accept-midas-asyncapi.yml
+  - type: DataModel
+    url: data-model/accept-data-model.yml
+- aid: accept:accept-capabilities-api
+  name: Accept Capabilities API
+  description: The Capabilities API from Accept — 5 operation(s) for capabilities.
+  humanURL: https://www.accept.io
+  baseURL: https://midas.accept.io
+  tags:
+  - Capabilities
+  properties:
+  - type: OpenAPI
+    url: openapi/accept-capabilities-api-openapi.yml
+  - type: APIReference
+    url: https://github.com/accept-io/midas/blob/main/docs/api/http-api.md
+  - type: AsyncAPI
+    url: asyncapi/accept-midas-asyncapi.yml
+  - type: DataModel
+    url: data-model/accept-data-model.yml
+- aid: accept:accept-controlplane-api
+  name: Accept Controlplane API
+  description: The Controlplane API from Accept — 18 operation(s) for controlplane.
+  humanURL: https://www.accept.io
+  baseURL: https://midas.accept.io
+  tags:
+  - Controlplane
+  properties:
+  - type: OpenAPI
+    url: openapi/accept-controlplane-api-openapi.yml
+  - type: APIReference
+    url: https://github.com/accept-io/midas/blob/main/docs/api/http-api.md
+  - type: AsyncAPI
+    url: asyncapi/accept-midas-asyncapi.yml
+  - type: DataModel
+    url: data-model/accept-data-model.yml
+- aid: accept:accept-coverage-api
+  name: Accept Coverage API
+  description: The Coverage API from Accept — 1 operation(s) for coverage.
+  humanURL: https://www.accept.io
+  baseURL: https://midas.accept.io
+  tags:
+  - Coverage
+  properties:
+  - type: OpenAPI
+    url: openapi/accept-coverage-api-openapi.yml
+  - type: APIReference
+    url: https://github.com/accept-io/midas/blob/main/docs/api/http-api.md
+  - type: AsyncAPI
+    url: asyncapi/accept-midas-asyncapi.yml
+  - type: DataModel
+    url: data-model/accept-data-model.yml
+- aid: accept:accept-decisions-api
+  name: Accept Decisions API
+  description: The Decisions API from Accept — 1 operation(s) for decisions.
+  humanURL: https://www.accept.io
+  baseURL: https://midas.accept.io
+  tags:
+  - Decisions
+  properties:
+  - type: OpenAPI
+    url: openapi/accept-decisions-api-openapi.yml
+  - type: APIReference
+    url: https://github.com/accept-io/midas/blob/main/docs/api/http-api.md
+  - type: AsyncAPI
+    url: asyncapi/accept-midas-asyncapi.yml
+  - type: DataModel
+    url: data-model/accept-data-model.yml
+- aid: accept:accept-drift-api
+  name: Accept Drift API
+  description: The Drift API from Accept — 15 operation(s) for drift.
+  humanURL: https://www.accept.io
+  baseURL: https://midas.accept.io
+  tags:
+  - Drift
+  properties:
+  - type: OpenAPI
+    url: openapi/accept-drift-api-openapi.yml
+  - type: APIReference
+    url: https://github.com/accept-io/midas/blob/main/docs/api/http-api.md
+  - type: AsyncAPI
+    url: asyncapi/accept-midas-asyncapi.yml
+  - type: DataModel
+    url: data-model/accept-data-model.yml
+- aid: accept:accept-envelopes-api
+  name: Accept Envelopes API
+  description: The Envelopes API from Accept — 2 operation(s) for envelopes.
+  humanURL: https://www.accept.io
+  baseURL: https://midas.accept.io
+  tags:
+  - Envelopes
+  properties:
+  - type: OpenAPI
+    url: openapi/accept-envelopes-api-openapi.yml
+  - type: APIReference
+    url: https://github.com/accept-io/midas/blob/main/docs/api/http-api.md
+  - type: AsyncAPI
+    url: asyncapi/accept-midas-asyncapi.yml
+  - type: DataModel
+    url: data-model/accept-data-model.yml
+- aid: accept:accept-escalation-targets-api
+  name: Accept Escalation Targets API
+  description: The Escalation Targets API from Accept — 4 operation(s) for escalation targets.
+  humanURL: https://www.accept.io
+  baseURL: https://midas.accept.io
+  tags:
+  - Escalation Targets
+  properties:
+  - type: OpenAPI
+    url: openapi/accept-escalation-targets-api-openapi.yml
+  - type: APIReference
+    url: https://github.com/accept-io/midas/blob/main/docs/api/http-api.md
+  - type: AsyncAPI
+    url: asyncapi/accept-midas-asyncapi.yml
+  - type: DataModel
+    url: data-model/accept-data-model.yml
+- aid: accept:accept-escalations-api
+  name: Accept Escalations API
+  description: The Escalations API from Accept — 1 operation(s) for escalations.
+  humanURL: https://www.accept.io
+  baseURL: https://midas.accept.io
+  tags:
+  - Escalations
+  properties:
+  - type: OpenAPI
+    url: openapi/accept-escalations-api-openapi.yml
+  - type: APIReference
+    url: https://github.com/accept-io/midas/blob/main/docs/api/http-api.md
+  - type: AsyncAPI
+    url: asyncapi/accept-midas-asyncapi.yml
+  - type: DataModel
+    url: data-model/accept-data-model.yml
+- aid: accept:accept-evaluate-api
+  name: Accept Evaluate API
+  description: The Evaluate API from Accept — 1 operation(s) for evaluate.
+  humanURL: https://www.accept.io
+  baseURL: https://midas.accept.io
+  tags:
+  - Evaluate
+  properties:
+  - type: OpenAPI
+    url: openapi/accept-evaluate-api-openapi.yml
+  - type: APIReference
+    url: https://github.com/accept-io/midas/blob/main/docs/api/http-api.md
+  - type: AsyncAPI
+    url: asyncapi/accept-midas-asyncapi.yml
+  - type: DataModel
+    url: data-model/accept-data-model.yml
+- aid: accept:accept-evidence-api
+  name: Accept Evidence API
+  description: The Evidence API from Accept — 4 operation(s) for evidence.
+  humanURL: https://www.accept.io
+  baseURL: https://midas.accept.io
+  tags:
+  - Evidence
+  properties:
+  - type: OpenAPI
+    url: openapi/accept-evidence-api-openapi.yml
+  - type: APIReference
+    url: https://github.com/accept-io/midas/blob/main/docs/api/http-api.md
+  - type: AsyncAPI
+    url: asyncapi/accept-midas-asyncapi.yml
+  - type: DataModel
+    url: data-model/accept-data-model.yml
+- aid: accept:accept-fail-mode-policies-api
+  name: Accept Fail Mode Policies API
+  description: The Fail Mode Policies API from Accept — 3 operation(s) for fail mode policies.
+  humanURL: https://www.accept.io
+  baseURL: https://midas.accept.io
+  tags:
+  - Fail Mode Policies
+  properties:
+  - type: OpenAPI
+    url: openapi/accept-fail-mode-policies-api-openapi.yml
+  - type: APIReference
+    url: https://github.com/accept-io/midas/blob/main/docs/api/http-api.md
+  - type: AsyncAPI
+    url: asyncapi/accept-midas-asyncapi.yml
+  - type: DataModel
+    url: data-model/accept-data-model.yml
+- aid: accept:accept-grants-api
+  name: Accept Grants API
+  description: The Grants API from Accept — 2 operation(s) for grants.
+  humanURL: https://www.accept.io
+  baseURL: https://midas.accept.io
+  tags:
+  - Grants
+  properties:
+  - type: OpenAPI
+    url: openapi/accept-grants-api-openapi.yml
+  - type: APIReference
+    url: https://github.com/accept-io/midas/blob/main/docs/api/http-api.md
+  - type: AsyncAPI
+    url: asyncapi/accept-midas-asyncapi.yml
+  - type: DataModel
+    url: data-model/accept-data-model.yml
+- aid: accept:accept-graphs-api
+  name: Accept Graphs API
+  description: The Graphs API from Accept — 2 operation(s) for graphs.
+  humanURL: https://www.accept.io
+  baseURL: https://midas.accept.io
+  tags:
+  - Graphs
+  properties:
+  - type: OpenAPI
+    url: openapi/accept-graphs-api-openapi.yml
+  - type: APIReference
+    url: https://github.com/accept-io/midas/blob/main/docs/api/http-api.md
+  - type: AsyncAPI
+    url: asyncapi/accept-midas-asyncapi.yml
+  - type: DataModel
+    url: data-model/accept-data-model.yml
+- aid: accept:accept-healthz-api
+  name: Accept Healthz API
+  description: The Healthz API from Accept — 1 operation(s) for healthz.
+  humanURL: https://www.accept.io
+  baseURL: https://midas.accept.io
+  tags:
+  - Healthz
+  properties:
+  - type: OpenAPI
+    url: openapi/accept-healthz-api-openapi.yml
+  - type: APIReference
+    url: https://github.com/accept-io/midas/blob/main/docs/api/http-api.md
+  - type: AsyncAPI
+    url: asyncapi/accept-midas-asyncapi.yml
+  - type: DataModel
+    url: data-model/accept-data-model.yml
+- aid: accept:accept-platform-api
+  name: Accept Platform API
+  description: The Platform API from Accept — 1 operation(s) for platform.
+  humanURL: https://www.accept.io
+  baseURL: https://midas.accept.io
+  tags:
+  - Platform
+  properties:
+  - type: OpenAPI
+    url: openapi/accept-platform-api-openapi.yml
+  - type: APIReference
+    url: https://github.com/accept-io/midas/blob/main/docs/api/http-api.md
+  - type: AsyncAPI
+    url: asyncapi/accept-midas-asyncapi.yml
+  - type: DataModel
+    url: data-model/accept-data-model.yml
+- aid: accept:accept-processes-api
+  name: Accept Processes API
+  description: The Processes API from Accept — 3 operation(s) for processes.
+  humanURL: https://www.accept.io
+  baseURL: https://midas.accept.io
+  tags:
+  - Processes
+  properties:
+  - type: OpenAPI
+    url: openapi/accept-processes-api-openapi.yml
+  - type: APIReference
+    url: https://github.com/accept-io/midas/blob/main/docs/api/http-api.md
+  - type: AsyncAPI
+    url: asyncapi/accept-midas-asyncapi.yml
+  - type: DataModel
+    url: data-model/accept-data-model.yml
+- aid: accept:accept-profiles-api
+  name: Accept Profiles API
+  description: The Profiles API from Accept — 4 operation(s) for profiles.
+  humanURL: https://www.accept.io
+  baseURL: https://midas.accept.io
+  tags:
+  - Profiles
+  properties:
+  - type: OpenAPI
+    url: openapi/accept-profiles-api-openapi.yml
+  - type: APIReference
+    url: https://github.com/accept-io/midas/blob/main/docs/api/http-api.md
+  - type: AsyncAPI
+    url: asyncapi/accept-midas-asyncapi.yml
+  - type: DataModel
+    url: data-model/accept-data-model.yml
+- aid: accept:accept-readyz-api
+  name: Accept Readyz API
+  description: The Readyz API from Accept — 1 operation(s) for readyz.
+  humanURL: https://www.accept.io
+  baseURL: https://midas.accept.io
+  tags:
+  - Readyz
+  properties:
+  - type: OpenAPI
+    url: openapi/accept-readyz-api-openapi.yml
+  - type: APIReference
+    url: https://github.com/accept-io/midas/blob/main/docs/api/http-api.md
+  - type: AsyncAPI
+    url: asyncapi/accept-midas-asyncapi.yml
+  - type: DataModel
+    url: data-model/accept-data-model.yml
+- aid: accept:accept-reviews-api
+  name: Accept Reviews API
+  description: The Reviews API from Accept — 1 operation(s) for reviews.
+  humanURL: https://www.accept.io
+  baseURL: https://midas.accept.io
+  tags:
+  - Reviews
+  properties:
+  - type: OpenAPI
+    url: openapi/accept-reviews-api-openapi.yml
+  - type: APIReference
+    url: https://github.com/accept-io/midas/blob/main/docs/api/http-api.md
+  - type: AsyncAPI
+    url: asyncapi/accept-midas-asyncapi.yml
+  - type: DataModel
+    url: data-model/accept-data-model.yml
+- aid: accept:accept-surfaces-api
+  name: Accept Surfaces API
+  description: The Surfaces API from Accept — 4 operation(s) for surfaces.
+  humanURL: https://www.accept.io
+  baseURL: https://midas.accept.io
+  tags:
+  - Surfaces
+  properties:
+  - type: OpenAPI
+    url: openapi/accept-surfaces-api-openapi.yml
+  - type: APIReference
+    url: https://github.com/accept-io/midas/blob/main/docs/api/http-api.md
+  - type: AsyncAPI
+    url: asyncapi/accept-midas-asyncapi.yml
+  - type: DataModel
+    url: data-model/accept-data-model.yml
+common:
+- type: DomainSecurity
+  url: security/accept-domain-security.yml
+- type: AgenticAccess
+  url: agentic-access/accept-agentic-access.yml
+- type: Authentication
+  url: authentication/accept-authentication.yml
+- type: Webhooks
+  url: asyncapi/accept-midas-asyncapi.yml
+- type: Conventions
+  url: conventions/accept-conventions.yml
+- type: Idempotency
+  url: conventions/accept-conventions.yml
+- type: ErrorCatalog
+  url: errors/accept-problem-types.yml
+- type: Conformance
+  url: conformance/accept-conformance.yml
+- type: Lifecycle
+  url: lifecycle/accept-lifecycle.yml
+- type: Packages
+  url: packages/accept-packages.yml
+- type: WellKnown
+  url: well-known/accept-well-known.yml
+- type: MCPServer
+  url: mcp/accept-mcp.yml
+- type: LLMsTxt
+  url: llms/accept-llms.txt
+- type: CLI
+  url: cli/accept-cli.yml
+- type: ChangeLog
+  url: changelog/accept-changelog.yml
+- type: ChangeLog
+  url: https://github.com/accept-io/midas/blob/main/CHANGELOG.md
+- type: VulnerabilityDisclosure
+  url: security/accept-vulnerability-disclosure.yml
+- type: Security
+  url: https://github.com/accept-io/midas/blob/main/SECURITY.md
+- type: AgentSkill
+  url: skills/_index.yml
+- type: DeveloperPortal
+  url: https://www.accept.io
+- type: Documentation
+  url: https://github.com/accept-io/midas/tree/main/docs
+- type: APIReference
+  url: https://github.com/accept-io/midas/blob/main/docs/api/http-api.md
+- type: GettingStarted
+  url: https://github.com/accept-io/midas/blob/main/docs/getting-started.md
+- type: GitHubOrganization
+  url: https://github.com/accept-io
+- type: SourceCode
+  url: https://github.com/accept-io/midas
+- type: Support
+  url: https://github.com/accept-io/community
+- type: Blog
+  url: https://www.accept.io/learn/learn-midas
+- type: Roadmap
+  url: https://github.com/accept-io/midas/blob/main/ROADMAP.md
+- type: License
+  url: https://github.com/accept-io/midas/blob/main/LICENSE
+- type: Sandbox
+  url: sandbox/accept-sandbox.yml
+- type: Console
+  url: https://midas.accept.io/explorer
+x-enrichment:
+  date: '2026-07-19'
+  status: backfilled
+  pass: local-v1
+  note: backfilled from .gitignore signal + verified work evidence

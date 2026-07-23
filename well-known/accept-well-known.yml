@@ -1,0 +1,32 @@
+generated: '2026-07-18'
+method: searched
+source: live GET probes 2026-07-18
+note: >-
+  No /.well-known/ discovery documents or /llms.txt are published on either host. MIDAS is
+  self-hosted open-source software; discovery surfaces are absent by design. Absence recorded
+  as valid data.
+hosts:
+- host: https://www.accept.io
+  documents:
+  - path: /.well-known/security.txt
+    status: 404
+  - path: /.well-known/openid-configuration
+    status: 404
+  - path: /.well-known/oauth-authorization-server
+    status: 404
+  - path: /.well-known/api-catalog
+    status: 404
+  - path: /.well-known/ai-plugin.json
+    status: 404
+- host: https://midas.accept.io
+  documents:
+  - path: /.well-known/security.txt
+    status: 404
+  - path: /.well-known/openid-configuration
+    status: 404
+  - path: /.well-known/oauth-authorization-server
+    status: 404
+  - path: /.well-known/api-catalog
+    status: 404
+  - path: /.well-known/ai-plugin.json
+    status: 404
