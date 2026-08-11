@@ -416,6 +416,16 @@ apis:
   - type: DataModel
     url: data-model/accept-data-model.yml
 common:
+- type: Overlay
+  url: overlays/accept-midas-overlay.yaml
+- type: IssueTracker
+  url: https://github.com/accept-io/midas/issues
+- type: Releases
+  url: https://github.com/accept-io/midas/releases
+- type: CodeOfConduct
+  url: https://github.com/accept-io/midas/blob/main/CODE_OF_CONDUCT.md
+- type: ContributionGuide
+  url: https://github.com/accept-io/midas/blob/main/CONTRIBUTING.md
 - type: DomainSecurity
   url: security/accept-domain-security.yml
 - type: AgenticAccess
