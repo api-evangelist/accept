@@ -1,0 +1,94 @@
+{
+  "opencollection": "1.0.0",
+  "info": {
+    "name": "MIDAS Agents Escalation Targets API",
+    "version": "1.1.0-rc.1"
+  },
+  "request": {
+    "auth": {
+      "type": "bearer",
+      "token": "{{bearerToken}}"
+    }
+  },
+  "items": [
+    {
+      "info": {
+        "name": "Escalation Targets",
+        "type": "folder"
+      },
+      "items": [
+        {
+          "info": {
+            "name": "List the latest version of every escalation target",
+            "type": "http"
+          },
+          "http": {
+            "method": "GET",
+            "url": "http://localhost:8080/v1/escalation_targets"
+          },
+          "docs": "Returns one row per logical escalation target id (the latest version of each), sorted by id ascending. The array always serialises non-null (empty list when no targets exist). Read-only; D31k-impl-1 does not introduce write endpoints.\n"
+        },
+        {
+          "info": {
+            "name": "Get the latest version of an EscalationTarget by ID",
+            "type": "http"
+          },
+          "http": {
+            "method": "GET",
+            "url": "http://localhost:8080/v1/escalation_targets/:id",
+            "params": [
+              {
+                "name": "id",
+                "value": "",
+                "type": "path"
+              }
+            ]
+          },
+          "docs": "Returns the highest-numbered EscalationTarget version for the given id regardless of lifecycle status. Read-only.\n"
+        },
+        {
+          "info": {
+            "name": "List every persisted version of an EscalationTarget",
+            "type": "http"
+          },
+          "http": {
+            "method": "GET",
+            "url": "http://localhost:8080/v1/escalation_targets/:id/versions",
+            "params": [
+              {
+                "name": "id",
+                "value": "",
+                "type": "path"
+              }
+            ]
+          },
+          "docs": "Returns every revision of the EscalationTarget id in descending version order. 404 when the id is unknown.\n"
+        },
+        {
+          "info": {
+            "name": "Get a specific EscalationTarget revision",
+            "type": "http"
+          },
+          "http": {
+            "method": "GET",
+            "url": "http://localhost:8080/v1/escalation_targets/:id/versions/:version",
+            "params": [
+              {
+                "name": "id",
+                "value": "",
+                "type": "path"
+              },
+              {
+                "name": "version",
+                "value": "",
+                "type": "path"
+              }
+            ]
+          },
+          "docs": "Returns the exact (id, version) revision. 404 when the pair does not exist.\n"
+        }
+      ]
+    }
+  ],
+  "bundled": true
+}

@@ -1,0 +1,96 @@
+{
+  "opencollection": "1.0.0",
+  "info": {
+    "name": "MIDAS Agents Surfaces API",
+    "version": "1.1.0-rc.1"
+  },
+  "request": {
+    "auth": {
+      "type": "bearer",
+      "token": "{{bearerToken}}"
+    }
+  },
+  "items": [
+    {
+      "info": {
+        "name": "Surfaces",
+        "type": "folder"
+      },
+      "items": [
+        {
+          "info": {
+            "name": "Get a decision surface",
+            "type": "http"
+          },
+          "http": {
+            "method": "GET",
+            "url": "http://localhost:8080/v1/surfaces/:id",
+            "params": [
+              {
+                "name": "id",
+                "value": "",
+                "type": "path"
+              }
+            ]
+          },
+          "docs": "Returns the latest version of a surface by default. Append /versions to list all versions. Append /impact to see profiles, grants, and agents linked to this surface.\n"
+        },
+        {
+          "info": {
+            "name": "List all versions of a decision surface",
+            "type": "http"
+          },
+          "http": {
+            "method": "GET",
+            "url": "http://localhost:8080/v1/surfaces/:id/versions",
+            "params": [
+              {
+                "name": "id",
+                "value": "",
+                "type": "path"
+              }
+            ]
+          },
+          "docs": "Returns the full version history for a surface, ordered by version ascending. Returns 404 when no surface with that ID exists. Requires platform.viewer or above.\n"
+        },
+        {
+          "info": {
+            "name": "Get the dependency graph for a decision surface",
+            "type": "http"
+          },
+          "http": {
+            "method": "GET",
+            "url": "http://localhost:8080/v1/surfaces/:id/impact",
+            "params": [
+              {
+                "name": "id",
+                "value": "",
+                "type": "path"
+              }
+            ]
+          },
+          "docs": "Returns the full impact graph for a surface: all linked profiles, all grants referencing those profiles, and all distinct agents referenced by those grants. Includes aggregate counts and deterministic operator warnings. All array sections are always present (never null). Requires platform.viewer or above.\n"
+        },
+        {
+          "info": {
+            "name": "Get recovery analysis for a decision surface",
+            "type": "http"
+          },
+          "http": {
+            "method": "GET",
+            "url": "http://localhost:8080/v1/surfaces/:id/recovery",
+            "params": [
+              {
+                "name": "id",
+                "value": "",
+                "type": "path"
+              }
+            ]
+          },
+          "docs": "Returns a read-only recovery analysis: version history state, active/latest version distinction, successor links, and deterministic recommended next actions. Requires platform.viewer or above.\n"
+        }
+      ]
+    }
+  ],
+  "bundled": true
+}

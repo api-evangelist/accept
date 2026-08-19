@@ -1,0 +1,154 @@
+{
+  "opencollection": "1.0.0",
+  "info": {
+    "name": "MIDAS Agents Evidence API",
+    "version": "1.1.0-rc.1"
+  },
+  "request": {
+    "auth": {
+      "type": "bearer",
+      "token": "{{bearerToken}}"
+    }
+  },
+  "items": [
+    {
+      "info": {
+        "name": "Evidence",
+        "type": "folder"
+      },
+      "items": [
+        {
+          "info": {
+            "name": "Get the runtime audit-event chain for one envelope",
+            "type": "http"
+          },
+          "http": {
+            "method": "GET",
+            "url": "http://localhost:8080/v1/evidence/envelopes/:id/audit-events",
+            "params": [
+              {
+                "name": "id",
+                "value": "",
+                "type": "path",
+                "description": "Envelope ID."
+              }
+            ]
+          },
+          "docs": "Returns the ordered runtime audit-event chain for one evaluation envelope. Events are returned newest-last in SequenceNo ascending order — the same order the runtime appended them. Payloads are returned as recorded; no redaction is applied.\n\nThis endpoint does NOT return the submitted request payload; use GET /v1/envelopes/{id} for envelope details (which includes the verbatim submitted JSON under the `submitted.raw` field).\n\nRead-only. Backed by the production envelope and audit repositories. D"
+        },
+        {
+          "info": {
+            "name": "Verify the audit-event chain integrity for one envelope",
+            "type": "http"
+          },
+          "http": {
+            "method": "GET",
+            "url": "http://localhost:8080/v1/evidence/envelopes/:id/integrity",
+            "params": [
+              {
+                "name": "id",
+                "value": "",
+                "type": "path",
+                "description": "Envelope ID."
+              }
+            ]
+          },
+          "docs": "Runs the per-envelope integrity verifier against the production audit chain for the specified envelope and returns a structured status report. Integrity findings (a broken chain) are reported with HTTP 200 and `valid: false` — a broken chain is the result being reported, not a transport failure. HTTP 500 is reserved for repository / hash-compute errors that prevent verification from completing.\n\nThe response does NOT include audit-event payloads, audit-event IDs, the envelope's submitted request"
+        },
+        {
+          "info": {
+            "name": "Export a decision evidence packet for one envelope",
+            "type": "http"
+          },
+          "http": {
+            "method": "GET",
+            "url": "http://localhost:8080/v1/evidence/envelopes/:id/packet",
+            "params": [
+              {
+                "name": "id",
+                "value": "",
+                "type": "path",
+                "description": "Envelope ID."
+              }
+            ]
+          },
+          "docs": "Returns a single decision evidence packet composing the existing production reads for one evaluation envelope: the envelope object (same shape as GET /v1/envelopes/{id}), the ordered audit-event chain (same items as GET /v1/evidence/envelopes/{id}/audit-events), and the per-envelope integrity verification result (same shape as GET /v1/evidence/envelopes/{id}/integrity).\n\nIntegrity findings are reported in-band: a broken audit chain produces HTTP 200 with `integrity.valid: false`. Repository or v"
+        },
+        {
+          "info": {
+            "name": "Search runtime audit events across envelopes",
+            "type": "http"
+          },
+          "http": {
+            "method": "GET",
+            "url": "http://localhost:8080/v1/evidence/audit-events",
+            "params": [
+              {
+                "name": "event_type",
+                "value": "",
+                "type": "query",
+                "description": "Single audit event type. event_types wins when both are supplied."
+              },
+              {
+                "name": "event_types",
+                "value": "",
+                "type": "query",
+                "description": "Comma-separated list of audit event types. Empty tokens are rejected with 400. Whitespace around each token is trimmed. When non-empty, takes precedence over event_type.\n"
+              },
+              {
+                "name": "envelope_id",
+                "value": "",
+                "type": "query",
+                "description": "Exact-match filter on envelope_id."
+              },
+              {
+                "name": "request_source",
+                "value": "",
+                "type": "query",
+                "description": "Exact-match filter on request_source."
+              },
+              {
+                "name": "request_id",
+                "value": "",
+                "type": "query",
+                "description": "Exact-match filter on request_id."
+              },
+              {
+                "name": "since",
+                "value": "",
+                "type": "query",
+                "description": "RFC3339 timestamp; inclusive lower bound on event occurred_at."
+              },
+              {
+                "name": "until",
+                "value": "",
+                "type": "query",
+                "description": "RFC3339 timestamp; exclusive upper bound on event occurred_at. Must not be earlier than since."
+              },
+              {
+                "name": "limit",
+                "value": "",
+                "type": "query",
+                "description": "Positive integer in 1..500. Empty applies the audit-list default page size (100). Oversize values are rejected with 400."
+              },
+              {
+                "name": "order",
+                "value": "",
+                "type": "query",
+                "description": "Result ordering by occurred_at. Defaults to desc (newest first)."
+              },
+              {
+                "name": "cursor",
+                "value": "",
+                "type": "query",
+                "description": "Opaque pagination token from a prior response's next_cursor (D30j). Pass verbatim — clients must not decode or modify the token. The cursor is bound to the order direction of the originating request; replaying a desc cursor against an asc query is rejected with 400. A malformed token is rejected with 400.\n"
+              }
+            ]
+          },
+          "docs": "Returns runtime audit events matching the supplied filter, newest-first by default. Backed by the same audit list primitive that powers /v1/coverage and applies the same hard upper bound (default page size 100, maximum 500). Cross-envelope search complements GET /v1/evidence/envelopes/{id}/audit-events (envelope-scoped chain).\n\nPayloads are returned as recorded; no redaction. This endpoint does NOT expose the submitted request payload — use GET /v1/envelopes/{id} for envelope details. payload_co"
+        }
+      ]
+    }
+  ],
+  "bundled": true
+}

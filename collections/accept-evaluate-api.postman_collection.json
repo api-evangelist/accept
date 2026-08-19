@@ -1,0 +1,350 @@
+{
+  "item": [
+    {
+      "id": "9aaf4320-0a9f-4440-9ef4-031c5ea2be3f",
+      "name": "Evaluate",
+      "description": {
+        "content": "",
+        "type": "text/plain"
+      },
+      "item": [
+        {
+          "id": "0f107a69-18eb-4041-b8eb-27b720e915d4",
+          "name": "Evaluate a decision request",
+          "request": {
+            "name": "Evaluate a decision request",
+            "description": {
+              "content": "Evaluates whether an agent is within authority to perform an action on a governed decision surface. Produces exactly one outcome and one tamper-evident audit envelope. Idempotent by request_id within a source.\n",
+              "type": "text/plain"
+            },
+            "url": {
+              "path": [
+                "v1",
+                "evaluate"
+              ],
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "query": [],
+              "variable": []
+            },
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "Accept",
+                "value": "application/json"
+              }
+            ],
+            "method": "POST",
+            "auth": null,
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"surface_id\": \"<string>\",\n  \"agent_id\": \"<string>\",\n  \"confidence\": \"<float>\",\n  \"consequence\": {\n    \"type\": \"<string>\",\n    \"amount\": \"<number>\",\n    \"currency\": \"<string>\",\n    \"risk_rating\": \"<string>\"\n  },\n  \"context\": {\n    \"key_0\": 671,\n    \"key_1\": \"string\",\n    \"key_2\": false,\n    \"key_3\": false,\n    \"key_4\": true\n  },\n  \"request_id\": \"<string>\",\n  \"request_source\": \"<string>\",\n  \"process_id\": \"<string>\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "response": [
+            {
+              "id": "bbc53284-0acb-4f36-848a-e965a09a5a7e",
+              "name": "Evaluation complete",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "v1",
+                    "evaluate"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [],
+                  "variable": []
+                },
+                "header": [
+                  {
+                    "description": {
+                      "content": "Added as a part of security scheme: bearer",
+                      "type": "text/plain"
+                    },
+                    "key": "Authorization",
+                    "value": "Bearer <token>"
+                  },
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  }
+                ],
+                "method": "POST",
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"surface_id\": \"<string>\",\n  \"agent_id\": \"<string>\",\n  \"confidence\": \"<float>\",\n  \"consequence\": {\n    \"type\": \"monetary\",\n    \"amount\": 3071.2645327614905,\n    \"currency\": \"string\",\n    \"risk_rating\": \"low\"\n  },\n  \"context\": {\n    \"key_0\": 6115,\n    \"key_1\": false\n  },\n  \"request_id\": \"<string>\",\n  \"request_source\": \"<string>\",\n  \"process_id\": \"<string>\"\n}",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                }
+              },
+              "status": "OK",
+              "code": 200,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"outcome\": \"escalate\",\n  \"reason\": \"string\",\n  \"audit_status\": \"recorded\",\n  \"envelope_id\": \"string\",\n  \"explanation\": \"string\",\n  \"policy_mode\": \"string\",\n  \"policy_reference\": \"string\",\n  \"policy_skipped\": false,\n  \"simulated\": false\n}",
+              "cookie": [],
+              "_postman_previewlanguage": "json"
+            },
+            {
+              "id": "b5722ca6-1d1a-45e3-8db1-482e40175e03",
+              "name": "Invalid request (missing required fields, invalid confidence value, etc.)",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "v1",
+                    "evaluate"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [],
+                  "variable": []
+                },
+                "header": [
+                  {
+                    "description": {
+                      "content": "Added as a part of security scheme: bearer",
+                      "type": "text/plain"
+                    },
+                    "key": "Authorization",
+                    "value": "Bearer <token>"
+                  },
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  }
+                ],
+                "method": "POST",
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"surface_id\": \"<string>\",\n  \"agent_id\": \"<string>\",\n  \"confidence\": \"<float>\",\n  \"consequence\": {\n    \"type\": \"monetary\",\n    \"amount\": 3071.2645327614905,\n    \"currency\": \"string\",\n    \"risk_rating\": \"low\"\n  },\n  \"context\": {\n    \"key_0\": 6115,\n    \"key_1\": false\n  },\n  \"request_id\": \"<string>\",\n  \"request_source\": \"<string>\",\n  \"process_id\": \"<string>\"\n}",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                }
+              },
+              "status": "Bad Request",
+              "code": 400,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"error\": \"string\"\n}",
+              "cookie": [],
+              "_postman_previewlanguage": "json"
+            },
+            {
+              "id": "2d403c9d-c181-48e1-a030-223a7ab6d59e",
+              "name": "Unauthenticated (auth.mode=required and no valid token provided)",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "v1",
+                    "evaluate"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [],
+                  "variable": []
+                },
+                "header": [
+                  {
+                    "description": {
+                      "content": "Added as a part of security scheme: bearer",
+                      "type": "text/plain"
+                    },
+                    "key": "Authorization",
+                    "value": "Bearer <token>"
+                  },
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  }
+                ],
+                "method": "POST",
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"surface_id\": \"<string>\",\n  \"agent_id\": \"<string>\",\n  \"confidence\": \"<float>\",\n  \"consequence\": {\n    \"type\": \"monetary\",\n    \"amount\": 3071.2645327614905,\n    \"currency\": \"string\",\n    \"risk_rating\": \"low\"\n  },\n  \"context\": {\n    \"key_0\": 6115,\n    \"key_1\": false\n  },\n  \"request_id\": \"<string>\",\n  \"request_source\": \"<string>\",\n  \"process_id\": \"<string>\"\n}",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                }
+              },
+              "status": "Unauthorized",
+              "code": 401,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"error\": \"string\"\n}",
+              "cookie": [],
+              "_postman_previewlanguage": "json"
+            },
+            {
+              "id": "f52e2463-f843-42b4-9faf-beb17d993a33",
+              "name": "Insufficient role (requires platform.operator or platform.admin)",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "v1",
+                    "evaluate"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [],
+                  "variable": []
+                },
+                "header": [
+                  {
+                    "description": {
+                      "content": "Added as a part of security scheme: bearer",
+                      "type": "text/plain"
+                    },
+                    "key": "Authorization",
+                    "value": "Bearer <token>"
+                  },
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  }
+                ],
+                "method": "POST",
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"surface_id\": \"<string>\",\n  \"agent_id\": \"<string>\",\n  \"confidence\": \"<float>\",\n  \"consequence\": {\n    \"type\": \"monetary\",\n    \"amount\": 3071.2645327614905,\n    \"currency\": \"string\",\n    \"risk_rating\": \"low\"\n  },\n  \"context\": {\n    \"key_0\": 6115,\n    \"key_1\": false\n  },\n  \"request_id\": \"<string>\",\n  \"request_source\": \"<string>\",\n  \"process_id\": \"<string>\"\n}",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                }
+              },
+              "status": "Forbidden",
+              "code": 403,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"error\": \"string\"\n}",
+              "cookie": [],
+              "_postman_previewlanguage": "json"
+            },
+            {
+              "id": "3a147d0d-6e52-4070-b45b-9b726a5098e2",
+              "name": "Internal error",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "v1",
+                    "evaluate"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [],
+                  "variable": []
+                },
+                "header": [
+                  {
+                    "description": {
+                      "content": "Added as a part of security scheme: bearer",
+                      "type": "text/plain"
+                    },
+                    "key": "Authorization",
+                    "value": "Bearer <token>"
+                  },
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  }
+                ],
+                "method": "POST",
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"surface_id\": \"<string>\",\n  \"agent_id\": \"<string>\",\n  \"confidence\": \"<float>\",\n  \"consequence\": {\n    \"type\": \"monetary\",\n    \"amount\": 3071.2645327614905,\n    \"currency\": \"string\",\n    \"risk_rating\": \"low\"\n  },\n  \"context\": {\n    \"key_0\": 6115,\n    \"key_1\": false\n  },\n  \"request_id\": \"<string>\",\n  \"request_source\": \"<string>\",\n  \"process_id\": \"<string>\"\n}",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                }
+              },
+              "status": "Internal Server Error",
+              "code": 500,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"error\": \"string\"\n}",
+              "cookie": [],
+              "_postman_previewlanguage": "json"
+            }
+          ],
+          "event": [],
+          "protocolProfileBehavior": {
+            "disableBodyPruning": true
+          }
+        }
+      ],
+      "event": []
+    }
+  ],
+  "event": [],
+  "variable": [
+    {
+      "type": "string",
+      "value": "http://localhost:8080",
+      "key": "baseUrl"
+    }
+  ],
+  "auth": {
+    "type": "bearer",
+    "bearer": [
+      {
+        "key": "token",
+        "value": "{{bearerToken}}"
+      }
+    ]
+  },
+  "info": {
+    "_postman_id": "1059853c-eb2e-44ce-bde8-8d46a0dd31f5",
+    "name": "MIDAS Agents Evaluate API",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+    "description": {
+      "content": "Authority governance engine for autonomous decisions. Every evaluation produces exactly one outcome and one tamper-evident audit envelope.\n",
+      "type": "text/plain"
+    }
+  }
+}

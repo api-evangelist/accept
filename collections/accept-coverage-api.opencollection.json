@@ -1,0 +1,80 @@
+{
+  "opencollection": "1.0.0",
+  "info": {
+    "name": "MIDAS Agents Coverage API",
+    "version": "1.1.0-rc.1"
+  },
+  "request": {
+    "auth": {
+      "type": "bearer",
+      "token": "{{bearerToken}}"
+    }
+  },
+  "items": [
+    {
+      "info": {
+        "name": "Coverage",
+        "type": "folder"
+      },
+      "items": [
+        {
+          "info": {
+            "name": "List governance coverage records",
+            "type": "http"
+          },
+          "http": {
+            "method": "GET",
+            "url": "http://localhost:8080/v1/coverage",
+            "params": [
+              {
+                "name": "request_source",
+                "value": "",
+                "type": "query"
+              },
+              {
+                "name": "request_id",
+                "value": "",
+                "type": "query"
+              },
+              {
+                "name": "envelope_id",
+                "value": "",
+                "type": "query"
+              },
+              {
+                "name": "process_id",
+                "value": "",
+                "type": "query"
+              },
+              {
+                "name": "expectation_id",
+                "value": "",
+                "type": "query"
+              },
+              {
+                "name": "since",
+                "value": "",
+                "type": "query",
+                "description": "RFC3339 timestamp; inclusive lower bound on event occurred_at."
+              },
+              {
+                "name": "until",
+                "value": "",
+                "type": "query",
+                "description": "RFC3339 timestamp; exclusive upper bound on event occurred_at."
+              },
+              {
+                "name": "limit",
+                "value": "",
+                "type": "query",
+                "description": "Positive integer; capped at the audit list maximum. Oversize values are rejected with 400."
+              }
+            ]
+          },
+          "docs": "Returns merged GOVERNANCE_CONDITION_DETECTED / GOVERNANCE_COVERAGE_GAP runtime audit events as coverage records keyed by (envelope_id, expectation_id, expectation_version). Each response includes a fixed limitations array describing the read model's scope and correlation semantics — see Issue #56. Requires platform.viewer or above.\n"
+        }
+      ]
+    }
+  ],
+  "bundled": true
+}

@@ -1,0 +1,1262 @@
+{
+  "item": [
+    {
+      "id": "bc3e3190-3fa4-41ff-9033-4fc39dd15515",
+      "name": "Fail Mode Policies",
+      "description": {
+        "content": "",
+        "type": "text/plain"
+      },
+      "item": [
+        {
+          "id": "0a2835ea-e173-4eb3-9407-7a5c686c5d42",
+          "name": "Get the latest version of a FailModePolicy by ID",
+          "request": {
+            "name": "Get the latest version of a FailModePolicy by ID",
+            "description": {
+              "content": "Returns the highest-numbered FailModePolicy version for the given id regardless of lifecycle status. Read-only; the runtime resolver remains evidence-only and rule contents do not influence outcome computation.\n",
+              "type": "text/plain"
+            },
+            "url": {
+              "path": [
+                "v1",
+                "fail_mode_policies",
+                ":id"
+              ],
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "query": [],
+              "variable": [
+                {
+                  "disabled": false,
+                  "type": "any",
+                  "value": "<string>",
+                  "key": "id",
+                  "description": "(Required) "
+                }
+              ]
+            },
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              }
+            ],
+            "method": "GET",
+            "auth": null
+          },
+          "response": [
+            {
+              "id": "b04fdc76-2507-4a98-9b22-41b494c87fc3",
+              "name": "FailModePolicy",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "v1",
+                    "fail_mode_policies",
+                    ":id"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [],
+                  "variable": [
+                    {
+                      "disabled": false,
+                      "type": "any",
+                      "value": "<string>",
+                      "key": "id",
+                      "description": "(Required) "
+                    }
+                  ]
+                },
+                "header": [
+                  {
+                    "description": {
+                      "content": "Added as a part of security scheme: bearer",
+                      "type": "text/plain"
+                    },
+                    "key": "Authorization",
+                    "value": "Bearer <token>"
+                  },
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  }
+                ],
+                "method": "GET",
+                "body": {}
+              },
+              "status": "OK",
+              "code": 200,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"id\": \"string\",\n  \"version\": 6272,\n  \"name\": \"string\",\n  \"status\": \"active\",\n  \"effective_date\": \"1951-08-08T01:25:45.844Z\",\n  \"business_owner\": \"string\",\n  \"technical_owner\": \"string\",\n  \"rules\": [\n    {\n      \"correctness_class\": \"resource\",\n      \"permitted_mode\": \"soft\",\n      \"enforcement_state\": \"evidence_only\",\n      \"outcome\": \"manual_review\",\n      \"reason\": \"string\"\n    },\n    {\n      \"correctness_class\": \"resource\",\n      \"permitted_mode\": \"soft\",\n      \"enforcement_state\": \"evidence_only\",\n      \"outcome\": \"escalate\",\n      \"reason\": \"string\"\n    }\n  ],\n  \"origin\": \"manual\",\n  \"managed\": false,\n  \"created_at\": \"1954-11-13T14:11:15.309Z\",\n  \"updated_at\": \"1964-12-23T10:15:06.524Z\",\n  \"description\": \"string\",\n  \"effective_until\": \"1971-07-02T21:59:49.214Z\",\n  \"retired_at\": \"1977-08-05T04:44:35.808Z\",\n  \"replaces\": \"string\",\n  \"successor_policy_id\": \"string\",\n  \"successor_version\": 6036,\n  \"created_by\": \"string\",\n  \"approved_by\": \"string\",\n  \"approved_at\": \"2024-06-30T06:35:19.080Z\"\n}",
+              "cookie": [],
+              "_postman_previewlanguage": "json"
+            },
+            {
+              "id": "da35aebc-972e-4f56-b988-1509263f5257",
+              "name": "Unauthenticated",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "v1",
+                    "fail_mode_policies",
+                    ":id"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [],
+                  "variable": [
+                    {
+                      "disabled": false,
+                      "type": "any",
+                      "value": "<string>",
+                      "key": "id",
+                      "description": "(Required) "
+                    }
+                  ]
+                },
+                "header": [
+                  {
+                    "description": {
+                      "content": "Added as a part of security scheme: bearer",
+                      "type": "text/plain"
+                    },
+                    "key": "Authorization",
+                    "value": "Bearer <token>"
+                  },
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  }
+                ],
+                "method": "GET",
+                "body": {}
+              },
+              "status": "Unauthorized",
+              "code": 401,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"error\": \"string\"\n}",
+              "cookie": [],
+              "_postman_previewlanguage": "json"
+            },
+            {
+              "id": "710a1c62-b85d-4e91-885a-18b34e49606c",
+              "name": "Insufficient role (requires platform.viewer or above)",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "v1",
+                    "fail_mode_policies",
+                    ":id"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [],
+                  "variable": [
+                    {
+                      "disabled": false,
+                      "type": "any",
+                      "value": "<string>",
+                      "key": "id",
+                      "description": "(Required) "
+                    }
+                  ]
+                },
+                "header": [
+                  {
+                    "description": {
+                      "content": "Added as a part of security scheme: bearer",
+                      "type": "text/plain"
+                    },
+                    "key": "Authorization",
+                    "value": "Bearer <token>"
+                  },
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  }
+                ],
+                "method": "GET",
+                "body": {}
+              },
+              "status": "Forbidden",
+              "code": 403,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"error\": \"string\"\n}",
+              "cookie": [],
+              "_postman_previewlanguage": "json"
+            },
+            {
+              "id": "6d01406c-6d9b-4241-aa72-4751b455fc5b",
+              "name": "FailModePolicy not found",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "v1",
+                    "fail_mode_policies",
+                    ":id"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [],
+                  "variable": [
+                    {
+                      "disabled": false,
+                      "type": "any",
+                      "value": "<string>",
+                      "key": "id",
+                      "description": "(Required) "
+                    }
+                  ]
+                },
+                "header": [
+                  {
+                    "description": {
+                      "content": "Added as a part of security scheme: bearer",
+                      "type": "text/plain"
+                    },
+                    "key": "Authorization",
+                    "value": "Bearer <token>"
+                  },
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  }
+                ],
+                "method": "GET",
+                "body": {}
+              },
+              "status": "Not Found",
+              "code": 404,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"error\": \"string\"\n}",
+              "cookie": [],
+              "_postman_previewlanguage": "json"
+            },
+            {
+              "id": "3d1b4b4e-9e52-4a04-81dc-51f691c2fd37",
+              "name": "Repository error",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "v1",
+                    "fail_mode_policies",
+                    ":id"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [],
+                  "variable": [
+                    {
+                      "disabled": false,
+                      "type": "any",
+                      "value": "<string>",
+                      "key": "id",
+                      "description": "(Required) "
+                    }
+                  ]
+                },
+                "header": [
+                  {
+                    "description": {
+                      "content": "Added as a part of security scheme: bearer",
+                      "type": "text/plain"
+                    },
+                    "key": "Authorization",
+                    "value": "Bearer <token>"
+                  },
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  }
+                ],
+                "method": "GET",
+                "body": {}
+              },
+              "status": "Internal Server Error",
+              "code": 500,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"error\": \"string\"\n}",
+              "cookie": [],
+              "_postman_previewlanguage": "json"
+            },
+            {
+              "id": "be4f4c97-a07a-4482-a93a-19ee51d2ce9e",
+              "name": "FailModePolicy reader not configured",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "v1",
+                    "fail_mode_policies",
+                    ":id"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [],
+                  "variable": [
+                    {
+                      "disabled": false,
+                      "type": "any",
+                      "value": "<string>",
+                      "key": "id",
+                      "description": "(Required) "
+                    }
+                  ]
+                },
+                "header": [
+                  {
+                    "description": {
+                      "content": "Added as a part of security scheme: bearer",
+                      "type": "text/plain"
+                    },
+                    "key": "Authorization",
+                    "value": "Bearer <token>"
+                  },
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  }
+                ],
+                "method": "GET",
+                "body": {}
+              },
+              "status": "Not Implemented",
+              "code": 501,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"error\": \"string\"\n}",
+              "cookie": [],
+              "_postman_previewlanguage": "json"
+            }
+          ],
+          "event": [],
+          "protocolProfileBehavior": {
+            "disableBodyPruning": true
+          }
+        },
+        {
+          "id": "4f1e6b7e-9dd9-41c2-89ca-583cd94f266c",
+          "name": "List all versions of a FailModePolicy",
+          "request": {
+            "name": "List all versions of a FailModePolicy",
+            "description": {
+              "content": "Returns every persisted revision of the FailModePolicy id in descending version order. 404 when the id is unknown.\n",
+              "type": "text/plain"
+            },
+            "url": {
+              "path": [
+                "v1",
+                "fail_mode_policies",
+                ":id",
+                "versions"
+              ],
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "query": [],
+              "variable": [
+                {
+                  "disabled": false,
+                  "type": "any",
+                  "value": "<string>",
+                  "key": "id",
+                  "description": "(Required) "
+                }
+              ]
+            },
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              }
+            ],
+            "method": "GET",
+            "auth": null
+          },
+          "response": [
+            {
+              "id": "0bfcae27-9d45-4856-bc9f-9d78e86979f8",
+              "name": "Versions list",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "v1",
+                    "fail_mode_policies",
+                    ":id",
+                    "versions"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [],
+                  "variable": [
+                    {
+                      "disabled": false,
+                      "type": "any",
+                      "value": "<string>",
+                      "key": "id",
+                      "description": "(Required) "
+                    }
+                  ]
+                },
+                "header": [
+                  {
+                    "description": {
+                      "content": "Added as a part of security scheme: bearer",
+                      "type": "text/plain"
+                    },
+                    "key": "Authorization",
+                    "value": "Bearer <token>"
+                  },
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  }
+                ],
+                "method": "GET",
+                "body": {}
+              },
+              "status": "OK",
+              "code": 200,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"fail_mode_policies\": [\n    {\n      \"id\": \"string\",\n      \"version\": 8584,\n      \"name\": \"string\",\n      \"status\": \"review\",\n      \"effective_date\": \"2020-12-26T08:30:23.144Z\",\n      \"business_owner\": \"string\",\n      \"technical_owner\": \"string\",\n      \"rules\": [\n        {\n          \"correctness_class\": \"resource\",\n          \"permitted_mode\": \"open\",\n          \"enforcement_state\": \"evidence_only\",\n          \"outcome\": \"permit_with_evidence\",\n          \"reason\": \"string\"\n        },\n        {\n          \"correctness_class\": \"resource\",\n          \"permitted_mode\": \"not_applicable\",\n          \"enforcement_state\": \"evidence_only\",\n          \"outcome\": \"manual_review\",\n          \"reason\": \"string\"\n        }\n      ],\n      \"origin\": \"manual\",\n      \"managed\": false,\n      \"created_at\": \"1998-02-21T19:52:17.338Z\",\n      \"updated_at\": \"1958-09-04T15:21:29.211Z\",\n      \"description\": \"string\",\n      \"effective_until\": \"1975-04-17T06:12:07.176Z\",\n      \"retired_at\": \"1965-01-26T10:00:07.412Z\",\n      \"replaces\": \"string\",\n      \"successor_policy_id\": \"string\",\n      \"successor_version\": 2115,\n      \"created_by\": \"string\",\n      \"approved_by\": \"string\",\n      \"approved_at\": \"2003-09-15T08:12:09.480Z\"\n    },\n    {\n      \"id\": \"string\",\n      \"version\": 4938,\n      \"name\": \"string\",\n      \"status\": \"retired\",\n      \"effective_date\": \"1998-06-22T22:58:47.044Z\",\n      \"business_owner\": \"string\",\n      \"technical_owner\": \"string\",\n      \"rules\": [\n        {\n          \"correctness_class\": \"input\",\n          \"permitted_mode\": \"closed\",\n          \"enforcement_state\": \"evidence_only\",\n          \"outcome\": \"escalate\",\n          \"reason\": \"string\"\n        },\n        {\n          \"correctness_class\": \"consistency\",\n          \"permitted_mode\": \"closed\",\n          \"enforcement_state\": \"evidence_only\",\n          \"outcome\": \"escalate\",\n          \"reason\": \"string\"\n        }\n      ],\n      \"origin\": \"manual\",\n      \"managed\": false,\n      \"created_at\": \"1947-06-28T18:28:09.283Z\",\n      \"updated_at\": \"1989-10-06T07:22:59.534Z\",\n      \"description\": \"string\",\n      \"effective_until\": \"2023-08-02T18:34:07.351Z\",\n      \"retired_at\": \"1962-12-05T02:15:57.109Z\",\n      \"replaces\": \"string\",\n      \"successor_policy_id\": \"string\",\n      \"successor_version\": 4506,\n      \"created_by\": \"string\",\n      \"approved_by\": \"string\",\n      \"approved_at\": \"1988-02-24T05:48:41.416Z\"\n    }\n  ]\n}",
+              "cookie": [],
+              "_postman_previewlanguage": "json"
+            },
+            {
+              "id": "7d8b0ee7-a865-410a-b1eb-4018227bd8bf",
+              "name": "Unauthenticated",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "v1",
+                    "fail_mode_policies",
+                    ":id",
+                    "versions"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [],
+                  "variable": [
+                    {
+                      "disabled": false,
+                      "type": "any",
+                      "value": "<string>",
+                      "key": "id",
+                      "description": "(Required) "
+                    }
+                  ]
+                },
+                "header": [
+                  {
+                    "description": {
+                      "content": "Added as a part of security scheme: bearer",
+                      "type": "text/plain"
+                    },
+                    "key": "Authorization",
+                    "value": "Bearer <token>"
+                  },
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  }
+                ],
+                "method": "GET",
+                "body": {}
+              },
+              "status": "Unauthorized",
+              "code": 401,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"error\": \"string\"\n}",
+              "cookie": [],
+              "_postman_previewlanguage": "json"
+            },
+            {
+              "id": "52891941-6348-4a09-92ac-25eb7fb4c65f",
+              "name": "Insufficient role (requires platform.viewer or above)",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "v1",
+                    "fail_mode_policies",
+                    ":id",
+                    "versions"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [],
+                  "variable": [
+                    {
+                      "disabled": false,
+                      "type": "any",
+                      "value": "<string>",
+                      "key": "id",
+                      "description": "(Required) "
+                    }
+                  ]
+                },
+                "header": [
+                  {
+                    "description": {
+                      "content": "Added as a part of security scheme: bearer",
+                      "type": "text/plain"
+                    },
+                    "key": "Authorization",
+                    "value": "Bearer <token>"
+                  },
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  }
+                ],
+                "method": "GET",
+                "body": {}
+              },
+              "status": "Forbidden",
+              "code": 403,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"error\": \"string\"\n}",
+              "cookie": [],
+              "_postman_previewlanguage": "json"
+            },
+            {
+              "id": "703927a8-07de-43f7-8133-7b5cacafef57",
+              "name": "FailModePolicy not found",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "v1",
+                    "fail_mode_policies",
+                    ":id",
+                    "versions"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [],
+                  "variable": [
+                    {
+                      "disabled": false,
+                      "type": "any",
+                      "value": "<string>",
+                      "key": "id",
+                      "description": "(Required) "
+                    }
+                  ]
+                },
+                "header": [
+                  {
+                    "description": {
+                      "content": "Added as a part of security scheme: bearer",
+                      "type": "text/plain"
+                    },
+                    "key": "Authorization",
+                    "value": "Bearer <token>"
+                  },
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  }
+                ],
+                "method": "GET",
+                "body": {}
+              },
+              "status": "Not Found",
+              "code": 404,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"error\": \"string\"\n}",
+              "cookie": [],
+              "_postman_previewlanguage": "json"
+            },
+            {
+              "id": "b6c01ee0-902f-46a9-b427-1358818cfae8",
+              "name": "Repository error",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "v1",
+                    "fail_mode_policies",
+                    ":id",
+                    "versions"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [],
+                  "variable": [
+                    {
+                      "disabled": false,
+                      "type": "any",
+                      "value": "<string>",
+                      "key": "id",
+                      "description": "(Required) "
+                    }
+                  ]
+                },
+                "header": [
+                  {
+                    "description": {
+                      "content": "Added as a part of security scheme: bearer",
+                      "type": "text/plain"
+                    },
+                    "key": "Authorization",
+                    "value": "Bearer <token>"
+                  },
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  }
+                ],
+                "method": "GET",
+                "body": {}
+              },
+              "status": "Internal Server Error",
+              "code": 500,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"error\": \"string\"\n}",
+              "cookie": [],
+              "_postman_previewlanguage": "json"
+            },
+            {
+              "id": "cf60b4d2-d277-4686-b3ae-11b6bbb85b6f",
+              "name": "FailModePolicy reader not configured",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "v1",
+                    "fail_mode_policies",
+                    ":id",
+                    "versions"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [],
+                  "variable": [
+                    {
+                      "disabled": false,
+                      "type": "any",
+                      "value": "<string>",
+                      "key": "id",
+                      "description": "(Required) "
+                    }
+                  ]
+                },
+                "header": [
+                  {
+                    "description": {
+                      "content": "Added as a part of security scheme: bearer",
+                      "type": "text/plain"
+                    },
+                    "key": "Authorization",
+                    "value": "Bearer <token>"
+                  },
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  }
+                ],
+                "method": "GET",
+                "body": {}
+              },
+              "status": "Not Implemented",
+              "code": 501,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"error\": \"string\"\n}",
+              "cookie": [],
+              "_postman_previewlanguage": "json"
+            }
+          ],
+          "event": [],
+          "protocolProfileBehavior": {
+            "disableBodyPruning": true
+          }
+        },
+        {
+          "id": "baa131e6-9bde-4348-8a48-877b3e149d75",
+          "name": "Get a specific FailModePolicy revision",
+          "request": {
+            "name": "Get a specific FailModePolicy revision",
+            "description": {
+              "content": "Returns the exact (id, version) revision. 404 when the pair does not exist. The runtime resolver remains evidence-only.\n",
+              "type": "text/plain"
+            },
+            "url": {
+              "path": [
+                "v1",
+                "fail_mode_policies",
+                ":id",
+                "versions",
+                ":version"
+              ],
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "query": [],
+              "variable": [
+                {
+                  "disabled": false,
+                  "type": "any",
+                  "value": "<string>",
+                  "key": "id",
+                  "description": "(Required) "
+                },
+                {
+                  "disabled": false,
+                  "type": "any",
+                  "value": "<integer>",
+                  "key": "version",
+                  "description": "(Required) "
+                }
+              ]
+            },
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              }
+            ],
+            "method": "GET",
+            "auth": null
+          },
+          "response": [
+            {
+              "id": "4ee27a21-3ae0-419b-b168-6768e8b4f44c",
+              "name": "FailModePolicy version",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "v1",
+                    "fail_mode_policies",
+                    ":id",
+                    "versions",
+                    ":version"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [],
+                  "variable": [
+                    {
+                      "disabled": false,
+                      "type": "any",
+                      "value": "<string>",
+                      "key": "id",
+                      "description": "(Required) "
+                    },
+                    {
+                      "disabled": false,
+                      "type": "any",
+                      "value": "<integer>",
+                      "key": "version",
+                      "description": "(Required) "
+                    }
+                  ]
+                },
+                "header": [
+                  {
+                    "description": {
+                      "content": "Added as a part of security scheme: bearer",
+                      "type": "text/plain"
+                    },
+                    "key": "Authorization",
+                    "value": "Bearer <token>"
+                  },
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  }
+                ],
+                "method": "GET",
+                "body": {}
+              },
+              "status": "OK",
+              "code": 200,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"id\": \"string\",\n  \"version\": 6272,\n  \"name\": \"string\",\n  \"status\": \"active\",\n  \"effective_date\": \"1951-08-08T01:25:45.844Z\",\n  \"business_owner\": \"string\",\n  \"technical_owner\": \"string\",\n  \"rules\": [\n    {\n      \"correctness_class\": \"resource\",\n      \"permitted_mode\": \"soft\",\n      \"enforcement_state\": \"evidence_only\",\n      \"outcome\": \"manual_review\",\n      \"reason\": \"string\"\n    },\n    {\n      \"correctness_class\": \"resource\",\n      \"permitted_mode\": \"soft\",\n      \"enforcement_state\": \"evidence_only\",\n      \"outcome\": \"escalate\",\n      \"reason\": \"string\"\n    }\n  ],\n  \"origin\": \"manual\",\n  \"managed\": false,\n  \"created_at\": \"1954-11-13T14:11:15.309Z\",\n  \"updated_at\": \"1964-12-23T10:15:06.524Z\",\n  \"description\": \"string\",\n  \"effective_until\": \"1971-07-02T21:59:49.214Z\",\n  \"retired_at\": \"1977-08-05T04:44:35.808Z\",\n  \"replaces\": \"string\",\n  \"successor_policy_id\": \"string\",\n  \"successor_version\": 6036,\n  \"created_by\": \"string\",\n  \"approved_by\": \"string\",\n  \"approved_at\": \"2024-06-30T06:35:19.080Z\"\n}",
+              "cookie": [],
+              "_postman_previewlanguage": "json"
+            },
+            {
+              "id": "f5c4beff-1bfd-4d49-a215-cf1392ca3777",
+              "name": "Version path segment is not a positive integer",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "v1",
+                    "fail_mode_policies",
+                    ":id",
+                    "versions",
+                    ":version"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [],
+                  "variable": [
+                    {
+                      "disabled": false,
+                      "type": "any",
+                      "value": "<string>",
+                      "key": "id",
+                      "description": "(Required) "
+                    },
+                    {
+                      "disabled": false,
+                      "type": "any",
+                      "value": "<integer>",
+                      "key": "version",
+                      "description": "(Required) "
+                    }
+                  ]
+                },
+                "header": [
+                  {
+                    "description": {
+                      "content": "Added as a part of security scheme: bearer",
+                      "type": "text/plain"
+                    },
+                    "key": "Authorization",
+                    "value": "Bearer <token>"
+                  },
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  }
+                ],
+                "method": "GET",
+                "body": {}
+              },
+              "status": "Bad Request",
+              "code": 400,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"error\": \"string\"\n}",
+              "cookie": [],
+              "_postman_previewlanguage": "json"
+            },
+            {
+              "id": "c190aaa3-9f04-44d1-8c65-f70d5d4519c5",
+              "name": "Unauthenticated",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "v1",
+                    "fail_mode_policies",
+                    ":id",
+                    "versions",
+                    ":version"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [],
+                  "variable": [
+                    {
+                      "disabled": false,
+                      "type": "any",
+                      "value": "<string>",
+                      "key": "id",
+                      "description": "(Required) "
+                    },
+                    {
+                      "disabled": false,
+                      "type": "any",
+                      "value": "<integer>",
+                      "key": "version",
+                      "description": "(Required) "
+                    }
+                  ]
+                },
+                "header": [
+                  {
+                    "description": {
+                      "content": "Added as a part of security scheme: bearer",
+                      "type": "text/plain"
+                    },
+                    "key": "Authorization",
+                    "value": "Bearer <token>"
+                  },
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  }
+                ],
+                "method": "GET",
+                "body": {}
+              },
+              "status": "Unauthorized",
+              "code": 401,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"error\": \"string\"\n}",
+              "cookie": [],
+              "_postman_previewlanguage": "json"
+            },
+            {
+              "id": "3b77df75-40ac-4caf-ac22-53e8ec5e27fb",
+              "name": "Insufficient role (requires platform.viewer or above)",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "v1",
+                    "fail_mode_policies",
+                    ":id",
+                    "versions",
+                    ":version"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [],
+                  "variable": [
+                    {
+                      "disabled": false,
+                      "type": "any",
+                      "value": "<string>",
+                      "key": "id",
+                      "description": "(Required) "
+                    },
+                    {
+                      "disabled": false,
+                      "type": "any",
+                      "value": "<integer>",
+                      "key": "version",
+                      "description": "(Required) "
+                    }
+                  ]
+                },
+                "header": [
+                  {
+                    "description": {
+                      "content": "Added as a part of security scheme: bearer",
+                      "type": "text/plain"
+                    },
+                    "key": "Authorization",
+                    "value": "Bearer <token>"
+                  },
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  }
+                ],
+                "method": "GET",
+                "body": {}
+              },
+              "status": "Forbidden",
+              "code": 403,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"error\": \"string\"\n}",
+              "cookie": [],
+              "_postman_previewlanguage": "json"
+            },
+            {
+              "id": "5d8706a1-e7ac-4072-9092-b917c8a79e86",
+              "name": "FailModePolicy or version not found",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "v1",
+                    "fail_mode_policies",
+                    ":id",
+                    "versions",
+                    ":version"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [],
+                  "variable": [
+                    {
+                      "disabled": false,
+                      "type": "any",
+                      "value": "<string>",
+                      "key": "id",
+                      "description": "(Required) "
+                    },
+                    {
+                      "disabled": false,
+                      "type": "any",
+                      "value": "<integer>",
+                      "key": "version",
+                      "description": "(Required) "
+                    }
+                  ]
+                },
+                "header": [
+                  {
+                    "description": {
+                      "content": "Added as a part of security scheme: bearer",
+                      "type": "text/plain"
+                    },
+                    "key": "Authorization",
+                    "value": "Bearer <token>"
+                  },
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  }
+                ],
+                "method": "GET",
+                "body": {}
+              },
+              "status": "Not Found",
+              "code": 404,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"error\": \"string\"\n}",
+              "cookie": [],
+              "_postman_previewlanguage": "json"
+            },
+            {
+              "id": "01c1802d-e241-47de-bbde-720ed864f938",
+              "name": "Repository error",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "v1",
+                    "fail_mode_policies",
+                    ":id",
+                    "versions",
+                    ":version"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [],
+                  "variable": [
+                    {
+                      "disabled": false,
+                      "type": "any",
+                      "value": "<string>",
+                      "key": "id",
+                      "description": "(Required) "
+                    },
+                    {
+                      "disabled": false,
+                      "type": "any",
+                      "value": "<integer>",
+                      "key": "version",
+                      "description": "(Required) "
+                    }
+                  ]
+                },
+                "header": [
+                  {
+                    "description": {
+                      "content": "Added as a part of security scheme: bearer",
+                      "type": "text/plain"
+                    },
+                    "key": "Authorization",
+                    "value": "Bearer <token>"
+                  },
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  }
+                ],
+                "method": "GET",
+                "body": {}
+              },
+              "status": "Internal Server Error",
+              "code": 500,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"error\": \"string\"\n}",
+              "cookie": [],
+              "_postman_previewlanguage": "json"
+            },
+            {
+              "id": "2a95bf2b-5f91-482d-80a1-b38b26a64ab4",
+              "name": "FailModePolicy reader not configured",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "v1",
+                    "fail_mode_policies",
+                    ":id",
+                    "versions",
+                    ":version"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [],
+                  "variable": [
+                    {
+                      "disabled": false,
+                      "type": "any",
+                      "value": "<string>",
+                      "key": "id",
+                      "description": "(Required) "
+                    },
+                    {
+                      "disabled": false,
+                      "type": "any",
+                      "value": "<integer>",
+                      "key": "version",
+                      "description": "(Required) "
+                    }
+                  ]
+                },
+                "header": [
+                  {
+                    "description": {
+                      "content": "Added as a part of security scheme: bearer",
+                      "type": "text/plain"
+                    },
+                    "key": "Authorization",
+                    "value": "Bearer <token>"
+                  },
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  }
+                ],
+                "method": "GET",
+                "body": {}
+              },
+              "status": "Not Implemented",
+              "code": 501,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"error\": \"string\"\n}",
+              "cookie": [],
+              "_postman_previewlanguage": "json"
+            }
+          ],
+          "event": [],
+          "protocolProfileBehavior": {
+            "disableBodyPruning": true
+          }
+        }
+      ],
+      "event": []
+    }
+  ],
+  "event": [],
+  "variable": [
+    {
+      "type": "string",
+      "value": "http://localhost:8080",
+      "key": "baseUrl"
+    }
+  ],
+  "auth": {
+    "type": "bearer",
+    "bearer": [
+      {
+        "key": "token",
+        "value": "{{bearerToken}}"
+      }
+    ]
+  },
+  "info": {
+    "_postman_id": "e71a6864-4bbf-40d3-a538-31bc6a83d022",
+    "name": "MIDAS Agents Fail Mode Policies API",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+    "description": {
+      "content": "Authority governance engine for autonomous decisions. Every evaluation produces exactly one outcome and one tamper-evident audit envelope.\n",
+      "type": "text/plain"
+    }
+  }
+}

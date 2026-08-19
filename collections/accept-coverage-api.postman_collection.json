@@ -1,0 +1,506 @@
+{
+  "item": [
+    {
+      "id": "1300c38b-ad7f-4d3f-abd9-16a72c878a0f",
+      "name": "Coverage",
+      "description": {
+        "content": "",
+        "type": "text/plain"
+      },
+      "item": [
+        {
+          "id": "50f8be41-3a8a-4b71-bbb1-918ce3b8c244",
+          "name": "List governance coverage records",
+          "request": {
+            "name": "List governance coverage records",
+            "description": {
+              "content": "Returns merged GOVERNANCE_CONDITION_DETECTED / GOVERNANCE_COVERAGE_GAP runtime audit events as coverage records keyed by (envelope_id, expectation_id, expectation_version). Each response includes a fixed limitations array describing the read model's scope and correlation semantics — see Issue #56. Requires platform.viewer or above.\n",
+              "type": "text/plain"
+            },
+            "url": {
+              "path": [
+                "v1",
+                "coverage"
+              ],
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "query": [
+                {
+                  "disabled": false,
+                  "key": "request_source",
+                  "value": "<string>"
+                },
+                {
+                  "disabled": false,
+                  "key": "request_id",
+                  "value": "<string>"
+                },
+                {
+                  "disabled": false,
+                  "key": "envelope_id",
+                  "value": "<string>"
+                },
+                {
+                  "disabled": false,
+                  "key": "process_id",
+                  "value": "<string>"
+                },
+                {
+                  "disabled": false,
+                  "key": "expectation_id",
+                  "value": "<string>"
+                },
+                {
+                  "disabled": false,
+                  "key": "since",
+                  "value": "<dateTime>",
+                  "description": "RFC3339 timestamp; inclusive lower bound on event occurred_at."
+                },
+                {
+                  "disabled": false,
+                  "key": "until",
+                  "value": "<dateTime>",
+                  "description": "RFC3339 timestamp; exclusive upper bound on event occurred_at."
+                },
+                {
+                  "disabled": false,
+                  "key": "limit",
+                  "value": "<integer>",
+                  "description": "Positive integer; capped at the audit list maximum. Oversize values are rejected with 400."
+                }
+              ],
+              "variable": []
+            },
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              }
+            ],
+            "method": "GET",
+            "auth": null
+          },
+          "response": [
+            {
+              "id": "2c4f3ff0-58dd-4238-b431-3846f7d5cb84",
+              "name": "Coverage records (newest first) plus the limitations array.",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "v1",
+                    "coverage"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [
+                    {
+                      "key": "request_source",
+                      "value": "<string>"
+                    },
+                    {
+                      "key": "request_id",
+                      "value": "<string>"
+                    },
+                    {
+                      "key": "envelope_id",
+                      "value": "<string>"
+                    },
+                    {
+                      "key": "process_id",
+                      "value": "<string>"
+                    },
+                    {
+                      "key": "expectation_id",
+                      "value": "<string>"
+                    },
+                    {
+                      "key": "since",
+                      "value": "<dateTime>"
+                    },
+                    {
+                      "key": "until",
+                      "value": "<dateTime>"
+                    },
+                    {
+                      "key": "limit",
+                      "value": "<integer>"
+                    }
+                  ],
+                  "variable": []
+                },
+                "header": [
+                  {
+                    "description": {
+                      "content": "Added as a part of security scheme: bearer",
+                      "type": "text/plain"
+                    },
+                    "key": "Authorization",
+                    "value": "Bearer <token>"
+                  },
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  }
+                ],
+                "method": "GET",
+                "body": {}
+              },
+              "status": "OK",
+              "code": 200,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"records\": [\n    {\n      \"request_source\": \"string\",\n      \"request_id\": \"string\",\n      \"envelope_id\": \"string\",\n      \"process_id\": \"string\",\n      \"expectation_id\": \"string\",\n      \"expectation_version\": 4863,\n      \"status\": \"gap\",\n      \"gap\": false,\n      \"partial\": false,\n      \"condition_type\": \"string\",\n      \"required_surface_id\": \"string\",\n      \"missing_surface_id\": \"string\",\n      \"actual_surface_id\": \"string\",\n      \"summary\": {\n        \"key_0\": 6563.158813860484\n      },\n      \"correlation_basis\": {\n        \"key_0\": 9077.87582082426\n      },\n      \"detected_at\": \"1984-07-10T23:04:34.394Z\",\n      \"gap_detected_at\": \"2011-05-19T15:24:40.717Z\"\n    },\n    {\n      \"request_source\": \"string\",\n      \"request_id\": \"string\",\n      \"envelope_id\": \"string\",\n      \"process_id\": \"string\",\n      \"expectation_id\": \"string\",\n      \"expectation_version\": 9065,\n      \"status\": \"gap\",\n      \"gap\": false,\n      \"partial\": false,\n      \"condition_type\": \"string\",\n      \"required_surface_id\": \"string\",\n      \"missing_surface_id\": \"string\",\n      \"actual_surface_id\": \"string\",\n      \"summary\": {\n        \"key_0\": 7347.0983067785155,\n        \"key_1\": \"string\"\n      },\n      \"correlation_basis\": {\n        \"key_0\": 86\n      },\n      \"detected_at\": \"2023-03-14T22:55:55.992Z\",\n      \"gap_detected_at\": \"1987-08-25T14:00:36.581Z\"\n    }\n  ],\n  \"limitations\": [\n    \"scope=process\",\n    \"correlation=same-evaluation\",\n    \"no-bypass-detection\",\n    \"no-time-window-correlation\"\n  ]\n}",
+              "cookie": [],
+              "_postman_previewlanguage": "json"
+            },
+            {
+              "id": "7e04fdd2-a009-4c47-a538-a71efa35c1f7",
+              "name": "Invalid limit or unparseable since|until timestamp.",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "v1",
+                    "coverage"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [
+                    {
+                      "key": "request_source",
+                      "value": "<string>"
+                    },
+                    {
+                      "key": "request_id",
+                      "value": "<string>"
+                    },
+                    {
+                      "key": "envelope_id",
+                      "value": "<string>"
+                    },
+                    {
+                      "key": "process_id",
+                      "value": "<string>"
+                    },
+                    {
+                      "key": "expectation_id",
+                      "value": "<string>"
+                    },
+                    {
+                      "key": "since",
+                      "value": "<dateTime>"
+                    },
+                    {
+                      "key": "until",
+                      "value": "<dateTime>"
+                    },
+                    {
+                      "key": "limit",
+                      "value": "<integer>"
+                    }
+                  ],
+                  "variable": []
+                },
+                "header": [
+                  {
+                    "description": {
+                      "content": "Added as a part of security scheme: bearer",
+                      "type": "text/plain"
+                    },
+                    "key": "Authorization",
+                    "value": "Bearer <token>"
+                  },
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  }
+                ],
+                "method": "GET",
+                "body": {}
+              },
+              "status": "Bad Request",
+              "code": 400,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"error\": \"string\"\n}",
+              "cookie": [],
+              "_postman_previewlanguage": "json"
+            },
+            {
+              "id": "bd10261c-2910-40ab-9a2d-e428a4d54c09",
+              "name": "Unauthenticated",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "v1",
+                    "coverage"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [
+                    {
+                      "key": "request_source",
+                      "value": "<string>"
+                    },
+                    {
+                      "key": "request_id",
+                      "value": "<string>"
+                    },
+                    {
+                      "key": "envelope_id",
+                      "value": "<string>"
+                    },
+                    {
+                      "key": "process_id",
+                      "value": "<string>"
+                    },
+                    {
+                      "key": "expectation_id",
+                      "value": "<string>"
+                    },
+                    {
+                      "key": "since",
+                      "value": "<dateTime>"
+                    },
+                    {
+                      "key": "until",
+                      "value": "<dateTime>"
+                    },
+                    {
+                      "key": "limit",
+                      "value": "<integer>"
+                    }
+                  ],
+                  "variable": []
+                },
+                "header": [
+                  {
+                    "description": {
+                      "content": "Added as a part of security scheme: bearer",
+                      "type": "text/plain"
+                    },
+                    "key": "Authorization",
+                    "value": "Bearer <token>"
+                  },
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  }
+                ],
+                "method": "GET",
+                "body": {}
+              },
+              "status": "Unauthorized",
+              "code": 401,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"error\": \"string\"\n}",
+              "cookie": [],
+              "_postman_previewlanguage": "json"
+            },
+            {
+              "id": "082be26b-997b-4205-abc3-adf88ae23613",
+              "name": "Insufficient role (requires platform.viewer or above)",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "v1",
+                    "coverage"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [
+                    {
+                      "key": "request_source",
+                      "value": "<string>"
+                    },
+                    {
+                      "key": "request_id",
+                      "value": "<string>"
+                    },
+                    {
+                      "key": "envelope_id",
+                      "value": "<string>"
+                    },
+                    {
+                      "key": "process_id",
+                      "value": "<string>"
+                    },
+                    {
+                      "key": "expectation_id",
+                      "value": "<string>"
+                    },
+                    {
+                      "key": "since",
+                      "value": "<dateTime>"
+                    },
+                    {
+                      "key": "until",
+                      "value": "<dateTime>"
+                    },
+                    {
+                      "key": "limit",
+                      "value": "<integer>"
+                    }
+                  ],
+                  "variable": []
+                },
+                "header": [
+                  {
+                    "description": {
+                      "content": "Added as a part of security scheme: bearer",
+                      "type": "text/plain"
+                    },
+                    "key": "Authorization",
+                    "value": "Bearer <token>"
+                  },
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  }
+                ],
+                "method": "GET",
+                "body": {}
+              },
+              "status": "Forbidden",
+              "code": 403,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"error\": \"string\"\n}",
+              "cookie": [],
+              "_postman_previewlanguage": "json"
+            },
+            {
+              "id": "b88983c1-f078-4820-9828-59892ae070e8",
+              "name": "Coverage read service not configured.",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "v1",
+                    "coverage"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [
+                    {
+                      "key": "request_source",
+                      "value": "<string>"
+                    },
+                    {
+                      "key": "request_id",
+                      "value": "<string>"
+                    },
+                    {
+                      "key": "envelope_id",
+                      "value": "<string>"
+                    },
+                    {
+                      "key": "process_id",
+                      "value": "<string>"
+                    },
+                    {
+                      "key": "expectation_id",
+                      "value": "<string>"
+                    },
+                    {
+                      "key": "since",
+                      "value": "<dateTime>"
+                    },
+                    {
+                      "key": "until",
+                      "value": "<dateTime>"
+                    },
+                    {
+                      "key": "limit",
+                      "value": "<integer>"
+                    }
+                  ],
+                  "variable": []
+                },
+                "header": [
+                  {
+                    "description": {
+                      "content": "Added as a part of security scheme: bearer",
+                      "type": "text/plain"
+                    },
+                    "key": "Authorization",
+                    "value": "Bearer <token>"
+                  },
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  }
+                ],
+                "method": "GET",
+                "body": {}
+              },
+              "status": "Not Implemented",
+              "code": 501,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"error\": \"string\"\n}",
+              "cookie": [],
+              "_postman_previewlanguage": "json"
+            }
+          ],
+          "event": [],
+          "protocolProfileBehavior": {
+            "disableBodyPruning": true
+          }
+        }
+      ],
+      "event": []
+    }
+  ],
+  "event": [],
+  "variable": [
+    {
+      "type": "string",
+      "value": "http://localhost:8080",
+      "key": "baseUrl"
+    }
+  ],
+  "auth": {
+    "type": "bearer",
+    "bearer": [
+      {
+        "key": "token",
+        "value": "{{bearerToken}}"
+      }
+    ]
+  },
+  "info": {
+    "_postman_id": "3ec8a9a6-35e3-49b4-b557-9a4055183add",
+    "name": "MIDAS Agents Coverage API",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+    "description": {
+      "content": "Authority governance engine for autonomous decisions. Every evaluation produces exactly one outcome and one tamper-evident audit envelope.\n",
+      "type": "text/plain"
+    }
+  }
+}

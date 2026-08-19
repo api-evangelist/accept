@@ -1,0 +1,1951 @@
+{
+  "item": [
+    {
+      "id": "a64b3f02-636b-4558-99c5-efca2f548f3c",
+      "name": "Evidence",
+      "description": {
+        "content": "",
+        "type": "text/plain"
+      },
+      "item": [
+        {
+          "id": "37b09be5-a1f4-49d4-ab7b-b779e7ce4a93",
+          "name": "Get the runtime audit-event chain for one envelope",
+          "request": {
+            "name": "Get the runtime audit-event chain for one envelope",
+            "description": {
+              "content": "Returns the ordered runtime audit-event chain for one evaluation envelope. Events are returned newest-last in SequenceNo ascending order — the same order the runtime appended them. Payloads are returned as recorded; no redaction is applied.\n\nThis endpoint does NOT return the submitted request payload; use GET /v1/envelopes/{id} for envelope details (which includes the verbatim submitted JSON under the `submitted.raw` field).\n\nRead-only. Backed by the production envelope and audit repositories. Disjoint from the Explorer audit-events route (GET /explorer/envelopes/{id}/audit-events), which uses the Explorer-isolated in-memory store and is workbench-only.\n\nRequires platform.viewer, platform.operator, or platform.admin.\n",
+              "type": "text/plain"
+            },
+            "url": {
+              "path": [
+                "v1",
+                "evidence",
+                "envelopes",
+                ":id",
+                "audit-events"
+              ],
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "query": [],
+              "variable": [
+                {
+                  "disabled": false,
+                  "type": "any",
+                  "value": "<string>",
+                  "key": "id",
+                  "description": "(Required) Envelope ID."
+                }
+              ]
+            },
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              }
+            ],
+            "method": "GET",
+            "auth": null
+          },
+          "response": [
+            {
+              "id": "0d1f5a86-77ae-462c-bc76-b72a183c430b",
+              "name": "Ordered audit-event chain for the envelope.",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "v1",
+                    "evidence",
+                    "envelopes",
+                    ":id",
+                    "audit-events"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [],
+                  "variable": [
+                    {
+                      "disabled": false,
+                      "type": "any",
+                      "value": "<string>",
+                      "key": "id",
+                      "description": "(Required) Envelope ID."
+                    }
+                  ]
+                },
+                "header": [
+                  {
+                    "description": {
+                      "content": "Added as a part of security scheme: bearer",
+                      "type": "text/plain"
+                    },
+                    "key": "Authorization",
+                    "value": "Bearer <token>"
+                  },
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  }
+                ],
+                "method": "GET",
+                "body": {}
+              },
+              "status": "OK",
+              "code": 200,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"envelope_id\": \"string\",\n  \"items\": [\n    {\n      \"id\": \"string\",\n      \"envelope_id\": \"string\",\n      \"request_source\": \"string\",\n      \"request_id\": \"string\",\n      \"sequence_no\": 5834,\n      \"event_type\": \"string\",\n      \"performer_type\": \"string\",\n      \"performer_id\": \"string\",\n      \"payload\": {\n        \"key_0\": 2566.7729450542543\n      },\n      \"occurred_at\": \"2003-01-08T20:18:44.800Z\",\n      \"hash\": \"string\",\n      \"prev_hash\": \"string\"\n    },\n    {\n      \"id\": \"string\",\n      \"envelope_id\": \"string\",\n      \"request_source\": \"string\",\n      \"request_id\": \"string\",\n      \"sequence_no\": 834,\n      \"event_type\": \"string\",\n      \"performer_type\": \"string\",\n      \"performer_id\": \"string\",\n      \"payload\": {\n        \"key_0\": false,\n        \"key_1\": false,\n        \"key_2\": \"string\"\n      },\n      \"occurred_at\": \"1974-12-12T10:20:56.948Z\",\n      \"hash\": \"string\",\n      \"prev_hash\": \"string\"\n    }\n  ],\n  \"count\": 9872\n}",
+              "cookie": [],
+              "_postman_previewlanguage": "json"
+            },
+            {
+              "id": "46ad837b-ad2d-4485-b277-a0e8c3161207",
+              "name": "Missing or invalid envelope ID.",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "v1",
+                    "evidence",
+                    "envelopes",
+                    ":id",
+                    "audit-events"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [],
+                  "variable": [
+                    {
+                      "disabled": false,
+                      "type": "any",
+                      "value": "<string>",
+                      "key": "id",
+                      "description": "(Required) Envelope ID."
+                    }
+                  ]
+                },
+                "header": [
+                  {
+                    "description": {
+                      "content": "Added as a part of security scheme: bearer",
+                      "type": "text/plain"
+                    },
+                    "key": "Authorization",
+                    "value": "Bearer <token>"
+                  },
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  }
+                ],
+                "method": "GET",
+                "body": {}
+              },
+              "status": "Bad Request",
+              "code": 400,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"error\": \"string\"\n}",
+              "cookie": [],
+              "_postman_previewlanguage": "json"
+            },
+            {
+              "id": "f68d1ca3-25a2-4ce6-ab27-0e38d5a4c0c2",
+              "name": "Unauthenticated.",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "v1",
+                    "evidence",
+                    "envelopes",
+                    ":id",
+                    "audit-events"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [],
+                  "variable": [
+                    {
+                      "disabled": false,
+                      "type": "any",
+                      "value": "<string>",
+                      "key": "id",
+                      "description": "(Required) Envelope ID."
+                    }
+                  ]
+                },
+                "header": [
+                  {
+                    "description": {
+                      "content": "Added as a part of security scheme: bearer",
+                      "type": "text/plain"
+                    },
+                    "key": "Authorization",
+                    "value": "Bearer <token>"
+                  },
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  }
+                ],
+                "method": "GET",
+                "body": {}
+              },
+              "status": "Unauthorized",
+              "code": 401,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"error\": \"string\"\n}",
+              "cookie": [],
+              "_postman_previewlanguage": "json"
+            },
+            {
+              "id": "bc00fe87-dfef-45f0-904c-6cb9c338195c",
+              "name": "Insufficient role (requires platform.viewer or above).",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "v1",
+                    "evidence",
+                    "envelopes",
+                    ":id",
+                    "audit-events"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [],
+                  "variable": [
+                    {
+                      "disabled": false,
+                      "type": "any",
+                      "value": "<string>",
+                      "key": "id",
+                      "description": "(Required) Envelope ID."
+                    }
+                  ]
+                },
+                "header": [
+                  {
+                    "description": {
+                      "content": "Added as a part of security scheme: bearer",
+                      "type": "text/plain"
+                    },
+                    "key": "Authorization",
+                    "value": "Bearer <token>"
+                  },
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  }
+                ],
+                "method": "GET",
+                "body": {}
+              },
+              "status": "Forbidden",
+              "code": 403,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"error\": \"string\"\n}",
+              "cookie": [],
+              "_postman_previewlanguage": "json"
+            },
+            {
+              "id": "de1ea8a3-6663-4f75-8863-b929f18c8882",
+              "name": "Envelope not found.",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "v1",
+                    "evidence",
+                    "envelopes",
+                    ":id",
+                    "audit-events"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [],
+                  "variable": [
+                    {
+                      "disabled": false,
+                      "type": "any",
+                      "value": "<string>",
+                      "key": "id",
+                      "description": "(Required) Envelope ID."
+                    }
+                  ]
+                },
+                "header": [
+                  {
+                    "description": {
+                      "content": "Added as a part of security scheme: bearer",
+                      "type": "text/plain"
+                    },
+                    "key": "Authorization",
+                    "value": "Bearer <token>"
+                  },
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  }
+                ],
+                "method": "GET",
+                "body": {}
+              },
+              "status": "Not Found",
+              "code": 404,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"error\": \"string\"\n}",
+              "cookie": [],
+              "_postman_previewlanguage": "json"
+            },
+            {
+              "id": "b614501e-4dc4-457a-b912-7dec09c4e177",
+              "name": "Repository error while reading the audit chain.",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "v1",
+                    "evidence",
+                    "envelopes",
+                    ":id",
+                    "audit-events"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [],
+                  "variable": [
+                    {
+                      "disabled": false,
+                      "type": "any",
+                      "value": "<string>",
+                      "key": "id",
+                      "description": "(Required) Envelope ID."
+                    }
+                  ]
+                },
+                "header": [
+                  {
+                    "description": {
+                      "content": "Added as a part of security scheme: bearer",
+                      "type": "text/plain"
+                    },
+                    "key": "Authorization",
+                    "value": "Bearer <token>"
+                  },
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  }
+                ],
+                "method": "GET",
+                "body": {}
+              },
+              "status": "Internal Server Error",
+              "code": 500,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"error\": \"string\"\n}",
+              "cookie": [],
+              "_postman_previewlanguage": "json"
+            },
+            {
+              "id": "a8e847ee-59ac-44de-b7a0-6bf297fa49c6",
+              "name": "Evidence read service is not configured on this deployment.",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "v1",
+                    "evidence",
+                    "envelopes",
+                    ":id",
+                    "audit-events"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [],
+                  "variable": [
+                    {
+                      "disabled": false,
+                      "type": "any",
+                      "value": "<string>",
+                      "key": "id",
+                      "description": "(Required) Envelope ID."
+                    }
+                  ]
+                },
+                "header": [
+                  {
+                    "description": {
+                      "content": "Added as a part of security scheme: bearer",
+                      "type": "text/plain"
+                    },
+                    "key": "Authorization",
+                    "value": "Bearer <token>"
+                  },
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  }
+                ],
+                "method": "GET",
+                "body": {}
+              },
+              "status": "Not Implemented",
+              "code": 501,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"error\": \"string\"\n}",
+              "cookie": [],
+              "_postman_previewlanguage": "json"
+            }
+          ],
+          "event": [],
+          "protocolProfileBehavior": {
+            "disableBodyPruning": true
+          }
+        },
+        {
+          "id": "921f0965-e410-4a6c-acc2-27ad0d27c2e8",
+          "name": "Verify the audit-event chain integrity for one envelope",
+          "request": {
+            "name": "Verify the audit-event chain integrity for one envelope",
+            "description": {
+              "content": "Runs the per-envelope integrity verifier against the production audit chain for the specified envelope and returns a structured status report. Integrity findings (a broken chain) are reported with HTTP 200 and `valid: false` — a broken chain is the result being reported, not a transport failure. HTTP 500 is reserved for repository / hash-compute errors that prevent verification from completing.\n\nThe response does NOT include audit-event payloads, audit-event IDs, the envelope's submitted request payload, or the envelope's submitted hash. Callers that need that detail use GET /v1/evidence/envelopes/{id}/audit-events for the chain or GET /v1/envelopes/{id} for envelope detail.\n\nRequires platform.viewer, platform.operator, or platform.admin.\n",
+              "type": "text/plain"
+            },
+            "url": {
+              "path": [
+                "v1",
+                "evidence",
+                "envelopes",
+                ":id",
+                "integrity"
+              ],
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "query": [],
+              "variable": [
+                {
+                  "disabled": false,
+                  "type": "any",
+                  "value": "<string>",
+                  "key": "id",
+                  "description": "(Required) Envelope ID."
+                }
+              ]
+            },
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              }
+            ],
+            "method": "GET",
+            "auth": null
+          },
+          "response": [
+            {
+              "id": "c9cbf52c-9d72-4125-b02b-70709b4633ae",
+              "name": "Integrity verification ran to completion. `valid` reports the result: true when every check passed; false when an integrity finding was reported. On `valid: false`, `error_kind` and `error_message` describe the finding.\n",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "v1",
+                    "evidence",
+                    "envelopes",
+                    ":id",
+                    "integrity"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [],
+                  "variable": [
+                    {
+                      "disabled": false,
+                      "type": "any",
+                      "value": "<string>",
+                      "key": "id",
+                      "description": "(Required) Envelope ID."
+                    }
+                  ]
+                },
+                "header": [
+                  {
+                    "description": {
+                      "content": "Added as a part of security scheme: bearer",
+                      "type": "text/plain"
+                    },
+                    "key": "Authorization",
+                    "value": "Bearer <token>"
+                  },
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  }
+                ],
+                "method": "GET",
+                "body": {}
+              },
+              "status": "OK",
+              "code": 200,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"envelope_id\": \"string\",\n  \"valid\": true,\n  \"chain_length\": 5690,\n  \"first_event_hash\": \"string\",\n  \"final_event_hash\": \"string\",\n  \"checked_at\": \"2010-09-13T17:16:32.855Z\",\n  \"error_kind\": \"string\",\n  \"error_message\": \"string\"\n}",
+              "cookie": [],
+              "_postman_previewlanguage": "json"
+            },
+            {
+              "id": "8fe5313b-9380-4a87-95e5-4e4738be1512",
+              "name": "Missing or invalid envelope ID.",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "v1",
+                    "evidence",
+                    "envelopes",
+                    ":id",
+                    "integrity"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [],
+                  "variable": [
+                    {
+                      "disabled": false,
+                      "type": "any",
+                      "value": "<string>",
+                      "key": "id",
+                      "description": "(Required) Envelope ID."
+                    }
+                  ]
+                },
+                "header": [
+                  {
+                    "description": {
+                      "content": "Added as a part of security scheme: bearer",
+                      "type": "text/plain"
+                    },
+                    "key": "Authorization",
+                    "value": "Bearer <token>"
+                  },
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  }
+                ],
+                "method": "GET",
+                "body": {}
+              },
+              "status": "Bad Request",
+              "code": 400,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"error\": \"string\"\n}",
+              "cookie": [],
+              "_postman_previewlanguage": "json"
+            },
+            {
+              "id": "0e6d10a6-4df4-4bf3-bab7-2f402d76544e",
+              "name": "Unauthenticated.",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "v1",
+                    "evidence",
+                    "envelopes",
+                    ":id",
+                    "integrity"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [],
+                  "variable": [
+                    {
+                      "disabled": false,
+                      "type": "any",
+                      "value": "<string>",
+                      "key": "id",
+                      "description": "(Required) Envelope ID."
+                    }
+                  ]
+                },
+                "header": [
+                  {
+                    "description": {
+                      "content": "Added as a part of security scheme: bearer",
+                      "type": "text/plain"
+                    },
+                    "key": "Authorization",
+                    "value": "Bearer <token>"
+                  },
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  }
+                ],
+                "method": "GET",
+                "body": {}
+              },
+              "status": "Unauthorized",
+              "code": 401,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"error\": \"string\"\n}",
+              "cookie": [],
+              "_postman_previewlanguage": "json"
+            },
+            {
+              "id": "9c4dcfb2-5d19-491c-9d19-b1f580807917",
+              "name": "Insufficient role (requires platform.viewer or above).",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "v1",
+                    "evidence",
+                    "envelopes",
+                    ":id",
+                    "integrity"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [],
+                  "variable": [
+                    {
+                      "disabled": false,
+                      "type": "any",
+                      "value": "<string>",
+                      "key": "id",
+                      "description": "(Required) Envelope ID."
+                    }
+                  ]
+                },
+                "header": [
+                  {
+                    "description": {
+                      "content": "Added as a part of security scheme: bearer",
+                      "type": "text/plain"
+                    },
+                    "key": "Authorization",
+                    "value": "Bearer <token>"
+                  },
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  }
+                ],
+                "method": "GET",
+                "body": {}
+              },
+              "status": "Forbidden",
+              "code": 403,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"error\": \"string\"\n}",
+              "cookie": [],
+              "_postman_previewlanguage": "json"
+            },
+            {
+              "id": "5d529c3a-bad4-464b-80f6-194dbdc37f9d",
+              "name": "Envelope not found.",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "v1",
+                    "evidence",
+                    "envelopes",
+                    ":id",
+                    "integrity"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [],
+                  "variable": [
+                    {
+                      "disabled": false,
+                      "type": "any",
+                      "value": "<string>",
+                      "key": "id",
+                      "description": "(Required) Envelope ID."
+                    }
+                  ]
+                },
+                "header": [
+                  {
+                    "description": {
+                      "content": "Added as a part of security scheme: bearer",
+                      "type": "text/plain"
+                    },
+                    "key": "Authorization",
+                    "value": "Bearer <token>"
+                  },
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  }
+                ],
+                "method": "GET",
+                "body": {}
+              },
+              "status": "Not Found",
+              "code": 404,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"error\": \"string\"\n}",
+              "cookie": [],
+              "_postman_previewlanguage": "json"
+            },
+            {
+              "id": "451ce0e7-3c32-48ab-ad24-591334a29dae",
+              "name": "Repository or hash-compute error prevented verification from completing.",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "v1",
+                    "evidence",
+                    "envelopes",
+                    ":id",
+                    "integrity"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [],
+                  "variable": [
+                    {
+                      "disabled": false,
+                      "type": "any",
+                      "value": "<string>",
+                      "key": "id",
+                      "description": "(Required) Envelope ID."
+                    }
+                  ]
+                },
+                "header": [
+                  {
+                    "description": {
+                      "content": "Added as a part of security scheme: bearer",
+                      "type": "text/plain"
+                    },
+                    "key": "Authorization",
+                    "value": "Bearer <token>"
+                  },
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  }
+                ],
+                "method": "GET",
+                "body": {}
+              },
+              "status": "Internal Server Error",
+              "code": 500,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"error\": \"string\"\n}",
+              "cookie": [],
+              "_postman_previewlanguage": "json"
+            },
+            {
+              "id": "adb6db61-43f7-4fae-92ad-05b091aa19be",
+              "name": "Evidence read service is not configured on this deployment.",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "v1",
+                    "evidence",
+                    "envelopes",
+                    ":id",
+                    "integrity"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [],
+                  "variable": [
+                    {
+                      "disabled": false,
+                      "type": "any",
+                      "value": "<string>",
+                      "key": "id",
+                      "description": "(Required) Envelope ID."
+                    }
+                  ]
+                },
+                "header": [
+                  {
+                    "description": {
+                      "content": "Added as a part of security scheme: bearer",
+                      "type": "text/plain"
+                    },
+                    "key": "Authorization",
+                    "value": "Bearer <token>"
+                  },
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  }
+                ],
+                "method": "GET",
+                "body": {}
+              },
+              "status": "Not Implemented",
+              "code": 501,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"error\": \"string\"\n}",
+              "cookie": [],
+              "_postman_previewlanguage": "json"
+            }
+          ],
+          "event": [],
+          "protocolProfileBehavior": {
+            "disableBodyPruning": true
+          }
+        },
+        {
+          "id": "dfc6b22d-16e3-41d7-aed3-ce3673ccce70",
+          "name": "Export a decision evidence packet for one envelope",
+          "request": {
+            "name": "Export a decision evidence packet for one envelope",
+            "description": {
+              "content": "Returns a single decision evidence packet composing the existing production reads for one evaluation envelope: the envelope object (same shape as GET /v1/envelopes/{id}), the ordered audit-event chain (same items as GET /v1/evidence/envelopes/{id}/audit-events), and the per-envelope integrity verification result (same shape as GET /v1/evidence/envelopes/{id}/integrity).\n\nIntegrity findings are reported in-band: a broken audit chain produces HTTP 200 with `integrity.valid: false`. Repository or verification read failures produce HTTP 500 — the packet is never returned partially.\n\nThe envelope sub-object preserves the existing /v1/envelopes/{id} contract, including its `submitted.raw` field. The packet wrapper itself has no top-level submitted / raw / submitted_hash field; D30e adds no redaction mode and no query flag toggles that placement.\n\nRequires platform.viewer, platform.operator, or platform.admin.\n",
+              "type": "text/plain"
+            },
+            "url": {
+              "path": [
+                "v1",
+                "evidence",
+                "envelopes",
+                ":id",
+                "packet"
+              ],
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "query": [],
+              "variable": [
+                {
+                  "disabled": false,
+                  "type": "any",
+                  "value": "<string>",
+                  "key": "id",
+                  "description": "(Required) Envelope ID."
+                }
+              ]
+            },
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              }
+            ],
+            "method": "GET",
+            "auth": null
+          },
+          "response": [
+            {
+              "id": "476ca549-7a1f-4877-9938-c8fb31d34e20",
+              "name": "Packet composed successfully. `integrity.valid` reports the chain status.",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "v1",
+                    "evidence",
+                    "envelopes",
+                    ":id",
+                    "packet"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [],
+                  "variable": [
+                    {
+                      "disabled": false,
+                      "type": "any",
+                      "value": "<string>",
+                      "key": "id",
+                      "description": "(Required) Envelope ID."
+                    }
+                  ]
+                },
+                "header": [
+                  {
+                    "description": {
+                      "content": "Added as a part of security scheme: bearer",
+                      "type": "text/plain"
+                    },
+                    "key": "Authorization",
+                    "value": "Bearer <token>"
+                  },
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  }
+                ],
+                "method": "GET",
+                "body": {}
+              },
+              "status": "OK",
+              "code": 200,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"envelope_id\": \"string\",\n  \"generated_at\": \"1982-04-03T06:55:29.469Z\",\n  \"envelope\": {\n    \"id\": \"string\",\n    \"state\": \"escalated\",\n    \"surface_id\": \"string\",\n    \"agent_id\": \"string\",\n    \"request_id\": \"string\",\n    \"request_source\": \"string\",\n    \"confidence\": 190.88981916631442,\n    \"outcome\": \"string\",\n    \"reason_code\": \"string\",\n    \"explanation\": \"string\",\n    \"profile_id\": \"string\",\n    \"grant_id\": \"string\",\n    \"surface_version\": 9918,\n    \"first_event_hash\": \"string\",\n    \"final_event_hash\": \"string\",\n    \"resolved\": {\n      \"structure\": {\n        \"process\": {\n          \"id\": \"string\",\n          \"origin\": \"string\",\n          \"managed\": false,\n          \"replaces\": \"string\",\n          \"status\": \"deprecated\"\n        },\n        \"business_service\": {\n          \"id\": \"string\",\n          \"origin\": \"string\",\n          \"managed\": false,\n          \"replaces\": \"string\",\n          \"status\": \"active\"\n        },\n        \"enabling_capabilities\": [\n          {\n            \"id\": \"string\",\n            \"name\": \"string\",\n            \"origin\": \"string\",\n            \"managed\": false,\n            \"replaces\": \"string\",\n            \"status\": \"deprecated\"\n          },\n          {\n            \"id\": \"string\",\n            \"name\": \"string\",\n            \"origin\": \"string\",\n            \"managed\": true,\n            \"replaces\": \"string\",\n            \"status\": \"deprecated\"\n          }\n        ]\n      }\n    },\n    \"created_at\": \"1999-12-04T18:29:04.351Z\",\n    \"closed_at\": \"1977-11-10T06:17:36.403Z\"\n  },\n  \"audit_events\": [\n    {\n      \"id\": \"string\",\n      \"envelope_id\": \"string\",\n      \"request_source\": \"string\",\n      \"request_id\": \"string\",\n      \"sequence_no\": 3550,\n      \"event_type\": \"string\",\n      \"performer_type\": \"string\",\n      \"performer_id\": \"string\",\n      \"payload\": {\n        \"key_0\": \"string\"\n      },\n      \"occurred_at\": \"1975-11-04T13:05:59.085Z\",\n      \"hash\": \"string\",\n      \"prev_hash\": \"string\"\n    },\n    {\n      \"id\": \"string\",\n      \"envelope_id\": \"string\",\n      \"request_source\": \"string\",\n      \"request_id\": \"string\",\n      \"sequence_no\": 8155,\n      \"event_type\": \"string\",\n      \"performer_type\": \"string\",\n      \"performer_id\": \"string\",\n      \"payload\": {\n        \"key_0\": false,\n        \"key_1\": 2635\n      },\n      \"occurred_at\": \"1983-09-24T13:24:29.462Z\",\n      \"hash\": \"string\",\n      \"prev_hash\": \"string\"\n    }\n  ],\n  \"integrity\": {\n    \"envelope_id\": \"string\",\n    \"valid\": true,\n    \"chain_length\": 5957,\n    \"first_event_hash\": \"string\",\n    \"final_event_hash\": \"string\",\n    \"checked_at\": \"2016-12-31T15:47:10.429Z\",\n    \"error_kind\": \"string\",\n    \"error_message\": \"string\"\n  }\n}",
+              "cookie": [],
+              "_postman_previewlanguage": "json"
+            },
+            {
+              "id": "f0316c4a-c396-4ece-8b99-ca019ed156bc",
+              "name": "Missing or invalid envelope ID.",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "v1",
+                    "evidence",
+                    "envelopes",
+                    ":id",
+                    "packet"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [],
+                  "variable": [
+                    {
+                      "disabled": false,
+                      "type": "any",
+                      "value": "<string>",
+                      "key": "id",
+                      "description": "(Required) Envelope ID."
+                    }
+                  ]
+                },
+                "header": [
+                  {
+                    "description": {
+                      "content": "Added as a part of security scheme: bearer",
+                      "type": "text/plain"
+                    },
+                    "key": "Authorization",
+                    "value": "Bearer <token>"
+                  },
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  }
+                ],
+                "method": "GET",
+                "body": {}
+              },
+              "status": "Bad Request",
+              "code": 400,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"error\": \"string\"\n}",
+              "cookie": [],
+              "_postman_previewlanguage": "json"
+            },
+            {
+              "id": "652818ab-8b88-467e-8a3d-c615045a40ee",
+              "name": "Unauthenticated.",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "v1",
+                    "evidence",
+                    "envelopes",
+                    ":id",
+                    "packet"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [],
+                  "variable": [
+                    {
+                      "disabled": false,
+                      "type": "any",
+                      "value": "<string>",
+                      "key": "id",
+                      "description": "(Required) Envelope ID."
+                    }
+                  ]
+                },
+                "header": [
+                  {
+                    "description": {
+                      "content": "Added as a part of security scheme: bearer",
+                      "type": "text/plain"
+                    },
+                    "key": "Authorization",
+                    "value": "Bearer <token>"
+                  },
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  }
+                ],
+                "method": "GET",
+                "body": {}
+              },
+              "status": "Unauthorized",
+              "code": 401,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"error\": \"string\"\n}",
+              "cookie": [],
+              "_postman_previewlanguage": "json"
+            },
+            {
+              "id": "8193f2b7-ff6d-4fe2-931d-57f04d46f2af",
+              "name": "Insufficient role (requires platform.viewer or above).",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "v1",
+                    "evidence",
+                    "envelopes",
+                    ":id",
+                    "packet"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [],
+                  "variable": [
+                    {
+                      "disabled": false,
+                      "type": "any",
+                      "value": "<string>",
+                      "key": "id",
+                      "description": "(Required) Envelope ID."
+                    }
+                  ]
+                },
+                "header": [
+                  {
+                    "description": {
+                      "content": "Added as a part of security scheme: bearer",
+                      "type": "text/plain"
+                    },
+                    "key": "Authorization",
+                    "value": "Bearer <token>"
+                  },
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  }
+                ],
+                "method": "GET",
+                "body": {}
+              },
+              "status": "Forbidden",
+              "code": 403,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"error\": \"string\"\n}",
+              "cookie": [],
+              "_postman_previewlanguage": "json"
+            },
+            {
+              "id": "8f1d11e3-749e-443d-a2da-b4290e6b9bb6",
+              "name": "Envelope not found.",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "v1",
+                    "evidence",
+                    "envelopes",
+                    ":id",
+                    "packet"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [],
+                  "variable": [
+                    {
+                      "disabled": false,
+                      "type": "any",
+                      "value": "<string>",
+                      "key": "id",
+                      "description": "(Required) Envelope ID."
+                    }
+                  ]
+                },
+                "header": [
+                  {
+                    "description": {
+                      "content": "Added as a part of security scheme: bearer",
+                      "type": "text/plain"
+                    },
+                    "key": "Authorization",
+                    "value": "Bearer <token>"
+                  },
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  }
+                ],
+                "method": "GET",
+                "body": {}
+              },
+              "status": "Not Found",
+              "code": 404,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"error\": \"string\"\n}",
+              "cookie": [],
+              "_postman_previewlanguage": "json"
+            },
+            {
+              "id": "f5d57f54-c33a-4743-bebd-1dc5b826ec97",
+              "name": "Repository or verification read failure prevented packet composition.",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "v1",
+                    "evidence",
+                    "envelopes",
+                    ":id",
+                    "packet"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [],
+                  "variable": [
+                    {
+                      "disabled": false,
+                      "type": "any",
+                      "value": "<string>",
+                      "key": "id",
+                      "description": "(Required) Envelope ID."
+                    }
+                  ]
+                },
+                "header": [
+                  {
+                    "description": {
+                      "content": "Added as a part of security scheme: bearer",
+                      "type": "text/plain"
+                    },
+                    "key": "Authorization",
+                    "value": "Bearer <token>"
+                  },
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  }
+                ],
+                "method": "GET",
+                "body": {}
+              },
+              "status": "Internal Server Error",
+              "code": 500,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"error\": \"string\"\n}",
+              "cookie": [],
+              "_postman_previewlanguage": "json"
+            },
+            {
+              "id": "d5a869ad-e550-4660-9c0a-28a74aaaef93",
+              "name": "Evidence read service is not configured on this deployment.",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "v1",
+                    "evidence",
+                    "envelopes",
+                    ":id",
+                    "packet"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [],
+                  "variable": [
+                    {
+                      "disabled": false,
+                      "type": "any",
+                      "value": "<string>",
+                      "key": "id",
+                      "description": "(Required) Envelope ID."
+                    }
+                  ]
+                },
+                "header": [
+                  {
+                    "description": {
+                      "content": "Added as a part of security scheme: bearer",
+                      "type": "text/plain"
+                    },
+                    "key": "Authorization",
+                    "value": "Bearer <token>"
+                  },
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  }
+                ],
+                "method": "GET",
+                "body": {}
+              },
+              "status": "Not Implemented",
+              "code": 501,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"error\": \"string\"\n}",
+              "cookie": [],
+              "_postman_previewlanguage": "json"
+            }
+          ],
+          "event": [],
+          "protocolProfileBehavior": {
+            "disableBodyPruning": true
+          }
+        },
+        {
+          "id": "4bd836b0-c42f-4cf8-b5d9-948d5f9c9137",
+          "name": "Search runtime audit events across envelopes",
+          "request": {
+            "name": "Search runtime audit events across envelopes",
+            "description": {
+              "content": "Returns runtime audit events matching the supplied filter, newest-first by default. Backed by the same audit list primitive that powers /v1/coverage and applies the same hard upper bound (default page size 100, maximum 500). Cross-envelope search complements GET /v1/evidence/envelopes/{id}/audit-events (envelope-scoped chain).\n\nPayloads are returned as recorded; no redaction. This endpoint does NOT expose the submitted request payload — use GET /v1/envelopes/{id} for envelope details. payload_contains and offset / page-number pagination are intentionally not exposed; the D30j cursor parameter is the only supported pagination mechanism.\n\nPagination model (D30j): the response carries an optional next_cursor opaque token; clients pass it back verbatim as the cursor query parameter to fetch the next page. The cursor is bound to the order direction of the originating request — replaying a desc cursor against an asc query is rejected with 400. Pagination stops when next_cursor is absent from the response.\n\nRequires platform.viewer, platform.operator, or platform.admin.\n",
+              "type": "text/plain"
+            },
+            "url": {
+              "path": [
+                "v1",
+                "evidence",
+                "audit-events"
+              ],
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "query": [
+                {
+                  "disabled": false,
+                  "key": "event_type",
+                  "value": "<string>",
+                  "description": "Single audit event type. event_types wins when both are supplied."
+                },
+                {
+                  "disabled": false,
+                  "key": "event_types",
+                  "value": "<string>",
+                  "description": "Comma-separated list of audit event types. Empty tokens are rejected with 400. Whitespace around each token is trimmed. When non-empty, takes precedence over event_type.\n"
+                },
+                {
+                  "disabled": false,
+                  "key": "envelope_id",
+                  "value": "<string>",
+                  "description": "Exact-match filter on envelope_id."
+                },
+                {
+                  "disabled": false,
+                  "key": "request_source",
+                  "value": "<string>",
+                  "description": "Exact-match filter on request_source."
+                },
+                {
+                  "disabled": false,
+                  "key": "request_id",
+                  "value": "<string>",
+                  "description": "Exact-match filter on request_id."
+                },
+                {
+                  "disabled": false,
+                  "key": "since",
+                  "value": "<dateTime>",
+                  "description": "RFC3339 timestamp; inclusive lower bound on event occurred_at."
+                },
+                {
+                  "disabled": false,
+                  "key": "until",
+                  "value": "<dateTime>",
+                  "description": "RFC3339 timestamp; exclusive upper bound on event occurred_at. Must not be earlier than since."
+                },
+                {
+                  "disabled": false,
+                  "key": "limit",
+                  "value": "<integer>",
+                  "description": "Positive integer in 1..500. Empty applies the audit-list default page size (100). Oversize values are rejected with 400."
+                },
+                {
+                  "disabled": false,
+                  "key": "order",
+                  "value": "<string>",
+                  "description": "Result ordering by occurred_at. Defaults to desc (newest first)."
+                },
+                {
+                  "disabled": false,
+                  "key": "cursor",
+                  "value": "<string>",
+                  "description": "Opaque pagination token from a prior response's next_cursor (D30j). Pass verbatim — clients must not decode or modify the token. The cursor is bound to the order direction of the originating request; replaying a desc cursor against an asc query is rejected with 400. A malformed token is rejected with 400.\n"
+                }
+              ],
+              "variable": []
+            },
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              }
+            ],
+            "method": "GET",
+            "auth": null
+          },
+          "response": [
+            {
+              "id": "2beed2c2-4402-457d-90dc-d65b83b352da",
+              "name": "Audit events matching the filter.",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "v1",
+                    "evidence",
+                    "audit-events"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [
+                    {
+                      "key": "event_type",
+                      "value": "<string>"
+                    },
+                    {
+                      "key": "event_types",
+                      "value": "<string>"
+                    },
+                    {
+                      "key": "envelope_id",
+                      "value": "<string>"
+                    },
+                    {
+                      "key": "request_source",
+                      "value": "<string>"
+                    },
+                    {
+                      "key": "request_id",
+                      "value": "<string>"
+                    },
+                    {
+                      "key": "since",
+                      "value": "<dateTime>"
+                    },
+                    {
+                      "key": "until",
+                      "value": "<dateTime>"
+                    },
+                    {
+                      "key": "limit",
+                      "value": "<integer>"
+                    },
+                    {
+                      "key": "order",
+                      "value": "<string>"
+                    },
+                    {
+                      "key": "cursor",
+                      "value": "<string>"
+                    }
+                  ],
+                  "variable": []
+                },
+                "header": [
+                  {
+                    "description": {
+                      "content": "Added as a part of security scheme: bearer",
+                      "type": "text/plain"
+                    },
+                    "key": "Authorization",
+                    "value": "Bearer <token>"
+                  },
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  }
+                ],
+                "method": "GET",
+                "body": {}
+              },
+              "status": "OK",
+              "code": 200,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"items\": [\n    {\n      \"id\": \"string\",\n      \"envelope_id\": \"string\",\n      \"request_source\": \"string\",\n      \"request_id\": \"string\",\n      \"sequence_no\": 7884,\n      \"event_type\": \"string\",\n      \"performer_type\": \"string\",\n      \"performer_id\": \"string\",\n      \"payload\": {\n        \"key_0\": 5751.343797189621,\n        \"key_1\": 5849.161151165768\n      },\n      \"occurred_at\": \"1975-07-14T10:23:05.927Z\",\n      \"hash\": \"string\",\n      \"prev_hash\": \"string\"\n    },\n    {\n      \"id\": \"string\",\n      \"envelope_id\": \"string\",\n      \"request_source\": \"string\",\n      \"request_id\": \"string\",\n      \"sequence_no\": 2440,\n      \"event_type\": \"string\",\n      \"performer_type\": \"string\",\n      \"performer_id\": \"string\",\n      \"payload\": {\n        \"key_0\": 7451,\n        \"key_1\": 1012,\n        \"key_2\": \"string\"\n      },\n      \"occurred_at\": \"2004-08-30T20:02:52.797Z\",\n      \"hash\": \"string\",\n      \"prev_hash\": \"string\"\n    }\n  ],\n  \"count\": 5184,\n  \"next_cursor\": \"string\"\n}",
+              "cookie": [],
+              "_postman_previewlanguage": "json"
+            },
+            {
+              "id": "e8db3736-5c50-4fa4-be42-e5a940f5934d",
+              "name": "Malformed query parameter (e.g. non-numeric limit, oversize limit, unparseable since/until, until earlier than since, empty event_types token, unknown order value, malformed or order-mismatched cursor).",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "v1",
+                    "evidence",
+                    "audit-events"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [
+                    {
+                      "key": "event_type",
+                      "value": "<string>"
+                    },
+                    {
+                      "key": "event_types",
+                      "value": "<string>"
+                    },
+                    {
+                      "key": "envelope_id",
+                      "value": "<string>"
+                    },
+                    {
+                      "key": "request_source",
+                      "value": "<string>"
+                    },
+                    {
+                      "key": "request_id",
+                      "value": "<string>"
+                    },
+                    {
+                      "key": "since",
+                      "value": "<dateTime>"
+                    },
+                    {
+                      "key": "until",
+                      "value": "<dateTime>"
+                    },
+                    {
+                      "key": "limit",
+                      "value": "<integer>"
+                    },
+                    {
+                      "key": "order",
+                      "value": "<string>"
+                    },
+                    {
+                      "key": "cursor",
+                      "value": "<string>"
+                    }
+                  ],
+                  "variable": []
+                },
+                "header": [
+                  {
+                    "description": {
+                      "content": "Added as a part of security scheme: bearer",
+                      "type": "text/plain"
+                    },
+                    "key": "Authorization",
+                    "value": "Bearer <token>"
+                  },
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  }
+                ],
+                "method": "GET",
+                "body": {}
+              },
+              "status": "Bad Request",
+              "code": 400,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"error\": \"string\"\n}",
+              "cookie": [],
+              "_postman_previewlanguage": "json"
+            },
+            {
+              "id": "f323a2ab-6af5-478e-9897-7255a8a3e904",
+              "name": "Unauthenticated.",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "v1",
+                    "evidence",
+                    "audit-events"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [
+                    {
+                      "key": "event_type",
+                      "value": "<string>"
+                    },
+                    {
+                      "key": "event_types",
+                      "value": "<string>"
+                    },
+                    {
+                      "key": "envelope_id",
+                      "value": "<string>"
+                    },
+                    {
+                      "key": "request_source",
+                      "value": "<string>"
+                    },
+                    {
+                      "key": "request_id",
+                      "value": "<string>"
+                    },
+                    {
+                      "key": "since",
+                      "value": "<dateTime>"
+                    },
+                    {
+                      "key": "until",
+                      "value": "<dateTime>"
+                    },
+                    {
+                      "key": "limit",
+                      "value": "<integer>"
+                    },
+                    {
+                      "key": "order",
+                      "value": "<string>"
+                    },
+                    {
+                      "key": "cursor",
+                      "value": "<string>"
+                    }
+                  ],
+                  "variable": []
+                },
+                "header": [
+                  {
+                    "description": {
+                      "content": "Added as a part of security scheme: bearer",
+                      "type": "text/plain"
+                    },
+                    "key": "Authorization",
+                    "value": "Bearer <token>"
+                  },
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  }
+                ],
+                "method": "GET",
+                "body": {}
+              },
+              "status": "Unauthorized",
+              "code": 401,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"error\": \"string\"\n}",
+              "cookie": [],
+              "_postman_previewlanguage": "json"
+            },
+            {
+              "id": "6eddbefc-19c6-4d6d-9ff8-9cc8d10eb08f",
+              "name": "Insufficient role (requires platform.viewer or above).",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "v1",
+                    "evidence",
+                    "audit-events"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [
+                    {
+                      "key": "event_type",
+                      "value": "<string>"
+                    },
+                    {
+                      "key": "event_types",
+                      "value": "<string>"
+                    },
+                    {
+                      "key": "envelope_id",
+                      "value": "<string>"
+                    },
+                    {
+                      "key": "request_source",
+                      "value": "<string>"
+                    },
+                    {
+                      "key": "request_id",
+                      "value": "<string>"
+                    },
+                    {
+                      "key": "since",
+                      "value": "<dateTime>"
+                    },
+                    {
+                      "key": "until",
+                      "value": "<dateTime>"
+                    },
+                    {
+                      "key": "limit",
+                      "value": "<integer>"
+                    },
+                    {
+                      "key": "order",
+                      "value": "<string>"
+                    },
+                    {
+                      "key": "cursor",
+                      "value": "<string>"
+                    }
+                  ],
+                  "variable": []
+                },
+                "header": [
+                  {
+                    "description": {
+                      "content": "Added as a part of security scheme: bearer",
+                      "type": "text/plain"
+                    },
+                    "key": "Authorization",
+                    "value": "Bearer <token>"
+                  },
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  }
+                ],
+                "method": "GET",
+                "body": {}
+              },
+              "status": "Forbidden",
+              "code": 403,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"error\": \"string\"\n}",
+              "cookie": [],
+              "_postman_previewlanguage": "json"
+            },
+            {
+              "id": "8c834ff2-a0b7-4c96-8f8c-4d7aade00bdf",
+              "name": "Repository error while reading audit events.",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "v1",
+                    "evidence",
+                    "audit-events"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [
+                    {
+                      "key": "event_type",
+                      "value": "<string>"
+                    },
+                    {
+                      "key": "event_types",
+                      "value": "<string>"
+                    },
+                    {
+                      "key": "envelope_id",
+                      "value": "<string>"
+                    },
+                    {
+                      "key": "request_source",
+                      "value": "<string>"
+                    },
+                    {
+                      "key": "request_id",
+                      "value": "<string>"
+                    },
+                    {
+                      "key": "since",
+                      "value": "<dateTime>"
+                    },
+                    {
+                      "key": "until",
+                      "value": "<dateTime>"
+                    },
+                    {
+                      "key": "limit",
+                      "value": "<integer>"
+                    },
+                    {
+                      "key": "order",
+                      "value": "<string>"
+                    },
+                    {
+                      "key": "cursor",
+                      "value": "<string>"
+                    }
+                  ],
+                  "variable": []
+                },
+                "header": [
+                  {
+                    "description": {
+                      "content": "Added as a part of security scheme: bearer",
+                      "type": "text/plain"
+                    },
+                    "key": "Authorization",
+                    "value": "Bearer <token>"
+                  },
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  }
+                ],
+                "method": "GET",
+                "body": {}
+              },
+              "status": "Internal Server Error",
+              "code": 500,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"error\": \"string\"\n}",
+              "cookie": [],
+              "_postman_previewlanguage": "json"
+            },
+            {
+              "id": "067901a1-70ae-4002-b91a-0b14453b9717",
+              "name": "Evidence read service is not configured on this deployment.",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "v1",
+                    "evidence",
+                    "audit-events"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [
+                    {
+                      "key": "event_type",
+                      "value": "<string>"
+                    },
+                    {
+                      "key": "event_types",
+                      "value": "<string>"
+                    },
+                    {
+                      "key": "envelope_id",
+                      "value": "<string>"
+                    },
+                    {
+                      "key": "request_source",
+                      "value": "<string>"
+                    },
+                    {
+                      "key": "request_id",
+                      "value": "<string>"
+                    },
+                    {
+                      "key": "since",
+                      "value": "<dateTime>"
+                    },
+                    {
+                      "key": "until",
+                      "value": "<dateTime>"
+                    },
+                    {
+                      "key": "limit",
+                      "value": "<integer>"
+                    },
+                    {
+                      "key": "order",
+                      "value": "<string>"
+                    },
+                    {
+                      "key": "cursor",
+                      "value": "<string>"
+                    }
+                  ],
+                  "variable": []
+                },
+                "header": [
+                  {
+                    "description": {
+                      "content": "Added as a part of security scheme: bearer",
+                      "type": "text/plain"
+                    },
+                    "key": "Authorization",
+                    "value": "Bearer <token>"
+                  },
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  }
+                ],
+                "method": "GET",
+                "body": {}
+              },
+              "status": "Not Implemented",
+              "code": 501,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"error\": \"string\"\n}",
+              "cookie": [],
+              "_postman_previewlanguage": "json"
+            }
+          ],
+          "event": [],
+          "protocolProfileBehavior": {
+            "disableBodyPruning": true
+          }
+        }
+      ],
+      "event": []
+    }
+  ],
+  "event": [],
+  "variable": [
+    {
+      "type": "string",
+      "value": "http://localhost:8080",
+      "key": "baseUrl"
+    }
+  ],
+  "auth": {
+    "type": "bearer",
+    "bearer": [
+      {
+        "key": "token",
+        "value": "{{bearerToken}}"
+      }
+    ]
+  },
+  "info": {
+    "_postman_id": "4a6d2108-8874-483a-8747-735831a4f3c9",
+    "name": "MIDAS Agents Evidence API",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+    "description": {
+      "content": "Authority governance engine for autonomous decisions. Every evaluation produces exactly one outcome and one tamper-evident audit envelope.\n",
+      "type": "text/plain"
+    }
+  }
+}

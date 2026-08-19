@@ -1,0 +1,73 @@
+{
+  "opencollection": "1.0.0",
+  "info": {
+    "name": "MIDAS Agents Businessservices API",
+    "version": "1.1.0-rc.1"
+  },
+  "request": {
+    "auth": {
+      "type": "bearer",
+      "token": "{{bearerToken}}"
+    }
+  },
+  "items": [
+    {
+      "info": {
+        "name": "Businessservices",
+        "type": "folder"
+      },
+      "items": [
+        {
+          "info": {
+            "name": "List all business services",
+            "type": "http"
+          },
+          "http": {
+            "method": "GET",
+            "url": "http://localhost:8080/v1/businessservices"
+          },
+          "docs": "Returns all registered business services wrapped in a `business_services` envelope. No pagination — returns the full list. Requires platform.viewer or above.\n"
+        },
+        {
+          "info": {
+            "name": "Get a business service by ID",
+            "type": "http"
+          },
+          "http": {
+            "method": "GET",
+            "url": "http://localhost:8080/v1/businessservices/:id",
+            "params": [
+              {
+                "name": "id",
+                "value": "",
+                "type": "path",
+                "description": "Unique business service identifier."
+              }
+            ]
+          },
+          "docs": "Returns a single business service by its unique identifier. Requires platform.viewer or above.\n"
+        },
+        {
+          "info": {
+            "name": "List business-service relationships",
+            "type": "http"
+          },
+          "http": {
+            "method": "GET",
+            "url": "http://localhost:8080/v1/businessservices/:id/relationships",
+            "params": [
+              {
+                "name": "id",
+                "value": "",
+                "type": "path",
+                "description": "Business service identifier."
+              }
+            ]
+          },
+          "docs": "Returns the directed BusinessServiceRelationship rows for the queried service, partitioned by direction. `outgoing` rows are those where the queried service is the source; `incoming` rows are those where it is the target. Both arrays are always present (never null) so callers can iterate without nil checks. Requires platform.viewer or above. See Epic 1, PR 1 (Service-Centric AI Governance Map).\n"
+        }
+      ]
+    }
+  ],
+  "bundled": true
+}

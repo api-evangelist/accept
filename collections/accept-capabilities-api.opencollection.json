@@ -1,0 +1,111 @@
+{
+  "opencollection": "1.0.0",
+  "info": {
+    "name": "MIDAS Agents Capabilities API",
+    "version": "1.1.0-rc.1"
+  },
+  "request": {
+    "auth": {
+      "type": "bearer",
+      "token": "{{bearerToken}}"
+    }
+  },
+  "items": [
+    {
+      "info": {
+        "name": "Capabilities",
+        "type": "folder"
+      },
+      "items": [
+        {
+          "info": {
+            "name": "List all capabilities",
+            "type": "http"
+          },
+          "http": {
+            "method": "GET",
+            "url": "http://localhost:8080/v1/capabilities"
+          },
+          "docs": "Returns all registered capabilities. No pagination — returns the full list. Requires platform.viewer or above.\n"
+        },
+        {
+          "info": {
+            "name": "Get a capability by ID",
+            "type": "http"
+          },
+          "http": {
+            "method": "GET",
+            "url": "http://localhost:8080/v1/capabilities/:id",
+            "params": [
+              {
+                "name": "id",
+                "value": "",
+                "type": "path",
+                "description": "Unique capability identifier."
+              }
+            ]
+          },
+          "docs": "Returns a single capability by its unique identifier. Requires platform.viewer or above.\n"
+        },
+        {
+          "info": {
+            "name": "List direct child capabilities of a parent capability",
+            "type": "http"
+          },
+          "http": {
+            "method": "GET",
+            "url": "http://localhost:8080/v1/capabilities/:id/children",
+            "params": [
+              {
+                "name": "id",
+                "value": "",
+                "type": "path",
+                "description": "Parent capability identifier."
+              }
+            ]
+          },
+          "docs": "Returns the direct children of the parent capability — i.e. the capabilities whose `parent_capability_id` equals the path id. Recursive descendants are NOT returned; a caller that wants the full subtree walks the hierarchy itself. Requires platform.viewer or above (Phase 3A).\n"
+        },
+        {
+          "info": {
+            "name": "List Business Services that use a capability",
+            "type": "http"
+          },
+          "http": {
+            "method": "GET",
+            "url": "http://localhost:8080/v1/capabilities/:id/businessservices",
+            "params": [
+              {
+                "name": "id",
+                "value": "",
+                "type": "path",
+                "description": "Capability identifier."
+              }
+            ]
+          },
+          "docs": "Returns the Business Services linked to the capability through the canonical BusinessServiceCapability M:N junction. Direct links only — Business Services are NOT inferred through Processes, Surfaces, or AI bindings (Phase 3B). Requires platform.viewer or above.\n"
+        },
+        {
+          "info": {
+            "name": "List AI System bindings scoped directly to a capability",
+            "type": "http"
+          },
+          "http": {
+            "method": "GET",
+            "url": "http://localhost:8080/v1/capabilities/:id/ai-bindings",
+            "params": [
+              {
+                "name": "id",
+                "value": "",
+                "type": "path",
+                "description": "Capability identifier."
+              }
+            ]
+          },
+          "docs": "Returns the AI System bindings whose `capability_id` matches the path id. Direct Capability scope only — bindings that reference the capability indirectly (e.g. via a Process whose BS is BSC-linked to the capability) are NOT inferred. Each binding renders with the same shape as the items in GET /v1/aisystems/{id}/bindings (Phase 3C). Requires platform.viewer or above.\n"
+        }
+      ]
+    }
+  ],
+  "bundled": true
+}

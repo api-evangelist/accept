@@ -1,0 +1,83 @@
+{
+  "opencollection": "1.0.0",
+  "info": {
+    "name": "MIDAS Agents Fail Mode Policies API",
+    "version": "1.1.0-rc.1"
+  },
+  "request": {
+    "auth": {
+      "type": "bearer",
+      "token": "{{bearerToken}}"
+    }
+  },
+  "items": [
+    {
+      "info": {
+        "name": "Fail Mode Policies",
+        "type": "folder"
+      },
+      "items": [
+        {
+          "info": {
+            "name": "Get the latest version of a FailModePolicy by ID",
+            "type": "http"
+          },
+          "http": {
+            "method": "GET",
+            "url": "http://localhost:8080/v1/fail_mode_policies/:id",
+            "params": [
+              {
+                "name": "id",
+                "value": "",
+                "type": "path"
+              }
+            ]
+          },
+          "docs": "Returns the highest-numbered FailModePolicy version for the given id regardless of lifecycle status. Read-only; the runtime resolver remains evidence-only and rule contents do not influence outcome computation.\n"
+        },
+        {
+          "info": {
+            "name": "List all versions of a FailModePolicy",
+            "type": "http"
+          },
+          "http": {
+            "method": "GET",
+            "url": "http://localhost:8080/v1/fail_mode_policies/:id/versions",
+            "params": [
+              {
+                "name": "id",
+                "value": "",
+                "type": "path"
+              }
+            ]
+          },
+          "docs": "Returns every persisted revision of the FailModePolicy id in descending version order. 404 when the id is unknown.\n"
+        },
+        {
+          "info": {
+            "name": "Get a specific FailModePolicy revision",
+            "type": "http"
+          },
+          "http": {
+            "method": "GET",
+            "url": "http://localhost:8080/v1/fail_mode_policies/:id/versions/:version",
+            "params": [
+              {
+                "name": "id",
+                "value": "",
+                "type": "path"
+              },
+              {
+                "name": "version",
+                "value": "",
+                "type": "path"
+              }
+            ]
+          },
+          "docs": "Returns the exact (id, version) revision. 404 when the pair does not exist. The runtime resolver remains evidence-only.\n"
+        }
+      ]
+    }
+  ],
+  "bundled": true
+}

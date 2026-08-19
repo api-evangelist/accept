@@ -1,0 +1,97 @@
+{
+  "opencollection": "1.0.0",
+  "info": {
+    "name": "MIDAS Agents Profiles API",
+    "version": "1.1.0-rc.1"
+  },
+  "request": {
+    "auth": {
+      "type": "bearer",
+      "token": "{{bearerToken}}"
+    }
+  },
+  "items": [
+    {
+      "info": {
+        "name": "Profiles",
+        "type": "folder"
+      },
+      "items": [
+        {
+          "info": {
+            "name": "List authority profiles by surface",
+            "type": "http"
+          },
+          "http": {
+            "method": "GET",
+            "url": "http://localhost:8080/v1/profiles",
+            "params": [
+              {
+                "name": "surface_id",
+                "value": "",
+                "type": "query",
+                "description": "Surface ID to filter profiles by. Required."
+              }
+            ]
+          },
+          "docs": "Returns all profiles attached to the given surface. surface_id is required."
+        },
+        {
+          "info": {
+            "name": "Get an authority profile",
+            "type": "http"
+          },
+          "http": {
+            "method": "GET",
+            "url": "http://localhost:8080/v1/profiles/:id",
+            "params": [
+              {
+                "name": "id",
+                "value": "",
+                "type": "path"
+              }
+            ]
+          },
+          "docs": "Returns the latest active version of a profile. Append /versions to list all versions.\n"
+        },
+        {
+          "info": {
+            "name": "List all versions of an authority profile",
+            "type": "http"
+          },
+          "http": {
+            "method": "GET",
+            "url": "http://localhost:8080/v1/profiles/:id/versions",
+            "params": [
+              {
+                "name": "id",
+                "value": "",
+                "type": "path"
+              }
+            ]
+          },
+          "docs": "Returns all versions of a profile, ordered by version descending (latest first). Returns 404 when no profile with that logical ID exists. Requires platform.viewer or above.\n"
+        },
+        {
+          "info": {
+            "name": "Get recovery analysis for an authority profile",
+            "type": "http"
+          },
+          "http": {
+            "method": "GET",
+            "url": "http://localhost:8080/v1/profiles/:id/recovery",
+            "params": [
+              {
+                "name": "id",
+                "value": "",
+                "type": "path"
+              }
+            ]
+          },
+          "docs": "Returns a read-only recovery analysis: version history state, active/latest version distinction, active grant counts, and deterministic recommended next actions. Requires platform.viewer or above.\n"
+        }
+      ]
+    }
+  ],
+  "bundled": true
+}

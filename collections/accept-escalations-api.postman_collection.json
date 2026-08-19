@@ -1,0 +1,209 @@
+{
+  "item": [
+    {
+      "id": "bc7903e0-75b0-496f-980a-7bce52a4f650",
+      "name": "Escalations",
+      "description": {
+        "content": "",
+        "type": "text/plain"
+      },
+      "item": [
+        {
+          "id": "4b226945-f2fa-4521-ae27-8349c9b7ecbf",
+          "name": "List pending escalations",
+          "request": {
+            "name": "List pending escalations",
+            "description": {
+              "content": "Returns all envelopes in the awaiting_review state — the operator's pending escalation queue. Use POST /v1/reviews to resolve them.\n",
+              "type": "text/plain"
+            },
+            "url": {
+              "path": [
+                "v1",
+                "escalations"
+              ],
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "query": [],
+              "variable": []
+            },
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              }
+            ],
+            "method": "GET",
+            "auth": null
+          },
+          "response": [
+            {
+              "id": "1e6208dc-aeab-442a-8886-f0e9f156dc48",
+              "name": "List of escalated envelopes awaiting review",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "v1",
+                    "escalations"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [],
+                  "variable": []
+                },
+                "header": [
+                  {
+                    "description": {
+                      "content": "Added as a part of security scheme: bearer",
+                      "type": "text/plain"
+                    },
+                    "key": "Authorization",
+                    "value": "Bearer <token>"
+                  },
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  }
+                ],
+                "method": "GET",
+                "body": {}
+              },
+              "status": "OK",
+              "code": 200,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "[\n  {\n    \"id\": \"string\",\n    \"state\": \"awaiting_review\",\n    \"surface_id\": \"string\",\n    \"agent_id\": \"string\",\n    \"request_id\": \"string\",\n    \"request_source\": \"string\",\n    \"confidence\": 9580.703881573172,\n    \"outcome\": \"string\",\n    \"reason_code\": \"string\",\n    \"explanation\": \"string\",\n    \"profile_id\": \"string\",\n    \"grant_id\": \"string\",\n    \"surface_version\": 4874,\n    \"first_event_hash\": \"string\",\n    \"final_event_hash\": \"string\",\n    \"resolved\": {\n      \"structure\": {\n        \"process\": {\n          \"id\": \"string\",\n          \"origin\": \"string\",\n          \"managed\": false,\n          \"replaces\": \"string\",\n          \"status\": \"deprecated\"\n        },\n        \"business_service\": {\n          \"id\": \"string\",\n          \"origin\": \"string\",\n          \"managed\": true,\n          \"replaces\": \"string\",\n          \"status\": \"deprecated\"\n        },\n        \"enabling_capabilities\": [\n          {\n            \"id\": \"string\",\n            \"name\": \"string\",\n            \"origin\": \"string\",\n            \"managed\": false,\n            \"replaces\": \"string\",\n            \"status\": \"deprecated\"\n          },\n          {\n            \"id\": \"string\",\n            \"name\": \"string\",\n            \"origin\": \"string\",\n            \"managed\": true,\n            \"replaces\": \"string\",\n            \"status\": \"active\"\n          }\n        ]\n      }\n    },\n    \"created_at\": \"1964-09-03T23:17:10.340Z\",\n    \"closed_at\": \"1966-02-08T21:49:38.897Z\"\n  },\n  {\n    \"id\": \"string\",\n    \"state\": \"evaluating\",\n    \"surface_id\": \"string\",\n    \"agent_id\": \"string\",\n    \"request_id\": \"string\",\n    \"request_source\": \"string\",\n    \"confidence\": 7827.3490025450255,\n    \"outcome\": \"string\",\n    \"reason_code\": \"string\",\n    \"explanation\": \"string\",\n    \"profile_id\": \"string\",\n    \"grant_id\": \"string\",\n    \"surface_version\": 6197,\n    \"first_event_hash\": \"string\",\n    \"final_event_hash\": \"string\",\n    \"resolved\": {\n      \"structure\": {\n        \"process\": {\n          \"id\": \"string\",\n          \"origin\": \"string\",\n          \"managed\": true,\n          \"replaces\": \"string\",\n          \"status\": \"active\"\n        },\n        \"business_service\": {\n          \"id\": \"string\",\n          \"origin\": \"string\",\n          \"managed\": false,\n          \"replaces\": \"string\",\n          \"status\": \"deprecated\"\n        },\n        \"enabling_capabilities\": [\n          {\n            \"id\": \"string\",\n            \"name\": \"string\",\n            \"origin\": \"string\",\n            \"managed\": false,\n            \"replaces\": \"string\",\n            \"status\": \"active\"\n          },\n          {\n            \"id\": \"string\",\n            \"name\": \"string\",\n            \"origin\": \"string\",\n            \"managed\": true,\n            \"replaces\": \"string\",\n            \"status\": \"active\"\n          }\n        ]\n      }\n    },\n    \"created_at\": \"1961-09-12T14:53:49.946Z\",\n    \"closed_at\": \"1974-09-02T05:31:50.987Z\"\n  }\n]",
+              "cookie": [],
+              "_postman_previewlanguage": "json"
+            },
+            {
+              "id": "e2e961d8-749e-40b8-931a-eab56f9e6c47",
+              "name": "Unauthenticated",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "v1",
+                    "escalations"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [],
+                  "variable": []
+                },
+                "header": [
+                  {
+                    "description": {
+                      "content": "Added as a part of security scheme: bearer",
+                      "type": "text/plain"
+                    },
+                    "key": "Authorization",
+                    "value": "Bearer <token>"
+                  },
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  }
+                ],
+                "method": "GET",
+                "body": {}
+              },
+              "status": "Unauthorized",
+              "code": 401,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"error\": \"string\"\n}",
+              "cookie": [],
+              "_postman_previewlanguage": "json"
+            },
+            {
+              "id": "10a497d3-3d80-48bb-9c72-40ba018a94d9",
+              "name": "Insufficient role (requires platform.viewer or above)",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "v1",
+                    "escalations"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [],
+                  "variable": []
+                },
+                "header": [
+                  {
+                    "description": {
+                      "content": "Added as a part of security scheme: bearer",
+                      "type": "text/plain"
+                    },
+                    "key": "Authorization",
+                    "value": "Bearer <token>"
+                  },
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  }
+                ],
+                "method": "GET",
+                "body": {}
+              },
+              "status": "Forbidden",
+              "code": 403,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"error\": \"string\"\n}",
+              "cookie": [],
+              "_postman_previewlanguage": "json"
+            }
+          ],
+          "event": [],
+          "protocolProfileBehavior": {
+            "disableBodyPruning": true
+          }
+        }
+      ],
+      "event": []
+    }
+  ],
+  "event": [],
+  "variable": [
+    {
+      "type": "string",
+      "value": "http://localhost:8080",
+      "key": "baseUrl"
+    }
+  ],
+  "auth": {
+    "type": "bearer",
+    "bearer": [
+      {
+        "key": "token",
+        "value": "{{bearerToken}}"
+      }
+    ]
+  },
+  "info": {
+    "_postman_id": "7d147c02-51b5-4492-b369-164a8f214167",
+    "name": "MIDAS Agents Escalations API",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+    "description": {
+      "content": "Authority governance engine for autonomous decisions. Every evaluation produces exactly one outcome and one tamper-evident audit envelope.\n",
+      "type": "text/plain"
+    }
+  }
+}

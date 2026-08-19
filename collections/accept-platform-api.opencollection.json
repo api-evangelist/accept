@@ -1,0 +1,73 @@
+{
+  "opencollection": "1.0.0",
+  "info": {
+    "name": "MIDAS Agents Platform API",
+    "version": "1.1.0-rc.1"
+  },
+  "request": {
+    "auth": {
+      "type": "bearer",
+      "token": "{{bearerToken}}"
+    }
+  },
+  "items": [
+    {
+      "info": {
+        "name": "Platform",
+        "type": "folder"
+      },
+      "items": [
+        {
+          "info": {
+            "name": "List platform-administrative audit events",
+            "type": "http"
+          },
+          "http": {
+            "method": "GET",
+            "url": "http://localhost:8080/v1/platform/admin-audit",
+            "params": [
+              {
+                "name": "action",
+                "value": "",
+                "type": "query",
+                "description": "Constrain results to a single action enum value."
+              },
+              {
+                "name": "outcome",
+                "value": "",
+                "type": "query",
+                "description": "Constrain results to success or failure."
+              },
+              {
+                "name": "actor_id",
+                "value": "",
+                "type": "query",
+                "description": "Constrain results to records emitted for a specific actor."
+              },
+              {
+                "name": "target_type",
+                "value": "",
+                "type": "query",
+                "description": "Constrain results to a specific target type."
+              },
+              {
+                "name": "target_id",
+                "value": "",
+                "type": "query",
+                "description": "Constrain results to a specific target ID."
+              },
+              {
+                "name": "limit",
+                "value": "",
+                "type": "query",
+                "description": "Cap the number of records returned. Values outside [1, 500] yield 400."
+              }
+            ]
+          },
+          "docs": "Returns the append-only platform-administrative audit trail covering apply invocations, password changes, and bootstrap admin creation. Records are returned in descending occurred_at order (newest first). Requires platform.admin role — more restrictive than /v1/controlplane/audit because the trail includes password and bootstrap events. See Issue #41.\n"
+        }
+      ]
+    }
+  ],
+  "bundled": true
+}

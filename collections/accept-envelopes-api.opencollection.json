@@ -1,0 +1,61 @@
+{
+  "opencollection": "1.0.0",
+  "info": {
+    "name": "MIDAS Agents Envelopes API",
+    "version": "1.1.0-rc.1"
+  },
+  "request": {
+    "auth": {
+      "type": "bearer",
+      "token": "{{bearerToken}}"
+    }
+  },
+  "items": [
+    {
+      "info": {
+        "name": "Envelopes",
+        "type": "folder"
+      },
+      "items": [
+        {
+          "info": {
+            "name": "List governance envelopes",
+            "type": "http"
+          },
+          "http": {
+            "method": "GET",
+            "url": "http://localhost:8080/v1/envelopes",
+            "params": [
+              {
+                "name": "state",
+                "value": "",
+                "type": "query",
+                "description": "Filter by envelope lifecycle state."
+              }
+            ]
+          },
+          "docs": "Returns all envelopes, optionally filtered by lifecycle state."
+        },
+        {
+          "info": {
+            "name": "Get a governance envelope by ID",
+            "type": "http"
+          },
+          "http": {
+            "method": "GET",
+            "url": "http://localhost:8080/v1/envelopes/:id",
+            "params": [
+              {
+                "name": "id",
+                "value": "",
+                "type": "path"
+              }
+            ]
+          },
+          "docs": "Get a governance envelope by ID"
+        }
+      ]
+    }
+  ],
+  "bundled": true
+}

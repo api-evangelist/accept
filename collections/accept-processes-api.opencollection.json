@@ -1,0 +1,73 @@
+{
+  "opencollection": "1.0.0",
+  "info": {
+    "name": "MIDAS Agents Processes API",
+    "version": "1.1.0-rc.1"
+  },
+  "request": {
+    "auth": {
+      "type": "bearer",
+      "token": "{{bearerToken}}"
+    }
+  },
+  "items": [
+    {
+      "info": {
+        "name": "Processes",
+        "type": "folder"
+      },
+      "items": [
+        {
+          "info": {
+            "name": "List all processes",
+            "type": "http"
+          },
+          "http": {
+            "method": "GET",
+            "url": "http://localhost:8080/v1/processes"
+          },
+          "docs": "Returns all registered processes. No pagination — returns the full list. Requires platform.viewer or above.\n"
+        },
+        {
+          "info": {
+            "name": "Get a process by ID",
+            "type": "http"
+          },
+          "http": {
+            "method": "GET",
+            "url": "http://localhost:8080/v1/processes/:id",
+            "params": [
+              {
+                "name": "id",
+                "value": "",
+                "type": "path",
+                "description": "Unique process identifier."
+              }
+            ]
+          },
+          "docs": "Returns a single process by its unique identifier. Requires platform.viewer or above.\n"
+        },
+        {
+          "info": {
+            "name": "List surfaces belonging to a process",
+            "type": "http"
+          },
+          "http": {
+            "method": "GET",
+            "url": "http://localhost:8080/v1/processes/:id/surfaces",
+            "params": [
+              {
+                "name": "id",
+                "value": "",
+                "type": "path",
+                "description": "Unique process identifier."
+              }
+            ]
+          },
+          "docs": "Returns all decision surfaces belonging to the given process. Returns 404 when the parent process does not exist. Returns an empty array when the process exists but has no surfaces. Requires platform.viewer or above.\n"
+        }
+      ]
+    }
+  ],
+  "bundled": true
+}

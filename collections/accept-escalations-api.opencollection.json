@@ -1,0 +1,35 @@
+{
+  "opencollection": "1.0.0",
+  "info": {
+    "name": "MIDAS Agents Escalations API",
+    "version": "1.1.0-rc.1"
+  },
+  "request": {
+    "auth": {
+      "type": "bearer",
+      "token": "{{bearerToken}}"
+    }
+  },
+  "items": [
+    {
+      "info": {
+        "name": "Escalations",
+        "type": "folder"
+      },
+      "items": [
+        {
+          "info": {
+            "name": "List pending escalations",
+            "type": "http"
+          },
+          "http": {
+            "method": "GET",
+            "url": "http://localhost:8080/v1/escalations"
+          },
+          "docs": "Returns all envelopes in the awaiting_review state — the operator's pending escalation queue. Use POST /v1/reviews to resolve them.\n"
+        }
+      ]
+    }
+  ],
+  "bundled": true
+}

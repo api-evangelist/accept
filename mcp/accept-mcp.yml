@@ -2,17 +2,16 @@ generated: '2026-07-18'
 method: derived
 status: candidate
 source: openapi/accept-midas-openapi-original.yml
-note: >-
-  No official/hosted MCP server is published by Accept Labs (searched docs, npm
-  @modelcontextprotocol, and the MCP registry — none found). The tools below are a CANDIDATE
-  surface derived from marquee MIDAS operations, one tool per operationId, for a future MCP
-  wrapper over the MIDAS HTTP API.
+note: No official/hosted MCP server is published by Accept Labs (searched docs, npm @modelcontextprotocol,
+  and the MCP registry — none found). The tools below are a CANDIDATE surface derived from marquee MIDAS
+  operations, one tool per operationId, for a future MCP wrapper over the MIDAS HTTP API.
 server:
   name: midas
   transport: http
 tools:
 - name: evaluate_decision
-  description: Evaluate whether an agent is within authority to perform an action; returns exactly one outcome and one audit envelope.
+  description: Evaluate whether an agent is within authority to perform an action; returns exactly one
+    outcome and one audit envelope.
   source_operation: openapi/accept-midas-openapi-original.yml#evaluate
 - name: create_review
   description: Reviewer resolution (approve/reject) of an escalated envelope.
@@ -47,3 +46,9 @@ tools:
 - name: get_context_graph
   description: Return the strategic context graph projection.
   source_operation: openapi/accept-midas-openapi-original.yml#getContextGraph
+deployment:
+  mode: none
+  verified: derived
+  tools: 12
+  checked: '2026-08-12'
+  source: catalog MCP census

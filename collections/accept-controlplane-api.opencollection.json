@@ -1,0 +1,387 @@
+{
+  "opencollection": "1.0.0",
+  "info": {
+    "name": "MIDAS Agents Controlplane API",
+    "version": "1.1.0-rc.1"
+  },
+  "request": {
+    "auth": {
+      "type": "bearer",
+      "token": "{{bearerToken}}"
+    }
+  },
+  "items": [
+    {
+      "info": {
+        "name": "Controlplane",
+        "type": "folder"
+      },
+      "items": [
+        {
+          "info": {
+            "name": "Apply a control-plane configuration bundle",
+            "type": "http"
+          },
+          "http": {
+            "method": "POST",
+            "url": "http://localhost:8080/v1/controlplane/apply"
+          },
+          "docs": "Applies a YAML bundle of surface, profile, grant, and agent documents. All resources in the bundle are validated before any are persisted. Surfaces are created in review state and must be approved separately. Requires platform.admin role.\n"
+        },
+        {
+          "info": {
+            "name": "Preview a control-plane bundle without applying it",
+            "type": "http"
+          },
+          "http": {
+            "method": "POST",
+            "url": "http://localhost:8080/v1/controlplane/plan"
+          },
+          "docs": "Validates and plans a YAML bundle, returning the projected changes without persisting anything. Useful for CI/CD dry-run workflows. Requires platform.admin role.\n"
+        },
+        {
+          "info": {
+            "name": "List control-plane audit events",
+            "type": "http"
+          },
+          "http": {
+            "method": "GET",
+            "url": "http://localhost:8080/v1/controlplane/audit"
+          },
+          "docs": "Returns the audit trail of control-plane operations (apply, approve, deprecate)."
+        },
+        {
+          "info": {
+            "name": "Approve a surface in review state",
+            "type": "http"
+          },
+          "http": {
+            "method": "POST",
+            "url": "http://localhost:8080/v1/controlplane/surfaces/:id/approve",
+            "params": [
+              {
+                "name": "id",
+                "value": "",
+                "type": "path"
+              }
+            ],
+            "body": {
+              "type": "json",
+              "data": "{}"
+            }
+          },
+          "docs": "Transitions a surface from review to active. Enforces maker-checker: the approver must not be the same principal who submitted the surface. Requires platform.admin or governance.approver role.\n"
+        },
+        {
+          "info": {
+            "name": "Deprecate an active surface",
+            "type": "http"
+          },
+          "http": {
+            "method": "POST",
+            "url": "http://localhost:8080/v1/controlplane/surfaces/:id/deprecate",
+            "params": [
+              {
+                "name": "id",
+                "value": "",
+                "type": "path"
+              }
+            ],
+            "body": {
+              "type": "json",
+              "data": "{}"
+            }
+          },
+          "docs": "Transitions a surface from active to deprecated. Deprecated surfaces remain usable for existing grants but signal pending migration. Requires platform.admin role.\n"
+        },
+        {
+          "info": {
+            "name": "Approve a profile version in review state",
+            "type": "http"
+          },
+          "http": {
+            "method": "POST",
+            "url": "http://localhost:8080/v1/controlplane/profiles/:id/approve",
+            "params": [
+              {
+                "name": "id",
+                "value": "",
+                "type": "path"
+              }
+            ],
+            "body": {
+              "type": "json",
+              "data": "{}"
+            }
+          },
+          "docs": "Transitions a specific profile version from review to active. Requires platform.admin or governance.approver role.\n"
+        },
+        {
+          "info": {
+            "name": "Approve a GovernanceExpectation version in review state",
+            "type": "http"
+          },
+          "http": {
+            "method": "POST",
+            "url": "http://localhost:8080/v1/controlplane/expectations/:id/approve",
+            "params": [
+              {
+                "name": "id",
+                "value": "",
+                "type": "path"
+              }
+            ],
+            "body": {
+              "type": "json",
+              "data": "{}"
+            }
+          },
+          "docs": "Transitions a specific GovernanceExpectation version from review to active. After approval the matcher (#53) considers the expectation when emitting GOVERNANCE_CONDITION_DETECTED runtime audit events. Requires platform.admin or governance.approver role.\n"
+        },
+        {
+          "info": {
+            "name": "Deprecate a profile version",
+            "type": "http"
+          },
+          "http": {
+            "method": "POST",
+            "url": "http://localhost:8080/v1/controlplane/profiles/:id/deprecate",
+            "params": [
+              {
+                "name": "id",
+                "value": "",
+                "type": "path"
+              }
+            ],
+            "body": {
+              "type": "json",
+              "data": "{}"
+            }
+          },
+          "docs": "Requires platform.admin role."
+        },
+        {
+          "info": {
+            "name": "Approve a FailModePolicy version in review state",
+            "type": "http"
+          },
+          "http": {
+            "method": "POST",
+            "url": "http://localhost:8080/v1/controlplane/fail_mode_policies/:id/approve",
+            "params": [
+              {
+                "name": "id",
+                "value": "",
+                "type": "path"
+              }
+            ],
+            "body": {
+              "type": "json",
+              "data": "{}"
+            }
+          },
+          "docs": "Transitions a specific FailModePolicy version from review to active. Requires platform.admin or governance.approver role (permission `fail_mode_policy:approve`). Mirrors the AuthorityProfile approval lifecycle.\n"
+        },
+        {
+          "info": {
+            "name": "Deprecate an active FailModePolicy version",
+            "type": "http"
+          },
+          "http": {
+            "method": "POST",
+            "url": "http://localhost:8080/v1/controlplane/fail_mode_policies/:id/deprecate",
+            "params": [
+              {
+                "name": "id",
+                "value": "",
+                "type": "path"
+              }
+            ],
+            "body": {
+              "type": "json",
+              "data": "{}"
+            }
+          },
+          "docs": "Transitions a specific FailModePolicy version from active to deprecated. The operator-supplied reason is captured in the control-audit record only — failmode.FailModePolicy has no DeprecationReason field on the persisted row. Requires platform.admin role (permission `fail_mode_policy:deprecate`, admin-only by deliberate maker-checker boundary).\n"
+        },
+        {
+          "info": {
+            "name": "Submit a DriftDefinition revision for review",
+            "type": "http"
+          },
+          "http": {
+            "method": "POST",
+            "url": "http://localhost:8080/v1/controlplane/drift_definitions/:id/submit",
+            "params": [
+              {
+                "name": "id",
+                "value": "",
+                "type": "path"
+              }
+            ],
+            "body": {
+              "type": "json",
+              "data": "{}"
+            }
+          },
+          "docs": "Transitions a specific DriftDefinition revision from draft to review. Requires platform.operator or platform.admin role (permission `drift_definition:submit`).\n"
+        },
+        {
+          "info": {
+            "name": "Approve a DriftDefinition revision in review state",
+            "type": "http"
+          },
+          "http": {
+            "method": "POST",
+            "url": "http://localhost:8080/v1/controlplane/drift_definitions/:id/approve",
+            "params": [
+              {
+                "name": "id",
+                "value": "",
+                "type": "path"
+              }
+            ],
+            "body": {
+              "type": "json",
+              "data": "{}"
+            }
+          },
+          "docs": "Transitions a specific DriftDefinition revision from review to active. Maker-checker is enforced at the service layer: the approver must not equal the revision's `created_by` field (case-insensitive trim). Requires governance.approver or platform.admin role (permission `drift_definition:approve`).\n"
+        },
+        {
+          "info": {
+            "name": "Reject a DriftDefinition revision back to draft",
+            "type": "http"
+          },
+          "http": {
+            "method": "POST",
+            "url": "http://localhost:8080/v1/controlplane/drift_definitions/:id/reject",
+            "params": [
+              {
+                "name": "id",
+                "value": "",
+                "type": "path"
+              }
+            ],
+            "body": {
+              "type": "json",
+              "data": "{}"
+            }
+          },
+          "docs": "Transitions a specific DriftDefinition revision from review back to draft. Approved_by and approved_at are not modified (review-state revisions have neither set). The operator-supplied reason is captured in the control-audit record only. Requires governance.approver or platform.admin role (permission `drift_definition:reject`).\n"
+        },
+        {
+          "info": {
+            "name": "Deprecate an active DriftDefinition revision",
+            "type": "http"
+          },
+          "http": {
+            "method": "POST",
+            "url": "http://localhost:8080/v1/controlplane/drift_definitions/:id/deprecate",
+            "params": [
+              {
+                "name": "id",
+                "value": "",
+                "type": "path"
+              }
+            ],
+            "body": {
+              "type": "json",
+              "data": "{}"
+            }
+          },
+          "docs": "Transitions a specific DriftDefinition revision from active to deprecated. Successor information is optional; when supplied it is persisted on the row's `successor_definition_id` and `successor_version` fields. The operator-supplied reason is captured in the control-audit record only. Requires platform.admin role (permission `drift_definition:deprecate`). Cross-version atomic deprecation (auto-deprecate prior active when activating a new revision) is intentionally NOT performed — operators must "
+        },
+        {
+          "info": {
+            "name": "Retire a DriftDefinition revision",
+            "type": "http"
+          },
+          "http": {
+            "method": "POST",
+            "url": "http://localhost:8080/v1/controlplane/drift_definitions/:id/retire",
+            "params": [
+              {
+                "name": "id",
+                "value": "",
+                "type": "path"
+              }
+            ],
+            "body": {
+              "type": "json",
+              "data": "{}"
+            }
+          },
+          "docs": "Transitions a DriftDefinition revision to retired. Allowed source states: draft, review, active, deprecated. Retired is terminal — already-retired revisions are rejected with 409. Requires platform.admin role (permission `drift_definition:retire`).\n"
+        },
+        {
+          "info": {
+            "name": "Suspend an active grant",
+            "type": "http"
+          },
+          "http": {
+            "method": "POST",
+            "url": "http://localhost:8080/v1/controlplane/grants/:id/suspend",
+            "params": [
+              {
+                "name": "id",
+                "value": "",
+                "type": "path"
+              }
+            ],
+            "body": {
+              "type": "json",
+              "data": "{}"
+            }
+          },
+          "docs": "Suspends an active authority grant, preventing the associated agent from being authorized on the linked profile. Reversible via reinstate. Requires platform.admin role.\n"
+        },
+        {
+          "info": {
+            "name": "Revoke a grant permanently",
+            "type": "http"
+          },
+          "http": {
+            "method": "POST",
+            "url": "http://localhost:8080/v1/controlplane/grants/:id/revoke",
+            "params": [
+              {
+                "name": "id",
+                "value": "",
+                "type": "path"
+              }
+            ],
+            "body": {
+              "type": "json",
+              "data": "{}"
+            }
+          },
+          "docs": "Permanently revokes an authority grant. This is irreversible. Requires platform.admin role.\n"
+        },
+        {
+          "info": {
+            "name": "Reinstate a suspended grant",
+            "type": "http"
+          },
+          "http": {
+            "method": "POST",
+            "url": "http://localhost:8080/v1/controlplane/grants/:id/reinstate",
+            "params": [
+              {
+                "name": "id",
+                "value": "",
+                "type": "path"
+              }
+            ],
+            "body": {
+              "type": "json",
+              "data": "{}"
+            }
+          },
+          "docs": "Reactivates a suspended grant, restoring the agent's authority. Only suspended grants can be reinstated; revoked grants cannot. Requires platform.admin role.\n"
+        }
+      ]
+    }
+  ],
+  "bundled": true
+}

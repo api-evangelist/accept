@@ -1,0 +1,67 @@
+{
+  "opencollection": "1.0.0",
+  "info": {
+    "name": "MIDAS Agents Grants API",
+    "version": "1.1.0-rc.1"
+  },
+  "request": {
+    "auth": {
+      "type": "bearer",
+      "token": "{{bearerToken}}"
+    }
+  },
+  "items": [
+    {
+      "info": {
+        "name": "Grants",
+        "type": "folder"
+      },
+      "items": [
+        {
+          "info": {
+            "name": "List authority grants",
+            "type": "http"
+          },
+          "http": {
+            "method": "GET",
+            "url": "http://localhost:8080/v1/grants",
+            "params": [
+              {
+                "name": "agent_id",
+                "value": "",
+                "type": "query",
+                "description": "Filter grants by agent ID. Mutually exclusive with profile_id."
+              },
+              {
+                "name": "profile_id",
+                "value": "",
+                "type": "query",
+                "description": "Filter grants by profile ID. Mutually exclusive with agent_id."
+              }
+            ]
+          },
+          "docs": "Returns grants filtered by agent or profile. Exactly one of agent_id or profile_id must be provided. Providing neither or both returns 400.\n"
+        },
+        {
+          "info": {
+            "name": "Get an authority grant",
+            "type": "http"
+          },
+          "http": {
+            "method": "GET",
+            "url": "http://localhost:8080/v1/grants/:id",
+            "params": [
+              {
+                "name": "id",
+                "value": "",
+                "type": "path"
+              }
+            ]
+          },
+          "docs": "Get an authority grant"
+        }
+      ]
+    }
+  ],
+  "bundled": true
+}

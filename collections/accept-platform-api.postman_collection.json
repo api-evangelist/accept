@@ -1,0 +1,465 @@
+{
+  "item": [
+    {
+      "id": "58d1e07f-cd47-48c1-ae57-219dfc1bc252",
+      "name": "Platform",
+      "description": {
+        "content": "",
+        "type": "text/plain"
+      },
+      "item": [
+        {
+          "id": "5537d6ce-ba5b-4d43-ad61-2ac154fad93b",
+          "name": "List platform-administrative audit events",
+          "request": {
+            "name": "List platform-administrative audit events",
+            "description": {
+              "content": "Returns the append-only platform-administrative audit trail covering apply invocations, password changes, and bootstrap admin creation. Records are returned in descending occurred_at order (newest first). Requires platform.admin role — more restrictive than /v1/controlplane/audit because the trail includes password and bootstrap events. See Issue #41.\n",
+              "type": "text/plain"
+            },
+            "url": {
+              "path": [
+                "v1",
+                "platform",
+                "admin-audit"
+              ],
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "query": [
+                {
+                  "disabled": false,
+                  "key": "action",
+                  "value": "<string>",
+                  "description": "Constrain results to a single action enum value."
+                },
+                {
+                  "disabled": false,
+                  "key": "outcome",
+                  "value": "<string>",
+                  "description": "Constrain results to success or failure."
+                },
+                {
+                  "disabled": false,
+                  "key": "actor_id",
+                  "value": "<string>",
+                  "description": "Constrain results to records emitted for a specific actor."
+                },
+                {
+                  "disabled": false,
+                  "key": "target_type",
+                  "value": "<string>",
+                  "description": "Constrain results to a specific target type."
+                },
+                {
+                  "disabled": false,
+                  "key": "target_id",
+                  "value": "<string>",
+                  "description": "Constrain results to a specific target ID."
+                },
+                {
+                  "disabled": false,
+                  "key": "limit",
+                  "value": "<integer>",
+                  "description": "Cap the number of records returned. Values outside [1, 500] yield 400."
+                }
+              ],
+              "variable": []
+            },
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              }
+            ],
+            "method": "GET",
+            "auth": null
+          },
+          "response": [
+            {
+              "id": "fbbfa43e-2f9c-4410-b1e5-fc2b0045dabb",
+              "name": "Admin-audit entries",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "v1",
+                    "platform",
+                    "admin-audit"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [
+                    {
+                      "key": "action",
+                      "value": "<string>"
+                    },
+                    {
+                      "key": "outcome",
+                      "value": "<string>"
+                    },
+                    {
+                      "key": "actor_id",
+                      "value": "<string>"
+                    },
+                    {
+                      "key": "target_type",
+                      "value": "<string>"
+                    },
+                    {
+                      "key": "target_id",
+                      "value": "<string>"
+                    },
+                    {
+                      "key": "limit",
+                      "value": "<integer>"
+                    }
+                  ],
+                  "variable": []
+                },
+                "header": [
+                  {
+                    "description": {
+                      "content": "Added as a part of security scheme: bearer",
+                      "type": "text/plain"
+                    },
+                    "key": "Authorization",
+                    "value": "Bearer <token>"
+                  },
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  }
+                ],
+                "method": "GET",
+                "body": {}
+              },
+              "status": "OK",
+              "code": 200,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"entries\": [\n    {\n      \"id\": \"string\",\n      \"occurred_at\": \"2003-01-29T15:51:06.795Z\",\n      \"action\": \"password.changed\",\n      \"outcome\": \"failure\",\n      \"actor_type\": \"user\",\n      \"actor_id\": \"string\",\n      \"target_type\": \"string\",\n      \"target_id\": \"string\",\n      \"request_id\": \"string\",\n      \"client_ip\": \"string\",\n      \"required_permission\": \"string\",\n      \"details\": {\n        \"bundle_bytes\": 3716,\n        \"created_count\": 6218,\n        \"conflict_count\": 8582,\n        \"unchanged_count\": 3538,\n        \"error_count\": 7352,\n        \"from_capability_id\": \"string\",\n        \"from_process_id\": \"string\",\n        \"to_capability_id\": \"string\",\n        \"to_process_id\": \"string\",\n        \"surfaces_migrated\": 3109,\n        \"older_than_days\": 5005,\n        \"processes_deleted\": [\n          \"string\",\n          \"string\"\n        ],\n        \"capabilities_deleted\": [\n          \"string\",\n          \"string\"\n        ],\n        \"error\": \"string\"\n      }\n    },\n    {\n      \"id\": \"string\",\n      \"occurred_at\": \"1951-04-16T19:36:57.067Z\",\n      \"action\": \"apply.invoked\",\n      \"outcome\": \"success\",\n      \"actor_type\": \"system\",\n      \"actor_id\": \"string\",\n      \"target_type\": \"string\",\n      \"target_id\": \"string\",\n      \"request_id\": \"string\",\n      \"client_ip\": \"string\",\n      \"required_permission\": \"string\",\n      \"details\": {\n        \"bundle_bytes\": 2567,\n        \"created_count\": 7604,\n        \"conflict_count\": 1040,\n        \"unchanged_count\": 2631,\n        \"error_count\": 1185,\n        \"from_capability_id\": \"string\",\n        \"from_process_id\": \"string\",\n        \"to_capability_id\": \"string\",\n        \"to_process_id\": \"string\",\n        \"surfaces_migrated\": 6323,\n        \"older_than_days\": 6646,\n        \"processes_deleted\": [\n          \"string\",\n          \"string\"\n        ],\n        \"capabilities_deleted\": [\n          \"string\",\n          \"string\"\n        ],\n        \"error\": \"string\"\n      }\n    }\n  ]\n}",
+              "cookie": [],
+              "_postman_previewlanguage": "json"
+            },
+            {
+              "id": "c4ead24b-1ba0-4c15-87a5-4a43a09eb274",
+              "name": "Invalid query parameter (e.g. non-positive or out-of-range limit)",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "v1",
+                    "platform",
+                    "admin-audit"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [
+                    {
+                      "key": "action",
+                      "value": "<string>"
+                    },
+                    {
+                      "key": "outcome",
+                      "value": "<string>"
+                    },
+                    {
+                      "key": "actor_id",
+                      "value": "<string>"
+                    },
+                    {
+                      "key": "target_type",
+                      "value": "<string>"
+                    },
+                    {
+                      "key": "target_id",
+                      "value": "<string>"
+                    },
+                    {
+                      "key": "limit",
+                      "value": "<integer>"
+                    }
+                  ],
+                  "variable": []
+                },
+                "header": [
+                  {
+                    "description": {
+                      "content": "Added as a part of security scheme: bearer",
+                      "type": "text/plain"
+                    },
+                    "key": "Authorization",
+                    "value": "Bearer <token>"
+                  },
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  }
+                ],
+                "method": "GET",
+                "body": {}
+              },
+              "status": "Bad Request",
+              "code": 400,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"error\": \"limit must be a positive integer\"\n}",
+              "cookie": [],
+              "_postman_previewlanguage": "json"
+            },
+            {
+              "id": "70f857f2-31ac-4442-9828-3f0a92bdfef8",
+              "name": "Unauthenticated",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "v1",
+                    "platform",
+                    "admin-audit"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [
+                    {
+                      "key": "action",
+                      "value": "<string>"
+                    },
+                    {
+                      "key": "outcome",
+                      "value": "<string>"
+                    },
+                    {
+                      "key": "actor_id",
+                      "value": "<string>"
+                    },
+                    {
+                      "key": "target_type",
+                      "value": "<string>"
+                    },
+                    {
+                      "key": "target_id",
+                      "value": "<string>"
+                    },
+                    {
+                      "key": "limit",
+                      "value": "<integer>"
+                    }
+                  ],
+                  "variable": []
+                },
+                "header": [
+                  {
+                    "description": {
+                      "content": "Added as a part of security scheme: bearer",
+                      "type": "text/plain"
+                    },
+                    "key": "Authorization",
+                    "value": "Bearer <token>"
+                  },
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  }
+                ],
+                "method": "GET",
+                "body": {}
+              },
+              "status": "Unauthorized",
+              "code": 401,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"error\": \"string\"\n}",
+              "cookie": [],
+              "_postman_previewlanguage": "json"
+            },
+            {
+              "id": "a8950419-786c-4403-adb5-a682c574ee1b",
+              "name": "Insufficient role (requires platform.admin)",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "v1",
+                    "platform",
+                    "admin-audit"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [
+                    {
+                      "key": "action",
+                      "value": "<string>"
+                    },
+                    {
+                      "key": "outcome",
+                      "value": "<string>"
+                    },
+                    {
+                      "key": "actor_id",
+                      "value": "<string>"
+                    },
+                    {
+                      "key": "target_type",
+                      "value": "<string>"
+                    },
+                    {
+                      "key": "target_id",
+                      "value": "<string>"
+                    },
+                    {
+                      "key": "limit",
+                      "value": "<integer>"
+                    }
+                  ],
+                  "variable": []
+                },
+                "header": [
+                  {
+                    "description": {
+                      "content": "Added as a part of security scheme: bearer",
+                      "type": "text/plain"
+                    },
+                    "key": "Authorization",
+                    "value": "Bearer <token>"
+                  },
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  }
+                ],
+                "method": "GET",
+                "body": {}
+              },
+              "status": "Forbidden",
+              "code": 403,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"error\": \"string\"\n}",
+              "cookie": [],
+              "_postman_previewlanguage": "json"
+            },
+            {
+              "id": "72df5394-d01d-4227-8976-f5657ae29cd5",
+              "name": "Admin-audit not configured",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "v1",
+                    "platform",
+                    "admin-audit"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [
+                    {
+                      "key": "action",
+                      "value": "<string>"
+                    },
+                    {
+                      "key": "outcome",
+                      "value": "<string>"
+                    },
+                    {
+                      "key": "actor_id",
+                      "value": "<string>"
+                    },
+                    {
+                      "key": "target_type",
+                      "value": "<string>"
+                    },
+                    {
+                      "key": "target_id",
+                      "value": "<string>"
+                    },
+                    {
+                      "key": "limit",
+                      "value": "<integer>"
+                    }
+                  ],
+                  "variable": []
+                },
+                "header": [
+                  {
+                    "description": {
+                      "content": "Added as a part of security scheme: bearer",
+                      "type": "text/plain"
+                    },
+                    "key": "Authorization",
+                    "value": "Bearer <token>"
+                  },
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  }
+                ],
+                "method": "GET",
+                "body": {}
+              },
+              "status": "Not Implemented",
+              "code": 501,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"error\": \"admin-audit not configured\"\n}",
+              "cookie": [],
+              "_postman_previewlanguage": "json"
+            }
+          ],
+          "event": [],
+          "protocolProfileBehavior": {
+            "disableBodyPruning": true
+          }
+        }
+      ],
+      "event": []
+    }
+  ],
+  "event": [],
+  "variable": [
+    {
+      "type": "string",
+      "value": "http://localhost:8080",
+      "key": "baseUrl"
+    }
+  ],
+  "auth": {
+    "type": "bearer",
+    "bearer": [
+      {
+        "key": "token",
+        "value": "{{bearerToken}}"
+      }
+    ]
+  },
+  "info": {
+    "_postman_id": "8d9905bf-cc05-4160-ad5f-b89fc9daaad5",
+    "name": "MIDAS Agents Platform API",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+    "description": {
+      "content": "Authority governance engine for autonomous decisions. Every evaluation produces exactly one outcome and one tamper-evident audit envelope.\n",
+      "type": "text/plain"
+    }
+  }
+}

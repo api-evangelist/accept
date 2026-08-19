@@ -1,0 +1,86 @@
+{
+  "opencollection": "1.0.0",
+  "info": {
+    "name": "MIDAS Agents Graphs API",
+    "version": "1.1.0-rc.1"
+  },
+  "request": {
+    "auth": {
+      "type": "bearer",
+      "token": "{{bearerToken}}"
+    }
+  },
+  "items": [
+    {
+      "info": {
+        "name": "Graphs",
+        "type": "folder"
+      },
+      "items": [
+        {
+          "info": {
+            "name": "Project a depth-bounded Context Graph rooted at an entity",
+            "type": "http"
+          },
+          "http": {
+            "method": "GET",
+            "url": "http://localhost:8080/v1/graphs/context",
+            "params": [
+              {
+                "name": "view",
+                "value": "",
+                "type": "query",
+                "description": "Perspective. `service` is rooted at a business service. `ai_system` is rooted at an AI system and walks bindings to their scope targets. `decision_surface` is rooted at a surface and emits parent process / business service plus AI systems bound directly to the surface.\n"
+              },
+              {
+                "name": "id",
+                "value": "",
+                "type": "query",
+                "description": "Root entity id. For view=service this is the business_service id.\n"
+              },
+              {
+                "name": "depth",
+                "value": "",
+                "type": "query",
+                "description": "Maximum BFS hops from the root, treating edges as undirected. Values above 5 are silently clamped to 5; negative or non-numeric values return 400.\n"
+              }
+            ]
+          },
+          "docs": "Returns a generic node/edge projection of business and operational context rooted at the entity identified by (view, id). Supported views: `service` (rooted at a BusinessService), `ai_system` (rooted at an AI system), `decision_surface` (rooted at a surface).\nNode kinds: business_service, related_business_service, capability, process, decision_surface, ai_system, ai_system_binding, authority_summary, coverage.\nEdge kinds (all directed): relates_to, has_capability, has_process, has_surface, bound"
+        },
+        {
+          "info": {
+            "name": "Project a depth-bounded Authority Graph rooted at a business service",
+            "type": "http"
+          },
+          "http": {
+            "method": "GET",
+            "url": "http://localhost:8080/v1/graphs/authority",
+            "params": [
+              {
+                "name": "view",
+                "value": "",
+                "type": "query",
+                "description": "Perspective. Only `service` is supported at MVP — root at a business service and walk the authority spine.\n"
+              },
+              {
+                "name": "id",
+                "value": "",
+                "type": "query",
+                "description": "Root entity id. For view=service this is the business_service id.\n"
+              },
+              {
+                "name": "depth",
+                "value": "",
+                "type": "query",
+                "description": "Maximum BFS hops from the root, treating edges as undirected. Default 4 reaches agent nodes. Values above 5 are silently clamped to 5; negative or non-numeric values return 400.\n"
+              }
+            ]
+          },
+          "docs": "Returns a generic node/edge projection of the authority spine rooted at a business service. Answers the operator question: \"for this business service, which decision surfaces are governed by which authority profiles, which grants, which agents, and which fail-mode policies?\"\nNode kinds (7): business_service, decision_surface, authority_profile, authority_grant, agent, fail_mode_policy, escalation_target.\nEdge kinds (7, all directed): business_service_has_surface (bs → surface), surface_uses_prof"
+        }
+      ]
+    }
+  ],
+  "bundled": true
+}

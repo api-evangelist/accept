@@ -1,0 +1,965 @@
+{
+  "item": [
+    {
+      "id": "0b08445e-8f83-4ebe-a2e1-ace5b8250155",
+      "name": "Graphs",
+      "description": {
+        "content": "",
+        "type": "text/plain"
+      },
+      "item": [
+        {
+          "id": "30d9b57b-5a88-4d6a-a665-7970cef5a2a3",
+          "name": "Project a depth-bounded Context Graph rooted at an entity",
+          "request": {
+            "name": "Project a depth-bounded Context Graph rooted at an entity",
+            "description": {
+              "content": "Returns a generic node/edge projection of business and operational context rooted at the entity identified by (view, id). Supported views: `service` (rooted at a BusinessService), `ai_system` (rooted at an AI system), `decision_surface` (rooted at a surface).\nNode kinds: business_service, related_business_service, capability, process, decision_surface, ai_system, ai_system_binding, authority_summary, coverage.\nEdge kinds (all directed): relates_to, has_capability, has_process, has_surface, bound_to (ai_system_binding to most-specific scope), system_of (ai_system_binding to ai_system), summarises, reports_coverage.\nThe `depth` parameter is interpreted as undirected BFS hops from the root. Default is 3; values above 5 are silently clamped to 5. Per-entity authority detail (authority_profile, authority_grant, agent, fail_mode_policy) is intentionally absent from the Context Graph and will be first-class on the future /v1/graphs/authority endpoint.\n",
+              "type": "text/plain"
+            },
+            "url": {
+              "path": [
+                "v1",
+                "graphs",
+                "context"
+              ],
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "query": [
+                {
+                  "disabled": false,
+                  "key": "view",
+                  "value": "<string>",
+                  "description": "(Required) Perspective. `service` is rooted at a business service. `ai_system` is rooted at an AI system and walks bindings to their scope targets. `decision_surface` is rooted at a surface and emits parent process / business service plus AI systems bound directly to the surface.\n"
+                },
+                {
+                  "disabled": false,
+                  "key": "id",
+                  "value": "<string>",
+                  "description": "(Required) Root entity id. For view=service this is the business_service id.\n"
+                },
+                {
+                  "disabled": false,
+                  "key": "depth",
+                  "value": "3",
+                  "description": "Maximum BFS hops from the root, treating edges as undirected. Values above 5 are silently clamped to 5; negative or non-numeric values return 400.\n"
+                }
+              ],
+              "variable": []
+            },
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              }
+            ],
+            "method": "GET",
+            "auth": null
+          },
+          "response": [
+            {
+              "id": "3b4c0c90-57da-4cce-9a3a-d7c12324f753",
+              "name": "Context Graph projection",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "v1",
+                    "graphs",
+                    "context"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [
+                    {
+                      "key": "view",
+                      "value": "<string>"
+                    },
+                    {
+                      "key": "id",
+                      "value": "<string>"
+                    },
+                    {
+                      "key": "depth",
+                      "value": "3"
+                    }
+                  ],
+                  "variable": []
+                },
+                "header": [
+                  {
+                    "description": {
+                      "content": "Added as a part of security scheme: bearer",
+                      "type": "text/plain"
+                    },
+                    "key": "Authorization",
+                    "value": "Bearer <token>"
+                  },
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  }
+                ],
+                "method": "GET",
+                "body": {}
+              },
+              "status": "OK",
+              "code": 200,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"root\": {\n    \"kind\": \"string\",\n    \"id\": \"string\"\n  },\n  \"view\": \"ai_system\",\n  \"depth\": 4,\n  \"nodes\": [\n    {\n      \"kind\": \"related_business_service\",\n      \"id\": \"string\",\n      \"label\": \"string\",\n      \"business_service\": {\n        \"id\": \"string\",\n        \"name\": \"string\",\n        \"status\": \"string\",\n        \"description\": \"string\",\n        \"owner\": \"string\",\n        \"service_type\": \"string\",\n        \"regulatory_scope\": \"string\",\n        \"fail_mode_policy_id\": \"string\",\n        \"external_ref\": {\n          \"source_system\": \"string\",\n          \"source_id\": \"string\",\n          \"source_url\": \"string\",\n          \"source_version\": \"string\",\n          \"last_synced_at\": \"2015-01-11T16:23:54.436Z\"\n        }\n      },\n      \"related_business_service\": {\n        \"id\": \"string\",\n        \"name\": \"string\",\n        \"outgoing\": {\n          \"relationship_id\": \"string\",\n          \"relationship_type\": \"string\",\n          \"description\": \"string\"\n        },\n        \"incoming\": {\n          \"relationship_id\": \"string\",\n          \"relationship_type\": \"string\",\n          \"description\": \"string\"\n        }\n      },\n      \"capability\": {\n        \"id\": \"string\",\n        \"name\": \"string\",\n        \"status\": \"string\",\n        \"description\": \"string\",\n        \"owner\": \"string\",\n        \"parent_capability_id\": \"string\",\n        \"external_ref\": {\n          \"source_system\": \"string\",\n          \"source_id\": \"string\",\n          \"source_url\": \"string\",\n          \"source_version\": \"string\",\n          \"last_synced_at\": \"1964-08-09T03:29:23.133Z\"\n        }\n      },\n      \"process\": {\n        \"id\": \"string\",\n        \"name\": \"string\",\n        \"status\": \"string\",\n        \"business_service_id\": \"string\",\n        \"description\": \"string\",\n        \"owner\": \"string\"\n      },\n      \"decision_surface\": {\n        \"id\": \"string\",\n        \"version\": 1107,\n        \"name\": \"string\",\n        \"status\": \"string\",\n        \"process_id\": \"string\",\n        \"ai_binding_ids\": [\n          \"string\",\n          \"string\"\n        ],\n        \"inherited_ai_binding_ids\": [\n          \"string\",\n          \"string\"\n        ],\n        \"profile_count\": 5563,\n        \"grant_count\": 3488,\n        \"agent_count\": 197,\n        \"description\": \"string\",\n        \"fail_mode_policy_id\": \"string\"\n      },\n      \"ai_system\": {\n        \"id\": \"string\",\n        \"name\": \"string\",\n        \"status\": \"string\",\n        \"description\": \"string\",\n        \"vendor\": \"string\",\n        \"system_type\": \"string\",\n        \"active_version\": 1360,\n        \"active_version_label\": \"string\",\n        \"active_version_status\": \"string\",\n        \"external_ref\": {\n          \"source_system\": \"string\",\n          \"source_id\": \"string\",\n          \"source_url\": \"string\",\n          \"source_version\": \"string\",\n          \"last_synced_at\": \"1956-11-20T20:58:42.524Z\"\n        }\n      },\n      \"ai_system_binding\": {\n        \"id\": \"string\",\n        \"ai_system_id\": \"string\",\n        \"business_service_id\": \"string\",\n        \"capability_id\": \"string\",\n        \"process_id\": \"string\",\n        \"surface_id\": \"string\",\n        \"scope_kind\": \"string\",\n        \"scope_id\": \"string\",\n        \"scope_label\": \"string\",\n        \"ai_system_name\": \"string\",\n        \"role\": \"string\",\n        \"description\": \"string\"\n      },\n      \"authority_summary\": {\n        \"surface_count\": 1665,\n        \"active_profile_count\": 5889,\n        \"active_grant_count\": 894,\n        \"active_agent_count\": 7267\n      },\n      \"coverage\": {\n        \"surface_count\": 1628,\n        \"surfaces_with_direct_ai_binding\": 1580,\n        \"surfaces_with_scoped_ai_binding\": 8088,\n        \"surfaces_with_no_ai_binding\": 5136\n      }\n    },\n    {\n      \"kind\": \"ai_system\",\n      \"id\": \"string\",\n      \"label\": \"string\",\n      \"business_service\": {\n        \"id\": \"string\",\n        \"name\": \"string\",\n        \"status\": \"string\",\n        \"description\": \"string\",\n        \"owner\": \"string\",\n        \"service_type\": \"string\",\n        \"regulatory_scope\": \"string\",\n        \"fail_mode_policy_id\": \"string\",\n        \"external_ref\": {\n          \"source_system\": \"string\",\n          \"source_id\": \"string\",\n          \"source_url\": \"string\",\n          \"source_version\": \"string\",\n          \"last_synced_at\": \"1978-07-11T05:27:39.137Z\"\n        }\n      },\n      \"related_business_service\": {\n        \"id\": \"string\",\n        \"name\": \"string\",\n        \"outgoing\": {\n          \"relationship_id\": \"string\",\n          \"relationship_type\": \"string\",\n          \"description\": \"string\"\n        },\n        \"incoming\": {\n          \"relationship_id\": \"string\",\n          \"relationship_type\": \"string\",\n          \"description\": \"string\"\n        }\n      },\n      \"capability\": {\n        \"id\": \"string\",\n        \"name\": \"string\",\n        \"status\": \"string\",\n        \"description\": \"string\",\n        \"owner\": \"string\",\n        \"parent_capability_id\": \"string\",\n        \"external_ref\": {\n          \"source_system\": \"string\",\n          \"source_id\": \"string\",\n          \"source_url\": \"string\",\n          \"source_version\": \"string\",\n          \"last_synced_at\": \"1967-05-13T22:57:04.102Z\"\n        }\n      },\n      \"process\": {\n        \"id\": \"string\",\n        \"name\": \"string\",\n        \"status\": \"string\",\n        \"business_service_id\": \"string\",\n        \"description\": \"string\",\n        \"owner\": \"string\"\n      },\n      \"decision_surface\": {\n        \"id\": \"string\",\n        \"version\": 2896,\n        \"name\": \"string\",\n        \"status\": \"string\",\n        \"process_id\": \"string\",\n        \"ai_binding_ids\": [\n          \"string\",\n          \"string\"\n        ],\n        \"inherited_ai_binding_ids\": [\n          \"string\",\n          \"string\"\n        ],\n        \"profile_count\": 902,\n        \"grant_count\": 9089,\n        \"agent_count\": 2973,\n        \"description\": \"string\",\n        \"fail_mode_policy_id\": \"string\"\n      },\n      \"ai_system\": {\n        \"id\": \"string\",\n        \"name\": \"string\",\n        \"status\": \"string\",\n        \"description\": \"string\",\n        \"vendor\": \"string\",\n        \"system_type\": \"string\",\n        \"active_version\": 5420,\n        \"active_version_label\": \"string\",\n        \"active_version_status\": \"string\",\n        \"external_ref\": {\n          \"source_system\": \"string\",\n          \"source_id\": \"string\",\n          \"source_url\": \"string\",\n          \"source_version\": \"string\",\n          \"last_synced_at\": \"2009-07-25T09:27:21.030Z\"\n        }\n      },\n      \"ai_system_binding\": {\n        \"id\": \"string\",\n        \"ai_system_id\": \"string\",\n        \"business_service_id\": \"string\",\n        \"capability_id\": \"string\",\n        \"process_id\": \"string\",\n        \"surface_id\": \"string\",\n        \"scope_kind\": \"string\",\n        \"scope_id\": \"string\",\n        \"scope_label\": \"string\",\n        \"ai_system_name\": \"string\",\n        \"role\": \"string\",\n        \"description\": \"string\"\n      },\n      \"authority_summary\": {\n        \"surface_count\": 5178,\n        \"active_profile_count\": 6958,\n        \"active_grant_count\": 5559,\n        \"active_agent_count\": 4771\n      },\n      \"coverage\": {\n        \"surface_count\": 8647,\n        \"surfaces_with_direct_ai_binding\": 3479,\n        \"surfaces_with_scoped_ai_binding\": 2197,\n        \"surfaces_with_no_ai_binding\": 5572\n      }\n    }\n  ],\n  \"edges\": [\n    {\n      \"kind\": \"bound_to\",\n      \"src\": {\n        \"kind\": \"string\",\n        \"id\": \"string\"\n      },\n      \"dst\": {\n        \"kind\": \"string\",\n        \"id\": \"string\"\n      },\n      \"label\": \"string\"\n    },\n    {\n      \"kind\": \"system_of\",\n      \"src\": {\n        \"kind\": \"string\",\n        \"id\": \"string\"\n      },\n      \"dst\": {\n        \"kind\": \"string\",\n        \"id\": \"string\"\n      },\n      \"label\": \"string\"\n    }\n  ]\n}",
+              "cookie": [],
+              "_postman_previewlanguage": "json"
+            },
+            {
+              "id": "8081502f-31b7-4619-8eba-9b14dda3060d",
+              "name": "Invalid view, id, or depth",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "v1",
+                    "graphs",
+                    "context"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [
+                    {
+                      "key": "view",
+                      "value": "<string>"
+                    },
+                    {
+                      "key": "id",
+                      "value": "<string>"
+                    },
+                    {
+                      "key": "depth",
+                      "value": "3"
+                    }
+                  ],
+                  "variable": []
+                },
+                "header": [
+                  {
+                    "description": {
+                      "content": "Added as a part of security scheme: bearer",
+                      "type": "text/plain"
+                    },
+                    "key": "Authorization",
+                    "value": "Bearer <token>"
+                  },
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  }
+                ],
+                "method": "GET",
+                "body": {}
+              },
+              "status": "Bad Request",
+              "code": 400,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"error\": \"string\"\n}",
+              "cookie": [],
+              "_postman_previewlanguage": "json"
+            },
+            {
+              "id": "1d7a19c4-59f9-4b84-b800-d36967edfdb0",
+              "name": "Unauthenticated",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "v1",
+                    "graphs",
+                    "context"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [
+                    {
+                      "key": "view",
+                      "value": "<string>"
+                    },
+                    {
+                      "key": "id",
+                      "value": "<string>"
+                    },
+                    {
+                      "key": "depth",
+                      "value": "3"
+                    }
+                  ],
+                  "variable": []
+                },
+                "header": [
+                  {
+                    "description": {
+                      "content": "Added as a part of security scheme: bearer",
+                      "type": "text/plain"
+                    },
+                    "key": "Authorization",
+                    "value": "Bearer <token>"
+                  },
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  }
+                ],
+                "method": "GET",
+                "body": {}
+              },
+              "status": "Unauthorized",
+              "code": 401,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"error\": \"string\"\n}",
+              "cookie": [],
+              "_postman_previewlanguage": "json"
+            },
+            {
+              "id": "7f51a579-1cd5-4e30-a407-8f211f7dee3b",
+              "name": "Insufficient role (requires platform.viewer or above)",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "v1",
+                    "graphs",
+                    "context"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [
+                    {
+                      "key": "view",
+                      "value": "<string>"
+                    },
+                    {
+                      "key": "id",
+                      "value": "<string>"
+                    },
+                    {
+                      "key": "depth",
+                      "value": "3"
+                    }
+                  ],
+                  "variable": []
+                },
+                "header": [
+                  {
+                    "description": {
+                      "content": "Added as a part of security scheme: bearer",
+                      "type": "text/plain"
+                    },
+                    "key": "Authorization",
+                    "value": "Bearer <token>"
+                  },
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  }
+                ],
+                "method": "GET",
+                "body": {}
+              },
+              "status": "Forbidden",
+              "code": 403,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"error\": \"string\"\n}",
+              "cookie": [],
+              "_postman_previewlanguage": "json"
+            },
+            {
+              "id": "89f4fdea-2222-48a4-b282-41992b9ea37a",
+              "name": "Root entity not found",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "v1",
+                    "graphs",
+                    "context"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [
+                    {
+                      "key": "view",
+                      "value": "<string>"
+                    },
+                    {
+                      "key": "id",
+                      "value": "<string>"
+                    },
+                    {
+                      "key": "depth",
+                      "value": "3"
+                    }
+                  ],
+                  "variable": []
+                },
+                "header": [
+                  {
+                    "description": {
+                      "content": "Added as a part of security scheme: bearer",
+                      "type": "text/plain"
+                    },
+                    "key": "Authorization",
+                    "value": "Bearer <token>"
+                  },
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  }
+                ],
+                "method": "GET",
+                "body": {}
+              },
+              "status": "Not Found",
+              "code": 404,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"error\": \"string\"\n}",
+              "cookie": [],
+              "_postman_previewlanguage": "json"
+            },
+            {
+              "id": "e481ea8a-877f-497e-a33b-841ba8d9ca9e",
+              "name": "Wrong HTTP method (only GET allowed)",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "v1",
+                    "graphs",
+                    "context"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [
+                    {
+                      "key": "view",
+                      "value": "<string>"
+                    },
+                    {
+                      "key": "id",
+                      "value": "<string>"
+                    },
+                    {
+                      "key": "depth",
+                      "value": "3"
+                    }
+                  ],
+                  "variable": []
+                },
+                "header": [
+                  {
+                    "description": {
+                      "content": "Added as a part of security scheme: bearer",
+                      "type": "text/plain"
+                    },
+                    "key": "Authorization",
+                    "value": "Bearer <token>"
+                  },
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  }
+                ],
+                "method": "GET",
+                "body": {}
+              },
+              "status": "Method Not Allowed",
+              "code": 405,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"error\": \"string\"\n}",
+              "cookie": [],
+              "_postman_previewlanguage": "json"
+            },
+            {
+              "id": "458b7e14-a281-4743-8689-44fe634c180c",
+              "name": "Context graph projection service not configured",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "v1",
+                    "graphs",
+                    "context"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [
+                    {
+                      "key": "view",
+                      "value": "<string>"
+                    },
+                    {
+                      "key": "id",
+                      "value": "<string>"
+                    },
+                    {
+                      "key": "depth",
+                      "value": "3"
+                    }
+                  ],
+                  "variable": []
+                },
+                "header": [
+                  {
+                    "description": {
+                      "content": "Added as a part of security scheme: bearer",
+                      "type": "text/plain"
+                    },
+                    "key": "Authorization",
+                    "value": "Bearer <token>"
+                  },
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  }
+                ],
+                "method": "GET",
+                "body": {}
+              },
+              "status": "Not Implemented",
+              "code": 501,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"error\": \"string\"\n}",
+              "cookie": [],
+              "_postman_previewlanguage": "json"
+            }
+          ],
+          "event": [],
+          "protocolProfileBehavior": {
+            "disableBodyPruning": true
+          }
+        },
+        {
+          "id": "358fc91e-9874-417d-87b4-fc6abadb17f1",
+          "name": "Project a depth-bounded Authority Graph rooted at a business service",
+          "request": {
+            "name": "Project a depth-bounded Authority Graph rooted at a business service",
+            "description": {
+              "content": "Returns a generic node/edge projection of the authority spine rooted at a business service. Answers the operator question: \"for this business service, which decision surfaces are governed by which authority profiles, which grants, which agents, and which fail-mode policies?\"\nNode kinds (7): business_service, decision_surface, authority_profile, authority_grant, agent, fail_mode_policy, escalation_target.\nEdge kinds (7, all directed): business_service_has_surface (bs → surface), surface_uses_profile (surface → profile), profile_has_grant (profile → grant), grant_authorises_agent (grant → agent), surface_has_fail_mode_policy (surface → policy, label=\"override\"), business_service_has_fail_mode_policy (bs → policy, label=\"default\"), profile_escalates_to (profile → escalation_target).\nProcess nodes are intentionally not projected — the BS → Surface relationship is collapsed into a single edge. The Surface node's typed data carries process_id for traceability.\nFail-mode policies are resolved at request time via the FailModePolicies repository's active-version lookup; missing active versions are skipped defensively without emitting a warning.\nThe `depth` parameter is interpreted as undirected BFS hops from the root. Default is 4 (one higher than the Context Graph's 3) so the default view reaches agent nodes at the end of the BS → Surface → Profile → Grant → Agent chain. Values above 5 are silently clamped to 5.\nMVP supports view=service only. Per-entity views (agent, surface) are reserved for later tranches.\n",
+              "type": "text/plain"
+            },
+            "url": {
+              "path": [
+                "v1",
+                "graphs",
+                "authority"
+              ],
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "query": [
+                {
+                  "disabled": false,
+                  "key": "view",
+                  "value": "<string>",
+                  "description": "(Required) Perspective. Only `service` is supported at MVP — root at a business service and walk the authority spine.\n"
+                },
+                {
+                  "disabled": false,
+                  "key": "id",
+                  "value": "<string>",
+                  "description": "(Required) Root entity id. For view=service this is the business_service id.\n"
+                },
+                {
+                  "disabled": false,
+                  "key": "depth",
+                  "value": "4",
+                  "description": "Maximum BFS hops from the root, treating edges as undirected. Default 4 reaches agent nodes. Values above 5 are silently clamped to 5; negative or non-numeric values return 400.\n"
+                }
+              ],
+              "variable": []
+            },
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              }
+            ],
+            "method": "GET",
+            "auth": null
+          },
+          "response": [
+            {
+              "id": "9b2da384-8dc5-4fd3-8b66-01bd1e0ee31d",
+              "name": "Authority Graph projection",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "v1",
+                    "graphs",
+                    "authority"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [
+                    {
+                      "key": "view",
+                      "value": "<string>"
+                    },
+                    {
+                      "key": "id",
+                      "value": "<string>"
+                    },
+                    {
+                      "key": "depth",
+                      "value": "4"
+                    }
+                  ],
+                  "variable": []
+                },
+                "header": [
+                  {
+                    "description": {
+                      "content": "Added as a part of security scheme: bearer",
+                      "type": "text/plain"
+                    },
+                    "key": "Authorization",
+                    "value": "Bearer <token>"
+                  },
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  }
+                ],
+                "method": "GET",
+                "body": {}
+              },
+              "status": "OK",
+              "code": 200,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"root\": {\n    \"kind\": \"business_service\",\n    \"id\": \"bs-1\"\n  },\n  \"view\": \"service\",\n  \"depth\": 4,\n  \"nodes\": [\n    {\n      \"kind\": \"business_service\",\n      \"id\": \"bs-1\",\n      \"label\": \"BS One\"\n    },\n    {\n      \"kind\": \"decision_surface\",\n      \"id\": \"surf-1\",\n      \"label\": \"Surface One\"\n    },\n    {\n      \"kind\": \"authority_profile\",\n      \"id\": \"prof-1\",\n      \"label\": \"Profile One\"\n    },\n    {\n      \"kind\": \"authority_grant\",\n      \"id\": \"grant-1\",\n      \"label\": \"grant-1\"\n    },\n    {\n      \"kind\": \"agent\",\n      \"id\": \"agent-1\",\n      \"label\": \"Agent One\"\n    },\n    {\n      \"kind\": \"escalation_target\",\n      \"id\": \"et-1\",\n      \"label\": \"Governance Approver\"\n    }\n  ],\n  \"edges\": [\n    {\n      \"kind\": \"business_service_has_surface\",\n      \"src\": {\n        \"kind\": \"business_service\",\n        \"id\": \"bs-1\"\n      },\n      \"dst\": {\n        \"kind\": \"decision_surface\",\n        \"id\": \"surf-1\"\n      }\n    },\n    {\n      \"kind\": \"surface_uses_profile\",\n      \"src\": {\n        \"kind\": \"decision_surface\",\n        \"id\": \"surf-1\"\n      },\n      \"dst\": {\n        \"kind\": \"authority_profile\",\n        \"id\": \"prof-1\"\n      }\n    },\n    {\n      \"kind\": \"profile_has_grant\",\n      \"src\": {\n        \"kind\": \"authority_profile\",\n        \"id\": \"prof-1\"\n      },\n      \"dst\": {\n        \"kind\": \"authority_grant\",\n        \"id\": \"grant-1\"\n      }\n    },\n    {\n      \"kind\": \"grant_authorises_agent\",\n      \"src\": {\n        \"kind\": \"authority_grant\",\n        \"id\": \"grant-1\"\n      },\n      \"dst\": {\n        \"kind\": \"agent\",\n        \"id\": \"agent-1\"\n      }\n    },\n    {\n      \"kind\": \"profile_escalates_to\",\n      \"src\": {\n        \"kind\": \"authority_profile\",\n        \"id\": \"prof-1\"\n      },\n      \"dst\": {\n        \"kind\": \"escalation_target\",\n        \"id\": \"et-1\"\n      }\n    }\n  ],\n  \"summary\": {\n    \"surface_count\": 1,\n    \"active_profile_count\": 1,\n    \"active_grant_count\": 1,\n    \"active_agent_count\": 1,\n    \"fail_mode_policy_count\": 0,\n    \"complete_authority_paths\": 1,\n    \"incomplete_authority_paths\": 0,\n    \"surfaces_with_policy_override\": 0,\n    \"surfaces_inheriting_bs_policy\": 0,\n    \"grants_with_stop_capability\": 0,\n    \"grants_with_constraints\": 0,\n    \"escalation_target_count\": 1,\n    \"profiles_with_escalation_target\": 1\n  },\n  \"diagnostics\": [],\n  \"diagnostic_summary\": {\n    \"info\": 0,\n    \"warning\": 0,\n    \"critical\": 0,\n    \"highest_severity\": \"none\"\n  },\n  \"surface_posture\": [\n    {\n      \"surface\": {\n        \"kind\": \"decision_surface\",\n        \"id\": \"surf-1\"\n      },\n      \"authority_status\": \"complete\",\n      \"profile_status\": \"covered\",\n      \"grant_status\": \"covered\",\n      \"agent_status\": \"covered\",\n      \"fail_mode_policy_status\": \"missing\",\n      \"escalation_status\": \"targeted\",\n      \"complete_paths\": 1,\n      \"incomplete_paths\": 0,\n      \"highest_severity\": \"none\"\n    }\n  ]\n}",
+              "cookie": [],
+              "_postman_previewlanguage": "json"
+            },
+            {
+              "id": "f96b0d52-3295-4055-854c-89f269022d70",
+              "name": "Invalid view, id, or depth",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "v1",
+                    "graphs",
+                    "authority"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [
+                    {
+                      "key": "view",
+                      "value": "<string>"
+                    },
+                    {
+                      "key": "id",
+                      "value": "<string>"
+                    },
+                    {
+                      "key": "depth",
+                      "value": "4"
+                    }
+                  ],
+                  "variable": []
+                },
+                "header": [
+                  {
+                    "description": {
+                      "content": "Added as a part of security scheme: bearer",
+                      "type": "text/plain"
+                    },
+                    "key": "Authorization",
+                    "value": "Bearer <token>"
+                  },
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  }
+                ],
+                "method": "GET",
+                "body": {}
+              },
+              "status": "Bad Request",
+              "code": 400,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"error\": \"string\"\n}",
+              "cookie": [],
+              "_postman_previewlanguage": "json"
+            },
+            {
+              "id": "4597f6a7-6ce0-4093-a61a-e80355a9107b",
+              "name": "Unauthenticated",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "v1",
+                    "graphs",
+                    "authority"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [
+                    {
+                      "key": "view",
+                      "value": "<string>"
+                    },
+                    {
+                      "key": "id",
+                      "value": "<string>"
+                    },
+                    {
+                      "key": "depth",
+                      "value": "4"
+                    }
+                  ],
+                  "variable": []
+                },
+                "header": [
+                  {
+                    "description": {
+                      "content": "Added as a part of security scheme: bearer",
+                      "type": "text/plain"
+                    },
+                    "key": "Authorization",
+                    "value": "Bearer <token>"
+                  },
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  }
+                ],
+                "method": "GET",
+                "body": {}
+              },
+              "status": "Unauthorized",
+              "code": 401,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"error\": \"string\"\n}",
+              "cookie": [],
+              "_postman_previewlanguage": "json"
+            },
+            {
+              "id": "96ea99d5-e05b-4c46-bac6-18395f73986f",
+              "name": "Insufficient role (requires platform.viewer or above)",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "v1",
+                    "graphs",
+                    "authority"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [
+                    {
+                      "key": "view",
+                      "value": "<string>"
+                    },
+                    {
+                      "key": "id",
+                      "value": "<string>"
+                    },
+                    {
+                      "key": "depth",
+                      "value": "4"
+                    }
+                  ],
+                  "variable": []
+                },
+                "header": [
+                  {
+                    "description": {
+                      "content": "Added as a part of security scheme: bearer",
+                      "type": "text/plain"
+                    },
+                    "key": "Authorization",
+                    "value": "Bearer <token>"
+                  },
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  }
+                ],
+                "method": "GET",
+                "body": {}
+              },
+              "status": "Forbidden",
+              "code": 403,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"error\": \"string\"\n}",
+              "cookie": [],
+              "_postman_previewlanguage": "json"
+            },
+            {
+              "id": "614de173-314c-48e4-ab75-872dce3bcf54",
+              "name": "Root business service not found",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "v1",
+                    "graphs",
+                    "authority"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [
+                    {
+                      "key": "view",
+                      "value": "<string>"
+                    },
+                    {
+                      "key": "id",
+                      "value": "<string>"
+                    },
+                    {
+                      "key": "depth",
+                      "value": "4"
+                    }
+                  ],
+                  "variable": []
+                },
+                "header": [
+                  {
+                    "description": {
+                      "content": "Added as a part of security scheme: bearer",
+                      "type": "text/plain"
+                    },
+                    "key": "Authorization",
+                    "value": "Bearer <token>"
+                  },
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  }
+                ],
+                "method": "GET",
+                "body": {}
+              },
+              "status": "Not Found",
+              "code": 404,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"error\": \"string\"\n}",
+              "cookie": [],
+              "_postman_previewlanguage": "json"
+            },
+            {
+              "id": "c4753b6f-2be2-4d32-a634-ac2d19c88a7e",
+              "name": "Wrong HTTP method (only GET allowed)",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "v1",
+                    "graphs",
+                    "authority"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [
+                    {
+                      "key": "view",
+                      "value": "<string>"
+                    },
+                    {
+                      "key": "id",
+                      "value": "<string>"
+                    },
+                    {
+                      "key": "depth",
+                      "value": "4"
+                    }
+                  ],
+                  "variable": []
+                },
+                "header": [
+                  {
+                    "description": {
+                      "content": "Added as a part of security scheme: bearer",
+                      "type": "text/plain"
+                    },
+                    "key": "Authorization",
+                    "value": "Bearer <token>"
+                  },
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  }
+                ],
+                "method": "GET",
+                "body": {}
+              },
+              "status": "Method Not Allowed",
+              "code": 405,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"error\": \"string\"\n}",
+              "cookie": [],
+              "_postman_previewlanguage": "json"
+            },
+            {
+              "id": "9b94027e-5353-4938-8d08-0563e6083cd8",
+              "name": "Authority graph projection service not configured",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "v1",
+                    "graphs",
+                    "authority"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [
+                    {
+                      "key": "view",
+                      "value": "<string>"
+                    },
+                    {
+                      "key": "id",
+                      "value": "<string>"
+                    },
+                    {
+                      "key": "depth",
+                      "value": "4"
+                    }
+                  ],
+                  "variable": []
+                },
+                "header": [
+                  {
+                    "description": {
+                      "content": "Added as a part of security scheme: bearer",
+                      "type": "text/plain"
+                    },
+                    "key": "Authorization",
+                    "value": "Bearer <token>"
+                  },
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  }
+                ],
+                "method": "GET",
+                "body": {}
+              },
+              "status": "Not Implemented",
+              "code": 501,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"error\": \"string\"\n}",
+              "cookie": [],
+              "_postman_previewlanguage": "json"
+            }
+          ],
+          "event": [],
+          "protocolProfileBehavior": {
+            "disableBodyPruning": true
+          }
+        }
+      ],
+      "event": []
+    }
+  ],
+  "event": [],
+  "variable": [
+    {
+      "type": "string",
+      "value": "http://localhost:8080",
+      "key": "baseUrl"
+    }
+  ],
+  "auth": {
+    "type": "bearer",
+    "bearer": [
+      {
+        "key": "token",
+        "value": "{{bearerToken}}"
+      }
+    ]
+  },
+  "info": {
+    "_postman_id": "684eccf1-62fd-4e8a-a3c4-b77c05cc43c6",
+    "name": "MIDAS Agents Graphs API",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+    "description": {
+      "content": "Authority governance engine for autonomous decisions. Every evaluation produces exactly one outcome and one tamper-evident audit envelope.\n",
+      "type": "text/plain"
+    }
+  }
+}

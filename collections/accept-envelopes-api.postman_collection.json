@@ -1,0 +1,587 @@
+{
+  "item": [
+    {
+      "id": "40228e56-0398-44d4-99f3-6811041021dc",
+      "name": "Envelopes",
+      "description": {
+        "content": "",
+        "type": "text/plain"
+      },
+      "item": [
+        {
+          "id": "56e99e6f-d3bc-42d1-bdc7-893051d92c71",
+          "name": "List governance envelopes",
+          "request": {
+            "name": "List governance envelopes",
+            "description": {
+              "content": "Returns all envelopes, optionally filtered by lifecycle state.",
+              "type": "text/plain"
+            },
+            "url": {
+              "path": [
+                "v1",
+                "envelopes"
+              ],
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "query": [
+                {
+                  "disabled": false,
+                  "key": "state",
+                  "value": "<string>",
+                  "description": "Filter by envelope lifecycle state."
+                }
+              ],
+              "variable": []
+            },
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              }
+            ],
+            "method": "GET",
+            "auth": null
+          },
+          "response": [
+            {
+              "id": "6d6f5457-9618-499e-8069-6adb6b9d61f5",
+              "name": "List of envelopes",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "v1",
+                    "envelopes"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [
+                    {
+                      "key": "state",
+                      "value": "<string>"
+                    }
+                  ],
+                  "variable": []
+                },
+                "header": [
+                  {
+                    "description": {
+                      "content": "Added as a part of security scheme: bearer",
+                      "type": "text/plain"
+                    },
+                    "key": "Authorization",
+                    "value": "Bearer <token>"
+                  },
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  }
+                ],
+                "method": "GET",
+                "body": {}
+              },
+              "status": "OK",
+              "code": 200,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "[\n  {\n    \"id\": \"string\",\n    \"state\": \"escalated\",\n    \"surface_id\": \"string\",\n    \"agent_id\": \"string\",\n    \"request_id\": \"string\",\n    \"request_source\": \"string\",\n    \"confidence\": 8361.884713286305,\n    \"outcome\": \"string\",\n    \"reason_code\": \"string\",\n    \"explanation\": \"string\",\n    \"profile_id\": \"string\",\n    \"grant_id\": \"string\",\n    \"surface_version\": 716,\n    \"first_event_hash\": \"string\",\n    \"final_event_hash\": \"string\",\n    \"resolved\": {\n      \"structure\": {\n        \"process\": {\n          \"id\": \"string\",\n          \"origin\": \"string\",\n          \"managed\": true,\n          \"replaces\": \"string\",\n          \"status\": \"deprecated\"\n        },\n        \"business_service\": {\n          \"id\": \"string\",\n          \"origin\": \"string\",\n          \"managed\": true,\n          \"replaces\": \"string\",\n          \"status\": \"active\"\n        },\n        \"enabling_capabilities\": [\n          {\n            \"id\": \"string\",\n            \"name\": \"string\",\n            \"origin\": \"string\",\n            \"managed\": false,\n            \"replaces\": \"string\",\n            \"status\": \"deprecated\"\n          },\n          {\n            \"id\": \"string\",\n            \"name\": \"string\",\n            \"origin\": \"string\",\n            \"managed\": false,\n            \"replaces\": \"string\",\n            \"status\": \"deprecated\"\n          }\n        ]\n      }\n    },\n    \"created_at\": \"1967-09-12T21:28:24.792Z\",\n    \"closed_at\": \"1952-10-07T10:56:35.939Z\"\n  },\n  {\n    \"id\": \"string\",\n    \"state\": \"outcome_recorded\",\n    \"surface_id\": \"string\",\n    \"agent_id\": \"string\",\n    \"request_id\": \"string\",\n    \"request_source\": \"string\",\n    \"confidence\": 3144.2884365959544,\n    \"outcome\": \"string\",\n    \"reason_code\": \"string\",\n    \"explanation\": \"string\",\n    \"profile_id\": \"string\",\n    \"grant_id\": \"string\",\n    \"surface_version\": 1115,\n    \"first_event_hash\": \"string\",\n    \"final_event_hash\": \"string\",\n    \"resolved\": {\n      \"structure\": {\n        \"process\": {\n          \"id\": \"string\",\n          \"origin\": \"string\",\n          \"managed\": true,\n          \"replaces\": \"string\",\n          \"status\": \"active\"\n        },\n        \"business_service\": {\n          \"id\": \"string\",\n          \"origin\": \"string\",\n          \"managed\": false,\n          \"replaces\": \"string\",\n          \"status\": \"active\"\n        },\n        \"enabling_capabilities\": [\n          {\n            \"id\": \"string\",\n            \"name\": \"string\",\n            \"origin\": \"string\",\n            \"managed\": true,\n            \"replaces\": \"string\",\n            \"status\": \"active\"\n          },\n          {\n            \"id\": \"string\",\n            \"name\": \"string\",\n            \"origin\": \"string\",\n            \"managed\": false,\n            \"replaces\": \"string\",\n            \"status\": \"deprecated\"\n          }\n        ]\n      }\n    },\n    \"created_at\": \"1960-03-20T04:27:05.169Z\",\n    \"closed_at\": \"2023-03-27T23:00:28.511Z\"\n  }\n]",
+              "cookie": [],
+              "_postman_previewlanguage": "json"
+            },
+            {
+              "id": "0056841f-6ec6-45b0-b69a-51a8d5720971",
+              "name": "Invalid state filter",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "v1",
+                    "envelopes"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [
+                    {
+                      "key": "state",
+                      "value": "<string>"
+                    }
+                  ],
+                  "variable": []
+                },
+                "header": [
+                  {
+                    "description": {
+                      "content": "Added as a part of security scheme: bearer",
+                      "type": "text/plain"
+                    },
+                    "key": "Authorization",
+                    "value": "Bearer <token>"
+                  },
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  }
+                ],
+                "method": "GET",
+                "body": {}
+              },
+              "status": "Bad Request",
+              "code": 400,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"error\": \"string\"\n}",
+              "cookie": [],
+              "_postman_previewlanguage": "json"
+            },
+            {
+              "id": "8ac74522-c76b-408f-97d5-8fe8f43c0b24",
+              "name": "Unauthenticated",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "v1",
+                    "envelopes"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [
+                    {
+                      "key": "state",
+                      "value": "<string>"
+                    }
+                  ],
+                  "variable": []
+                },
+                "header": [
+                  {
+                    "description": {
+                      "content": "Added as a part of security scheme: bearer",
+                      "type": "text/plain"
+                    },
+                    "key": "Authorization",
+                    "value": "Bearer <token>"
+                  },
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  }
+                ],
+                "method": "GET",
+                "body": {}
+              },
+              "status": "Unauthorized",
+              "code": 401,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"error\": \"string\"\n}",
+              "cookie": [],
+              "_postman_previewlanguage": "json"
+            },
+            {
+              "id": "1baa095c-e163-4560-888f-1cb72d5e713d",
+              "name": "Insufficient role (requires platform.viewer or above)",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "v1",
+                    "envelopes"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [
+                    {
+                      "key": "state",
+                      "value": "<string>"
+                    }
+                  ],
+                  "variable": []
+                },
+                "header": [
+                  {
+                    "description": {
+                      "content": "Added as a part of security scheme: bearer",
+                      "type": "text/plain"
+                    },
+                    "key": "Authorization",
+                    "value": "Bearer <token>"
+                  },
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  }
+                ],
+                "method": "GET",
+                "body": {}
+              },
+              "status": "Forbidden",
+              "code": 403,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"error\": \"string\"\n}",
+              "cookie": [],
+              "_postman_previewlanguage": "json"
+            }
+          ],
+          "event": [],
+          "protocolProfileBehavior": {
+            "disableBodyPruning": true
+          }
+        },
+        {
+          "id": "352b5420-3ccf-46ab-a162-3aad6a309465",
+          "name": "Get a governance envelope by ID",
+          "request": {
+            "name": "Get a governance envelope by ID",
+            "description": {},
+            "url": {
+              "path": [
+                "v1",
+                "envelopes",
+                ":id"
+              ],
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "query": [],
+              "variable": [
+                {
+                  "disabled": false,
+                  "type": "any",
+                  "value": "<string>",
+                  "key": "id",
+                  "description": "(Required) "
+                }
+              ]
+            },
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              }
+            ],
+            "method": "GET",
+            "auth": null
+          },
+          "response": [
+            {
+              "id": "ab135afb-415f-4337-9afd-bf37568d6670",
+              "name": "Envelope found",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "v1",
+                    "envelopes",
+                    ":id"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [],
+                  "variable": [
+                    {
+                      "disabled": false,
+                      "type": "any",
+                      "value": "<string>",
+                      "key": "id",
+                      "description": "(Required) "
+                    }
+                  ]
+                },
+                "header": [
+                  {
+                    "description": {
+                      "content": "Added as a part of security scheme: bearer",
+                      "type": "text/plain"
+                    },
+                    "key": "Authorization",
+                    "value": "Bearer <token>"
+                  },
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  }
+                ],
+                "method": "GET",
+                "body": {}
+              },
+              "status": "OK",
+              "code": 200,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"id\": \"string\",\n  \"state\": \"received\",\n  \"surface_id\": \"string\",\n  \"agent_id\": \"string\",\n  \"request_id\": \"string\",\n  \"request_source\": \"string\",\n  \"confidence\": 5810.33006282227,\n  \"outcome\": \"string\",\n  \"reason_code\": \"string\",\n  \"explanation\": \"string\",\n  \"profile_id\": \"string\",\n  \"grant_id\": \"string\",\n  \"surface_version\": 5473,\n  \"first_event_hash\": \"string\",\n  \"final_event_hash\": \"string\",\n  \"resolved\": {\n    \"structure\": {\n      \"process\": {\n        \"id\": \"string\",\n        \"origin\": \"string\",\n        \"managed\": true,\n        \"replaces\": \"string\",\n        \"status\": \"deprecated\"\n      },\n      \"business_service\": {\n        \"id\": \"string\",\n        \"origin\": \"string\",\n        \"managed\": false,\n        \"replaces\": \"string\",\n        \"status\": \"active\"\n      },\n      \"enabling_capabilities\": [\n        {\n          \"id\": \"string\",\n          \"name\": \"string\",\n          \"origin\": \"string\",\n          \"managed\": false,\n          \"replaces\": \"string\",\n          \"status\": \"active\"\n        },\n        {\n          \"id\": \"string\",\n          \"name\": \"string\",\n          \"origin\": \"string\",\n          \"managed\": false,\n          \"replaces\": \"string\",\n          \"status\": \"active\"\n        }\n      ]\n    }\n  },\n  \"created_at\": \"1979-09-16T17:20:38.101Z\",\n  \"closed_at\": \"1951-12-05T11:37:42.877Z\"\n}",
+              "cookie": [],
+              "_postman_previewlanguage": "json"
+            },
+            {
+              "id": "58e464ea-c37d-4c9e-afbe-79cf7e8b1826",
+              "name": "Invalid envelope ID",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "v1",
+                    "envelopes",
+                    ":id"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [],
+                  "variable": [
+                    {
+                      "disabled": false,
+                      "type": "any",
+                      "value": "<string>",
+                      "key": "id",
+                      "description": "(Required) "
+                    }
+                  ]
+                },
+                "header": [
+                  {
+                    "description": {
+                      "content": "Added as a part of security scheme: bearer",
+                      "type": "text/plain"
+                    },
+                    "key": "Authorization",
+                    "value": "Bearer <token>"
+                  },
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  }
+                ],
+                "method": "GET",
+                "body": {}
+              },
+              "status": "Bad Request",
+              "code": 400,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"error\": \"string\"\n}",
+              "cookie": [],
+              "_postman_previewlanguage": "json"
+            },
+            {
+              "id": "1017cc75-14a8-4bd7-816a-24eabd48ba28",
+              "name": "Unauthenticated",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "v1",
+                    "envelopes",
+                    ":id"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [],
+                  "variable": [
+                    {
+                      "disabled": false,
+                      "type": "any",
+                      "value": "<string>",
+                      "key": "id",
+                      "description": "(Required) "
+                    }
+                  ]
+                },
+                "header": [
+                  {
+                    "description": {
+                      "content": "Added as a part of security scheme: bearer",
+                      "type": "text/plain"
+                    },
+                    "key": "Authorization",
+                    "value": "Bearer <token>"
+                  },
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  }
+                ],
+                "method": "GET",
+                "body": {}
+              },
+              "status": "Unauthorized",
+              "code": 401,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"error\": \"string\"\n}",
+              "cookie": [],
+              "_postman_previewlanguage": "json"
+            },
+            {
+              "id": "cd0c8162-45f7-4b53-8b6b-9505fd64303a",
+              "name": "Insufficient role",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "v1",
+                    "envelopes",
+                    ":id"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [],
+                  "variable": [
+                    {
+                      "disabled": false,
+                      "type": "any",
+                      "value": "<string>",
+                      "key": "id",
+                      "description": "(Required) "
+                    }
+                  ]
+                },
+                "header": [
+                  {
+                    "description": {
+                      "content": "Added as a part of security scheme: bearer",
+                      "type": "text/plain"
+                    },
+                    "key": "Authorization",
+                    "value": "Bearer <token>"
+                  },
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  }
+                ],
+                "method": "GET",
+                "body": {}
+              },
+              "status": "Forbidden",
+              "code": 403,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"error\": \"string\"\n}",
+              "cookie": [],
+              "_postman_previewlanguage": "json"
+            },
+            {
+              "id": "ab7808e2-d6f2-41e5-880a-1d75a8119261",
+              "name": "Envelope not found",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "v1",
+                    "envelopes",
+                    ":id"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [],
+                  "variable": [
+                    {
+                      "disabled": false,
+                      "type": "any",
+                      "value": "<string>",
+                      "key": "id",
+                      "description": "(Required) "
+                    }
+                  ]
+                },
+                "header": [
+                  {
+                    "description": {
+                      "content": "Added as a part of security scheme: bearer",
+                      "type": "text/plain"
+                    },
+                    "key": "Authorization",
+                    "value": "Bearer <token>"
+                  },
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  }
+                ],
+                "method": "GET",
+                "body": {}
+              },
+              "status": "Not Found",
+              "code": 404,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"error\": \"string\"\n}",
+              "cookie": [],
+              "_postman_previewlanguage": "json"
+            }
+          ],
+          "event": [],
+          "protocolProfileBehavior": {
+            "disableBodyPruning": true
+          }
+        }
+      ],
+      "event": []
+    }
+  ],
+  "event": [],
+  "variable": [
+    {
+      "type": "string",
+      "value": "http://localhost:8080",
+      "key": "baseUrl"
+    }
+  ],
+  "auth": {
+    "type": "bearer",
+    "bearer": [
+      {
+        "key": "token",
+        "value": "{{bearerToken}}"
+      }
+    ]
+  },
+  "info": {
+    "_postman_id": "1c1948d0-80e8-4321-bbb1-c40599fab79a",
+    "name": "MIDAS Agents Envelopes API",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+    "description": {
+      "content": "Authority governance engine for autonomous decisions. Every evaluation produces exactly one outcome and one tamper-evident audit envelope.\n",
+      "type": "text/plain"
+    }
+  }
+}

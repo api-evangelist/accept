@@ -1,0 +1,325 @@
+{
+  "opencollection": "1.0.0",
+  "info": {
+    "name": "MIDAS Agents Drift API",
+    "version": "1.1.0-rc.1"
+  },
+  "request": {
+    "auth": {
+      "type": "bearer",
+      "token": "{{bearerToken}}"
+    }
+  },
+  "items": [
+    {
+      "info": {
+        "name": "Drift",
+        "type": "folder"
+      },
+      "items": [
+        {
+          "info": {
+            "name": "Get node-scoped Drift Analytics read model data",
+            "type": "http"
+          },
+          "http": {
+            "method": "GET",
+            "url": "http://localhost:8080/v1/drift/analytics",
+            "params": [
+              {
+                "name": "node_kind",
+                "value": "",
+                "type": "query"
+              },
+              {
+                "name": "node_id",
+                "value": "",
+                "type": "query"
+              },
+              {
+                "name": "range",
+                "value": "",
+                "type": "query"
+              }
+            ]
+          },
+          "docs": "Get node-scoped Drift Analytics read model data"
+        },
+        {
+          "info": {
+            "name": "Get the latest version of a DriftDefinition by ID",
+            "type": "http"
+          },
+          "http": {
+            "method": "GET",
+            "url": "http://localhost:8080/v1/drift/definitions/:id",
+            "params": [
+              {
+                "name": "id",
+                "value": "",
+                "type": "path"
+              }
+            ]
+          },
+          "docs": "Get the latest version of a DriftDefinition by ID"
+        },
+        {
+          "info": {
+            "name": "List all versions of a DriftDefinition",
+            "type": "http"
+          },
+          "http": {
+            "method": "GET",
+            "url": "http://localhost:8080/v1/drift/definitions/:id/versions",
+            "params": [
+              {
+                "name": "id",
+                "value": "",
+                "type": "path"
+              }
+            ]
+          },
+          "docs": "List all versions of a DriftDefinition"
+        },
+        {
+          "info": {
+            "name": "Get a specific DriftDefinition revision",
+            "type": "http"
+          },
+          "http": {
+            "method": "GET",
+            "url": "http://localhost:8080/v1/drift/definitions/:id/versions/:version",
+            "params": [
+              {
+                "name": "id",
+                "value": "",
+                "type": "path"
+              },
+              {
+                "name": "version",
+                "value": "",
+                "type": "path"
+              }
+            ]
+          },
+          "docs": "Get a specific DriftDefinition revision"
+        },
+        {
+          "info": {
+            "name": "List DriftSeries for a DriftDefinition",
+            "type": "http"
+          },
+          "http": {
+            "method": "GET",
+            "url": "http://localhost:8080/v1/drift/definitions/:id/series",
+            "params": [
+              {
+                "name": "id",
+                "value": "",
+                "type": "path"
+              }
+            ]
+          },
+          "docs": "List DriftSeries for a DriftDefinition"
+        },
+        {
+          "info": {
+            "name": "List DriftObservations for a DriftDefinition",
+            "type": "http"
+          },
+          "http": {
+            "method": "GET",
+            "url": "http://localhost:8080/v1/drift/definitions/:id/observations",
+            "params": [
+              {
+                "name": "id",
+                "value": "",
+                "type": "path"
+              }
+            ]
+          },
+          "docs": "List DriftObservations for a DriftDefinition"
+        },
+        {
+          "info": {
+            "name": "Get a DriftSeries by ID",
+            "type": "http"
+          },
+          "http": {
+            "method": "GET",
+            "url": "http://localhost:8080/v1/drift/series/:id",
+            "params": [
+              {
+                "name": "id",
+                "value": "",
+                "type": "path"
+              }
+            ]
+          },
+          "docs": "Get a DriftSeries by ID"
+        },
+        {
+          "info": {
+            "name": "List DriftSeriesPoints for a series",
+            "type": "http"
+          },
+          "http": {
+            "method": "GET",
+            "url": "http://localhost:8080/v1/drift/series/:id/points",
+            "params": [
+              {
+                "name": "id",
+                "value": "",
+                "type": "path"
+              },
+              {
+                "name": "from_window",
+                "value": "",
+                "type": "query",
+                "description": "Inclusive lower bound on window_start; RFC3339."
+              },
+              {
+                "name": "limit",
+                "value": "",
+                "type": "query"
+              }
+            ]
+          },
+          "docs": "List DriftSeriesPoints for a series"
+        },
+        {
+          "info": {
+            "name": "List DriftObservations for a series",
+            "type": "http"
+          },
+          "http": {
+            "method": "GET",
+            "url": "http://localhost:8080/v1/drift/series/:id/observations",
+            "params": [
+              {
+                "name": "id",
+                "value": "",
+                "type": "path"
+              }
+            ]
+          },
+          "docs": "List DriftObservations for a series"
+        },
+        {
+          "info": {
+            "name": "List DriftAnnotations attached to a series",
+            "type": "http"
+          },
+          "http": {
+            "method": "GET",
+            "url": "http://localhost:8080/v1/drift/series/:id/annotations",
+            "params": [
+              {
+                "name": "id",
+                "value": "",
+                "type": "path"
+              }
+            ]
+          },
+          "docs": "List DriftAnnotations attached to a series"
+        },
+        {
+          "info": {
+            "name": "Get a DriftSeriesPoint by ID",
+            "type": "http"
+          },
+          "http": {
+            "method": "GET",
+            "url": "http://localhost:8080/v1/drift/series-points/:id",
+            "params": [
+              {
+                "name": "id",
+                "value": "",
+                "type": "path"
+              }
+            ]
+          },
+          "docs": "Get a DriftSeriesPoint by ID"
+        },
+        {
+          "info": {
+            "name": "Get a DriftObservation by ID",
+            "type": "http"
+          },
+          "http": {
+            "method": "GET",
+            "url": "http://localhost:8080/v1/drift/observations/:id",
+            "params": [
+              {
+                "name": "id",
+                "value": "",
+                "type": "path"
+              }
+            ]
+          },
+          "docs": "Get a DriftObservation by ID"
+        },
+        {
+          "info": {
+            "name": "List DriftAnnotations attached to an observation",
+            "type": "http"
+          },
+          "http": {
+            "method": "GET",
+            "url": "http://localhost:8080/v1/drift/observations/:id/annotations",
+            "params": [
+              {
+                "name": "id",
+                "value": "",
+                "type": "path"
+              }
+            ]
+          },
+          "docs": "List DriftAnnotations attached to an observation"
+        },
+        {
+          "info": {
+            "name": "Get a DriftAnnotation by ID",
+            "type": "http"
+          },
+          "http": {
+            "method": "GET",
+            "url": "http://localhost:8080/v1/drift/annotations/:id",
+            "params": [
+              {
+                "name": "id",
+                "value": "",
+                "type": "path"
+              }
+            ]
+          },
+          "docs": "Get a DriftAnnotation by ID"
+        },
+        {
+          "info": {
+            "name": "List DriftObservations for a governed entity target",
+            "type": "http"
+          },
+          "http": {
+            "method": "GET",
+            "url": "http://localhost:8080/v1/drift/entities/:kind/:entity_id/observations",
+            "params": [
+              {
+                "name": "kind",
+                "value": "",
+                "type": "path"
+              },
+              {
+                "name": "entity_id",
+                "value": "",
+                "type": "path"
+              }
+            ]
+          },
+          "docs": "List DriftObservations for a governed entity target"
+        }
+      ]
+    }
+  ],
+  "bundled": true
+}
