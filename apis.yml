@@ -40,6 +40,15 @@ tags:
 - Authority
 - Decision Governance
 - Audit
+- Open-Source
+tags_raw:
+- Company
+- Enterprise
+- Governance
+- AI Agents
+- Authority
+- Decision Governance
+- Audit
 - Open Source
 maintainers:
 - FN: Kin Lane
@@ -85,6 +94,8 @@ apis:
   humanURL: https://www.accept.io
   baseURL: https://midas.accept.io
   tags:
+  - Business Services
+  tags_raw:
   - Businessservices
   properties:
   - type: OpenAPI
@@ -117,6 +128,8 @@ apis:
   humanURL: https://www.accept.io
   baseURL: https://midas.accept.io
   tags:
+  - Control Plane
+  tags_raw:
   - Controlplane
   properties:
   - type: OpenAPI
