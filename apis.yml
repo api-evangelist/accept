@@ -9,6 +9,18 @@ description: >-
   evaluation API (POST /v1/evaluate), a YAML control-plane for surfaces/profiles/grants, an
   evidence and integrity API, drift detection, an Explorer UI, and OIDC/local IAM. It is
   positioned for enterprise teams governing what automated actors are authorised to decide.
+deliveryModel:
+  model: unknown
+  open_source: unknown
+  commercial: false
+  callable_host: false
+  label: Delivery model not determined — needs a product licence on record
+  confidence: low
+  source:
+  - openapi
+  - repository-unlicensed
+  generated: '2026-08-28'
+  method: derived
 accessModel:
   pricing: unknown
   onboarding: self-serve
