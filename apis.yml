@@ -106,7 +106,7 @@ apis:
   humanURL: https://www.accept.io
   baseURL: https://midas.accept.io
   tags:
-  - Businessservices
+  - Business Services
   tags_raw:
   - Businessservices
   properties:
@@ -140,7 +140,7 @@ apis:
   humanURL: https://www.accept.io
   baseURL: https://midas.accept.io
   tags:
-  - Controlplane
+  - Control Plane
   tags_raw:
   - Controlplane
   properties:
