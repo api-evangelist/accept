@@ -443,6 +443,8 @@ apis:
   - type: DataModel
     url: data-model/accept-data-model.yml
 common:
+- type: Website
+  url: https://www.accept.io/
 - type: Overlay
   url: overlays/accept-midas-overlay.yaml
 - type: IssueTracker
