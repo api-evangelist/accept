@@ -102,24 +102,6 @@ apis:
     url: asyncapi/accept-midas-asyncapi.yml
   - type: DataModel
     url: data-model/accept-data-model.yml
-- aid: accept:accept-businessservices-api
-  name: Accept Businessservices API
-  description: The Businessservices API from Accept — 3 operation(s) for businessservices.
-  humanURL: https://www.accept.io
-  baseURL: https://midas.accept.io
-  tags:
-  - Business Services
-  tags_raw:
-  - Businessservices
-  properties:
-  - type: OpenAPI
-    url: openapi/accept-businessservices-api-openapi.yml
-  - type: APIReference
-    url: https://github.com/accept-io/midas/blob/main/docs/api/http-api.md
-  - type: AsyncAPI
-    url: asyncapi/accept-midas-asyncapi.yml
-  - type: DataModel
-    url: data-model/accept-data-model.yml
 - aid: accept:accept-capabilities-api
   name: Accept Capabilities API
   description: The Capabilities API from Accept — 5 operation(s) for capabilities.
@@ -130,24 +112,6 @@ apis:
   properties:
   - type: OpenAPI
     url: openapi/accept-capabilities-api-openapi.yml
-  - type: APIReference
-    url: https://github.com/accept-io/midas/blob/main/docs/api/http-api.md
-  - type: AsyncAPI
-    url: asyncapi/accept-midas-asyncapi.yml
-  - type: DataModel
-    url: data-model/accept-data-model.yml
-- aid: accept:accept-controlplane-api
-  name: Accept Controlplane API
-  description: The Controlplane API from Accept — 18 operation(s) for controlplane.
-  humanURL: https://www.accept.io
-  baseURL: https://midas.accept.io
-  tags:
-  - Control Plane
-  tags_raw:
-  - Controlplane
-  properties:
-  - type: OpenAPI
-    url: openapi/accept-controlplane-api-openapi.yml
   - type: APIReference
     url: https://github.com/accept-io/midas/blob/main/docs/api/http-api.md
   - type: AsyncAPI
@@ -436,6 +400,38 @@ apis:
   properties:
   - type: OpenAPI
     url: openapi/accept-surfaces-api-openapi.yml
+  - type: APIReference
+    url: https://github.com/accept-io/midas/blob/main/docs/api/http-api.md
+  - type: AsyncAPI
+    url: asyncapi/accept-midas-asyncapi.yml
+  - type: DataModel
+    url: data-model/accept-data-model.yml
+- aid: accept:accept-business-services-api
+  name: Accept Business Services API
+  description: The Business Services API from Accept — 3 operation(s) for business services.
+  humanURL: https://www.accept.io
+  baseURL: https://midas.accept.io
+  tags:
+  - Business Services
+  properties:
+  - type: OpenAPI
+    url: openapi/accept-business-services-api-openapi.yml
+  - type: APIReference
+    url: https://github.com/accept-io/midas/blob/main/docs/api/http-api.md
+  - type: AsyncAPI
+    url: asyncapi/accept-midas-asyncapi.yml
+  - type: DataModel
+    url: data-model/accept-data-model.yml
+- aid: accept:accept-control-plane-api
+  name: Accept Control Plane API
+  description: The Control Plane API from Accept — 18 operation(s) for control plane.
+  humanURL: https://www.accept.io
+  baseURL: https://midas.accept.io
+  tags:
+  - Control Plane
+  properties:
+  - type: OpenAPI
+    url: openapi/accept-control-plane-api-openapi.yml
   - type: APIReference
     url: https://github.com/accept-io/midas/blob/main/docs/api/http-api.md
   - type: AsyncAPI
