@@ -1,10 +1,8 @@
-openapi: 3.1.0
+openapi: 3.2.0
 info:
-  title: MIDAS Agents Coverage API
+  title: MIDAS Coverage API
   version: 1.1.0-rc.1
-  description: 'Authority governance engine for autonomous decisions. Every evaluation produces exactly one outcome and one tamper-evident audit envelope.
-
-    '
+  description: Authority governance engine for autonomous decisions. Every evaluation produces exactly one outcome and one tamper-evident audit envelope.
 servers:
 - url: http://localhost:8080
   description: Local development
@@ -17,9 +15,7 @@ paths:
     get:
       operationId: listGovernanceCoverage
       summary: List governance coverage records
-      description: 'Returns merged GOVERNANCE_CONDITION_DETECTED / GOVERNANCE_COVERAGE_GAP runtime audit events as coverage records keyed by (envelope_id, expectation_id, expectation_version). Each response includes a fixed limitations array describing the read model''s scope and correlation semantics — see Issue #56. Requires platform.viewer or above.
-
-        '
+      description: 'Returns merged GOVERNANCE_CONDITION_DETECTED / GOVERNANCE_COVERAGE_GAP runtime audit events as coverage records keyed by (envelope_id, expectation_id, expectation_version). Each response includes a fixed limitations array describing the read model''s scope and correlation semantics — see Issue #56. Requires platform.viewer or above.'
       parameters:
       - name: request_source
         in: query

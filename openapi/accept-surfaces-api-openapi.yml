@@ -1,10 +1,8 @@
-openapi: 3.1.0
+openapi: 3.2.0
 info:
-  title: MIDAS Agents Surfaces API
+  title: MIDAS Surfaces API
   version: 1.1.0-rc.1
-  description: 'Authority governance engine for autonomous decisions. Every evaluation produces exactly one outcome and one tamper-evident audit envelope.
-
-    '
+  description: Authority governance engine for autonomous decisions. Every evaluation produces exactly one outcome and one tamper-evident audit envelope.
 servers:
 - url: http://localhost:8080
   description: Local development
@@ -17,9 +15,7 @@ paths:
     get:
       operationId: getSurface
       summary: Get a decision surface
-      description: 'Returns the latest version of a surface by default. Append /versions to list all versions. Append /impact to see profiles, grants, and agents linked to this surface.
-
-        '
+      description: Returns the latest version of a surface by default. Append /versions to list all versions. Append /impact to see profiles, grants, and agents linked to this surface.
       parameters:
       - name: id
         in: path
@@ -57,9 +53,7 @@ paths:
     get:
       operationId: listSurfaceVersions
       summary: List all versions of a decision surface
-      description: 'Returns the full version history for a surface, ordered by version ascending. Returns 404 when no surface with that ID exists. Requires platform.viewer or above.
-
-        '
+      description: Returns the full version history for a surface, ordered by version ascending. Returns 404 when no surface with that ID exists. Requires platform.viewer or above.
       parameters:
       - name: id
         in: path
@@ -99,9 +93,7 @@ paths:
     get:
       operationId: getSurfaceImpact
       summary: Get the dependency graph for a decision surface
-      description: 'Returns the full impact graph for a surface: all linked profiles, all grants referencing those profiles, and all distinct agents referenced by those grants. Includes aggregate counts and deterministic operator warnings. All array sections are always present (never null). Requires platform.viewer or above.
-
-        '
+      description: 'Returns the full impact graph for a surface: all linked profiles, all grants referencing those profiles, and all distinct agents referenced by those grants. Includes aggregate counts and deterministic operator warnings. All array sections are always present (never null). Requires platform.viewer or above.'
       parameters:
       - name: id
         in: path
@@ -139,9 +131,7 @@ paths:
     get:
       operationId: getSurfaceRecovery
       summary: Get recovery analysis for a decision surface
-      description: 'Returns a read-only recovery analysis: version history state, active/latest version distinction, successor links, and deterministic recommended next actions. Requires platform.viewer or above.
-
-        '
+      description: 'Returns a read-only recovery analysis: version history state, active/latest version distinction, successor links, and deterministic recommended next actions. Requires platform.viewer or above.'
       parameters:
       - name: id
         in: path
@@ -177,6 +167,53 @@ paths:
       - Surfaces
 components:
   schemas:
+    Surface:
+      type: object
+      properties:
+        id:
+          type: string
+        name:
+          type: string
+        status:
+          $ref: '#/components/schemas/LifecycleStatus'
+        version:
+          type: integer
+        domain:
+          type: string
+        business_owner:
+          type: string
+        technical_owner:
+          type: string
+        effective_from:
+          type: string
+          format: date-time
+        approved_by:
+          type: string
+        approved_at:
+          type: string
+          format: date-time
+        deprecation_reason:
+          type: string
+        successor_surface_id:
+          type: string
+    Error:
+      type: object
+      required:
+      - error
+      properties:
+        error:
+          type: string
+    LifecycleStatus:
+      type: string
+      description: 'Canonical lifecycle posture for versioned governance resources (Surface, Profile, FailModePolicy, EscalationTarget). Every governed configuration entity in MIDAS follows the same draft -> review -> active -> deprecated -> retired progression. Only `active` versions participate in runtime resolution.
+
+        '
+      enum:
+      - draft
+      - review
+      - active
+      - deprecated
+      - retired
     SurfaceVersionItem:
       type: object
       description: A single entry in the surface version history list.
@@ -200,45 +237,6 @@ components:
         updated_at:
           type: string
           format: date-time
-    SurfaceRecovery:
-      type: object
-      description: Read-only recovery analysis for a decision surface.
-      properties:
-        surface_id:
-          type: string
-        latest_version:
-          type: integer
-        latest_status:
-          type: string
-        active_version:
-          type: integer
-          nullable: true
-          description: Null when no version is currently effective.
-        active_status:
-          type: string
-          nullable: true
-          description: Null when no version is currently effective.
-        successor_surface_id:
-          type: string
-        deprecation_reason:
-          type: string
-        version_count:
-          type: integer
-        warnings:
-          type: array
-          items:
-            type: string
-        recommended_next_actions:
-          type: array
-          items:
-            type: string
-    Error:
-      type: object
-      required:
-      - error
-      properties:
-        error:
-          type: string
     SurfaceImpact:
       type: object
       description: 'Full dependency graph for a decision surface — all linked profiles, grants, and distinct agents. All array sections are always present (never null). Warnings are deterministic based on active-count thresholds.
@@ -361,46 +359,38 @@ components:
           items:
             type: string
           description: Operator warnings. Empty array when none apply.
-    Surface:
+    SurfaceRecovery:
       type: object
+      description: Read-only recovery analysis for a decision surface.
       properties:
-        id:
+        surface_id:
           type: string
-        name:
-          type: string
-        status:
-          $ref: '#/components/schemas/LifecycleStatus'
-        version:
+        latest_version:
           type: integer
-        domain:
+        latest_status:
           type: string
-        business_owner:
+        active_version:
+          type: integer
+          nullable: true
+          description: Null when no version is currently effective.
+        active_status:
           type: string
-        technical_owner:
-          type: string
-        effective_from:
-          type: string
-          format: date-time
-        approved_by:
-          type: string
-        approved_at:
-          type: string
-          format: date-time
-        deprecation_reason:
-          type: string
+          nullable: true
+          description: Null when no version is currently effective.
         successor_surface_id:
           type: string
-    LifecycleStatus:
-      type: string
-      description: 'Canonical lifecycle posture for versioned governance resources (Surface, Profile, FailModePolicy, EscalationTarget). Every governed configuration entity in MIDAS follows the same draft -> review -> active -> deprecated -> retired progression. Only `active` versions participate in runtime resolution.
-
-        '
-      enum:
-      - draft
-      - review
-      - active
-      - deprecated
-      - retired
+        deprecation_reason:
+          type: string
+        version_count:
+          type: integer
+        warnings:
+          type: array
+          items:
+            type: string
+        recommended_next_actions:
+          type: array
+          items:
+            type: string
   securitySchemes:
     BearerAuth:
       type: http

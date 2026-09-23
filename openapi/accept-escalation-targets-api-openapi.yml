@@ -1,10 +1,8 @@
-openapi: 3.1.0
+openapi: 3.2.0
 info:
-  title: MIDAS Agents Escalation Targets API
+  title: MIDAS Escalation Targets API
   version: 1.1.0-rc.1
-  description: 'Authority governance engine for autonomous decisions. Every evaluation produces exactly one outcome and one tamper-evident audit envelope.
-
-    '
+  description: Authority governance engine for autonomous decisions. Every evaluation produces exactly one outcome and one tamper-evident audit envelope.
 servers:
 - url: http://localhost:8080
   description: Local development
@@ -17,9 +15,7 @@ paths:
     get:
       operationId: listEscalationTargets
       summary: List the latest version of every escalation target
-      description: 'Returns one row per logical escalation target id (the latest version of each), sorted by id ascending. The array always serialises non-null (empty list when no targets exist). Read-only; D31k-impl-1 does not introduce write endpoints.
-
-        '
+      description: Returns one row per logical escalation target id (the latest version of each), sorted by id ascending. The array always serialises non-null (empty list when no targets exist). Read-only; D31k-impl-1 does not introduce write endpoints.
       responses:
         '200':
           description: Escalation targets list
@@ -57,9 +53,7 @@ paths:
     get:
       operationId: getEscalationTarget
       summary: Get the latest version of an EscalationTarget by ID
-      description: 'Returns the highest-numbered EscalationTarget version for the given id regardless of lifecycle status. Read-only.
-
-        '
+      description: Returns the highest-numbered EscalationTarget version for the given id regardless of lifecycle status. Read-only.
       parameters:
       - name: id
         in: path
@@ -109,9 +103,7 @@ paths:
     get:
       operationId: listEscalationTargetVersions
       summary: List every persisted version of an EscalationTarget
-      description: 'Returns every revision of the EscalationTarget id in descending version order. 404 when the id is unknown.
-
-        '
+      description: Returns every revision of the EscalationTarget id in descending version order. 404 when the id is unknown.
       parameters:
       - name: id
         in: path
@@ -161,9 +153,7 @@ paths:
     get:
       operationId: getEscalationTargetVersion
       summary: Get a specific EscalationTarget revision
-      description: 'Returns the exact (id, version) revision. 404 when the pair does not exist.
-
-        '
+      description: Returns the exact (id, version) revision. 404 when the pair does not exist.
       parameters:
       - name: id
         in: path
@@ -223,16 +213,6 @@ paths:
       - Escalation Targets
 components:
   schemas:
-    EscalationTargetKind:
-      type: string
-      description: 'Discriminator for the EscalationTarget Handle field. role = identity role name (e.g. governance.approver); agent = registered agent id; surface = decision surface id; external = external system or URI identifier. Cross-context existence is not enforced at the repository layer.
-
-        '
-      enum:
-      - role
-      - agent
-      - surface
-      - external
     EscalationTargetListResponse:
       type: object
       description: 'List wrapper for EscalationTarget GET endpoints. The array always serialises non-null (empty list when no targets exist).
@@ -245,13 +225,16 @@ components:
           type: array
           items:
             $ref: '#/components/schemas/EscalationTarget'
-    Error:
-      type: object
-      required:
-      - error
-      properties:
-        error:
-          type: string
+    EscalationTargetKind:
+      type: string
+      description: 'Discriminator for the EscalationTarget Handle field. role = identity role name (e.g. governance.approver); agent = registered agent id; surface = decision surface id; external = external system or URI identifier. Cross-context existence is not enforced at the repository layer.
+
+        '
+      enum:
+      - role
+      - agent
+      - surface
+      - external
     EscalationTargetStatus:
       description: 'Lifecycle state of an EscalationTarget version. Delegates to the canonical LifecycleStatus posture. Only `active` versions participate in runtime escalation resolution.
 
@@ -269,6 +252,13 @@ components:
       - active
       - deprecated
       - retired
+    Error:
+      type: object
+      required:
+      - error
+      properties:
+        error:
+          type: string
     EscalationTarget:
       type: object
       description: 'Governed, versioned escalation target. Composite (id, version) primary key. The runtime escalation-target resolver picks the highest active version whose effective window covers the moment of escalation, mirroring FailModePolicy resolution.

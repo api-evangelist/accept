@@ -1,10 +1,8 @@
-openapi: 3.1.0
+openapi: 3.2.0
 info:
-  title: MIDAS Agents Profiles API
+  title: MIDAS Profiles API
   version: 1.1.0-rc.1
-  description: 'Authority governance engine for autonomous decisions. Every evaluation produces exactly one outcome and one tamper-evident audit envelope.
-
-    '
+  description: Authority governance engine for autonomous decisions. Every evaluation produces exactly one outcome and one tamper-evident audit envelope.
 servers:
 - url: http://localhost:8080
   description: Local development
@@ -52,9 +50,7 @@ paths:
     get:
       operationId: getProfile
       summary: Get an authority profile
-      description: 'Returns the latest active version of a profile. Append /versions to list all versions.
-
-        '
+      description: Returns the latest active version of a profile. Append /versions to list all versions.
       parameters:
       - name: id
         in: path
@@ -92,9 +88,7 @@ paths:
     get:
       operationId: listProfileVersions
       summary: List all versions of an authority profile
-      description: 'Returns all versions of a profile, ordered by version descending (latest first). Returns 404 when no profile with that logical ID exists. Requires platform.viewer or above.
-
-        '
+      description: Returns all versions of a profile, ordered by version descending (latest first). Returns 404 when no profile with that logical ID exists. Requires platform.viewer or above.
       parameters:
       - name: id
         in: path
@@ -134,9 +128,7 @@ paths:
     get:
       operationId: getProfileRecovery
       summary: Get recovery analysis for an authority profile
-      description: 'Returns a read-only recovery analysis: version history state, active/latest version distinction, active grant counts, and deterministic recommended next actions. Requires platform.viewer or above.
-
-        '
+      description: 'Returns a read-only recovery analysis: version history state, active/latest version distinction, active grant counts, and deterministic recommended next actions. Requires platform.viewer or above.'
       parameters:
       - name: id
         in: path
@@ -172,56 +164,6 @@ paths:
       - Profiles
 components:
   schemas:
-    ProfileRecovery:
-      type: object
-      description: Read-only recovery analysis for an authority profile.
-      properties:
-        profile_id:
-          type: string
-        surface_id:
-          type: string
-        latest_version:
-          type: integer
-        latest_status:
-          type: string
-        active_version:
-          type: integer
-          nullable: true
-          description: Null when no version is currently effective.
-        active_status:
-          type: string
-          nullable: true
-          description: Null when no version is currently effective.
-        version_count:
-          type: integer
-        versions:
-          type: array
-          items:
-            type: object
-            properties:
-              version:
-                type: integer
-              status:
-                type: string
-              effective_from:
-                type: string
-                format: date-time
-        active_grant_count:
-          type: integer
-          description: 'Number of active grants linked to this profile. -1 when the grant repository is not available.
-
-            '
-        capability_note:
-          type: string
-          description: Human-readable description of the profile lifecycle behaviour.
-        warnings:
-          type: array
-          items:
-            type: string
-        recommended_next_actions:
-          type: array
-          items:
-            type: string
     Error:
       type: object
       required:
@@ -295,6 +237,56 @@ components:
         updated_at:
           type: string
           format: date-time
+    ProfileRecovery:
+      type: object
+      description: Read-only recovery analysis for an authority profile.
+      properties:
+        profile_id:
+          type: string
+        surface_id:
+          type: string
+        latest_version:
+          type: integer
+        latest_status:
+          type: string
+        active_version:
+          type: integer
+          nullable: true
+          description: Null when no version is currently effective.
+        active_status:
+          type: string
+          nullable: true
+          description: Null when no version is currently effective.
+        version_count:
+          type: integer
+        versions:
+          type: array
+          items:
+            type: object
+            properties:
+              version:
+                type: integer
+              status:
+                type: string
+              effective_from:
+                type: string
+                format: date-time
+        active_grant_count:
+          type: integer
+          description: 'Number of active grants linked to this profile. -1 when the grant repository is not available.
+
+            '
+        capability_note:
+          type: string
+          description: Human-readable description of the profile lifecycle behaviour.
+        warnings:
+          type: array
+          items:
+            type: string
+        recommended_next_actions:
+          type: array
+          items:
+            type: string
   securitySchemes:
     BearerAuth:
       type: http

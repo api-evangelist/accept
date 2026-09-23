@@ -1,10 +1,8 @@
-openapi: 3.1.0
+openapi: 3.2.0
 info:
-  title: MIDAS Agents Aisystems API
+  title: MIDAS Aisystems API
   version: 1.1.0-rc.1
-  description: 'Authority governance engine for autonomous decisions. Every evaluation produces exactly one outcome and one tamper-evident audit envelope.
-
-    '
+  description: Authority governance engine for autonomous decisions. Every evaluation produces exactly one outcome and one tamper-evident audit envelope.
 servers:
 - url: http://localhost:8080
   description: Local development
@@ -17,9 +15,7 @@ paths:
     get:
       operationId: listAISystems
       summary: List AI systems
-      description: 'Returns all registered AI systems. The `ai_systems` array is always present (possibly empty). Requires platform.viewer or above. See Epic 1, PR 2 (AI System Registration Foundation).
-
-        '
+      description: Returns all registered AI systems. The `ai_systems` array is always present (possibly empty). Requires platform.viewer or above. See Epic 1, PR 2 (AI System Registration Foundation).
       responses:
         '200':
           description: AI systems
@@ -106,9 +102,7 @@ paths:
     get:
       operationId: listAISystemVersions
       summary: List versions for an AI system
-      description: 'Returns all versions for the AI system, ordered by version DESC (latest first). The `versions` array is always present (possibly empty).
-
-        '
+      description: Returns all versions for the AI system, ordered by version DESC (latest first). The `versions` array is always present (possibly empty).
       parameters:
       - name: id
         in: path
@@ -219,9 +213,7 @@ paths:
     get:
       operationId: listAISystemBindings
       summary: List bindings for an AI system
-      description: 'Returns all bindings linking the AI system to existing MIDAS context entities. The `bindings` array is always present (possibly empty).
-
-        '
+      description: Returns all bindings linking the AI system to existing MIDAS context entities. The `bindings` array is always present (possibly empty).
       parameters:
       - name: id
         in: path
@@ -269,6 +261,37 @@ paths:
       - Aisystems
 components:
   schemas:
+    ExternalRef:
+      type: object
+      description: 'Structured reference to an entity in an external system (ServiceNow, LeanIX, GitHub, internal catalogues, custom). MIDAS records the reference but never validates the source_system against an enum and never resolves the reference by calling the external system. source_system and source_id must either both be present or both be absent — the consistency rule is enforced by a CHECK constraint on each consuming table. Wire-format nullability: the parent response renders `external_ref: null` when no external reference is recorded.
+
+        '
+      required:
+      - source_system
+      - source_id
+      properties:
+        source_system:
+          type: string
+          description: 'Caller-asserted label identifying the external system that
+
+            produced this reference. Vendor-neutral; MIDAS does not
+
+            validate or resolve this value.
+
+            '
+        source_id:
+          type: string
+          description: Identifier of the entity in the source system.
+        source_url:
+          type: string
+          description: Optional deep link to the entity in the source system.
+        source_version:
+          type: string
+          description: Optional version label assigned by the source system.
+        last_synced_at:
+          type: string
+          format: date-time
+          description: Optional timestamp of the last sync from the source system.
     AISystem:
       type: object
       description: 'AI System registry entry. Identity-only; risk classification and external references are deferred to follow-up epics. Status is honoured at apply time (no review-forcing).
@@ -327,86 +350,6 @@ components:
           - $ref: '#/components/schemas/ExternalRef'
           nullable: true
           description: Optional structured external reference. See ExternalRef (Epic 1, PR 3).
-    AISystemsResponse:
-      type: object
-      description: 'Top-level response shape for GET /v1/aisystems. The `ai_systems` array is always present (never null).
-
-        '
-      required:
-      - ai_systems
-      properties:
-        ai_systems:
-          type: array
-          items:
-            $ref: '#/components/schemas/AISystem'
-    AISystemVersionsResponse:
-      type: object
-      description: 'Top-level response shape for GET /v1/aisystems/{id}/versions. The `versions` array is always present (never null).
-
-        '
-      required:
-      - ai_system_id
-      - versions
-      properties:
-        ai_system_id:
-          type: string
-        versions:
-          type: array
-          items:
-            $ref: '#/components/schemas/AISystemVersion'
-    ExternalRef:
-      type: object
-      description: 'Structured reference to an entity in an external system (ServiceNow, LeanIX, GitHub, internal catalogues, custom). MIDAS records the reference but never validates the source_system against an enum and never resolves the reference by calling the external system. source_system and source_id must either both be present or both be absent — the consistency rule is enforced by a CHECK constraint on each consuming table. Wire-format nullability: the parent response renders `external_ref: null` when no external reference is recorded.
-
-        '
-      required:
-      - source_system
-      - source_id
-      properties:
-        source_system:
-          type: string
-          description: 'Caller-asserted label identifying the external system that
-
-            produced this reference. Vendor-neutral; MIDAS does not
-
-            validate or resolve this value.
-
-            '
-        source_id:
-          type: string
-          description: Identifier of the entity in the source system.
-        source_url:
-          type: string
-          description: Optional deep link to the entity in the source system.
-        source_version:
-          type: string
-          description: Optional version label assigned by the source system.
-        last_synced_at:
-          type: string
-          format: date-time
-          description: Optional timestamp of the last sync from the source system.
-    Error:
-      type: object
-      required:
-      - error
-      properties:
-        error:
-          type: string
-    AISystemBindingsResponse:
-      type: object
-      description: 'Top-level response shape for GET /v1/aisystems/{id}/bindings. The `bindings` array is always present (never null).
-
-        '
-      required:
-      - ai_system_id
-      - bindings
-      properties:
-        ai_system_id:
-          type: string
-        bindings:
-          type: array
-          items:
-            $ref: '#/components/schemas/AISystemBinding'
     AISystemVersion:
       type: object
       description: 'Versioned snapshot of an AISystem. Identified by composite (ai_system_id, version). Status is honoured at apply time.
@@ -471,6 +414,55 @@ components:
           - $ref: '#/components/schemas/ExternalRef'
           nullable: true
           description: Optional structured external reference. See ExternalRef (Epic 1, PR 3).
+    AISystemsResponse:
+      type: object
+      description: 'Top-level response shape for GET /v1/aisystems. The `ai_systems` array is always present (never null).
+
+        '
+      required:
+      - ai_systems
+      properties:
+        ai_systems:
+          type: array
+          items:
+            $ref: '#/components/schemas/AISystem'
+    Error:
+      type: object
+      required:
+      - error
+      properties:
+        error:
+          type: string
+    AISystemBindingsResponse:
+      type: object
+      description: 'Top-level response shape for GET /v1/aisystems/{id}/bindings. The `bindings` array is always present (never null).
+
+        '
+      required:
+      - ai_system_id
+      - bindings
+      properties:
+        ai_system_id:
+          type: string
+        bindings:
+          type: array
+          items:
+            $ref: '#/components/schemas/AISystemBinding'
+    AISystemVersionsResponse:
+      type: object
+      description: 'Top-level response shape for GET /v1/aisystems/{id}/versions. The `versions` array is always present (never null).
+
+        '
+      required:
+      - ai_system_id
+      - versions
+      properties:
+        ai_system_id:
+          type: string
+        versions:
+          type: array
+          items:
+            $ref: '#/components/schemas/AISystemVersion'
     AISystemBinding:
       type: object
       description: 'Immediate-apply junction linking an AI system (optionally pinned to a specific version) to one or more existing MIDAS context entities (BusinessService, Capability, Process, DecisionSurface). At least one of business_service_id, capability_id, process_id, or surface_id is set; unset fields are returned as JSON null rather than empty strings.

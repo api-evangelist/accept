@@ -1,10 +1,8 @@
-openapi: 3.1.0
+openapi: 3.2.0
 info:
-  title: MIDAS Agents Drift API
+  title: MIDAS Drift API
   version: 1.1.0-rc.1
-  description: 'Authority governance engine for autonomous decisions. Every evaluation produces exactly one outcome and one tamper-evident audit envelope.
-
-    '
+  description: Authority governance engine for autonomous decisions. Every evaluation produces exactly one outcome and one tamper-evident audit envelope.
 servers:
 - url: http://localhost:8080
   description: Local development
@@ -757,38 +755,322 @@ paths:
       - Drift
 components:
   schemas:
-    DriftThresholdDirection:
+    DriftBaselineStrategy:
       type: string
-      enum:
-      - ascending
-      - descending
-    DriftAnalyticsObservedPoint:
-      type: object
-      required:
-      - t
-      - value
-      properties:
-        t:
-          type: string
-          format: date-time
-        value:
-          type: number
-          format: double
-        status:
-          type: string
-        magnitude:
-          type: number
-          format: double
-    DriftPointComputationMode:
-      type: string
-      description: 'Computation provenance for a series point. Backfill state lives on this enum; it is not encoded on detector_status.
+      description: 'V1 baseline strategies. champion_challenger and seasonality_aware are deferred to V2 and MUST NOT appear here.
 
         '
       enum:
-      - realtime
-      - backfilled
-      - corrected
-      - imported
+      - rolling
+      - fixed_governed
+      - previous_equivalent
+      - since_last_governed_change
+      - manually_pinned
+    DriftSeries:
+      type: object
+      description: One time-ordered stream for a (definition revision, metric, cadence) tuple.
+      required:
+      - id
+      - definition_id
+      - definition_version
+      - metric_id
+      - cadence
+      - status
+      - continuity_group_id
+      - created_at
+      - updated_at
+      properties:
+        id:
+          type: string
+        definition_id:
+          type: string
+        definition_version:
+          type: integer
+          minimum: 1
+        metric_id:
+          type: string
+        cadence:
+          $ref: '#/components/schemas/DriftCadence'
+        status:
+          $ref: '#/components/schemas/DriftStatusBand'
+        continuity_group_id:
+          type: string
+        previous_series_id:
+          type: string
+        superseded_by_series_id:
+          type: string
+        cutover_at:
+          type: string
+          format: date-time
+          nullable: true
+        sealed_at:
+          type: string
+          format: date-time
+          nullable: true
+        created_at:
+          type: string
+          format: date-time
+        updated_at:
+          type: string
+          format: date-time
+    DriftType:
+      type: string
+      description: 'V1 drift taxonomy. Population, data, prediction, performance, and concept drift are deferred to V2 and MUST NOT appear here.
+
+        '
+      enum:
+      - invocation
+      - outcome
+      - confidence
+      - latency
+      - evidence
+      - authority
+      - policy
+      - coverage
+      - process_path
+    DriftAnnotationTargetRef:
+      type: object
+      required:
+      - kind
+      - id
+      properties:
+        kind:
+          $ref: '#/components/schemas/DriftAnnotationTargetKind'
+        id:
+          type: string
+    DriftDefinitionListResponse:
+      type: object
+      required:
+      - drift_definitions
+      properties:
+        drift_definitions:
+          type: array
+          items:
+            $ref: '#/components/schemas/DriftDefinition'
+    DriftAnnotation:
+      type: object
+      description: Operator commentary against a series or observation.
+      required:
+      - id
+      - target
+      - annotation_type
+      - body
+      - reference_envelope_ids
+      - status
+      - author_id
+      - created_at
+      - updated_at
+      properties:
+        id:
+          type: string
+        target:
+          $ref: '#/components/schemas/DriftAnnotationTargetRef'
+        annotation_type:
+          $ref: '#/components/schemas/DriftAnnotationType'
+        body:
+          type: string
+        suppression_until:
+          type: string
+          format: date-time
+          nullable: true
+        reference_envelope_ids:
+          type: array
+          items:
+            type: string
+        status:
+          $ref: '#/components/schemas/DriftAnnotationStatus'
+        superseded_by_id:
+          type: string
+        author_id:
+          type: string
+        created_at:
+          type: string
+          format: date-time
+        updated_at:
+          type: string
+          format: date-time
+    DriftOrigin:
+      type: string
+      enum:
+      - manual
+      - inferred
+      - auto_instrumented
+    DriftObservationListResponse:
+      type: object
+      required:
+      - drift_observations
+      properties:
+        drift_observations:
+          type: array
+          items:
+            $ref: '#/components/schemas/DriftObservation'
+    DriftSeriesPoint:
+      type: object
+      description: 'Append-only window summary. summary_stats and baseline_stats are opaque JSON objects whose internal shape is detector- specific. Backfill state is encoded on computation_mode + backfill_run_id, NOT on status.
+
+        '
+      required:
+      - id
+      - series_id
+      - window_start
+      - window_end
+      - sample_count
+      - summary_stats
+      - baseline_stats
+      - magnitude
+      - status
+      - computation_mode
+      - computed_at
+      - source_window_complete
+      - provenance_envelope_ids
+      - created_at
+      properties:
+        id:
+          type: string
+        series_id:
+          type: string
+        window_start:
+          type: string
+          format: date-time
+        window_end:
+          type: string
+          format: date-time
+        sample_count:
+          type: integer
+          minimum: 0
+        summary_stats:
+          type: object
+          description: Detector-specific summary stats; opaque object whose internal shape is detector-specific.
+          additionalProperties: true
+        baseline_stats:
+          type: object
+          description: Detector-specific baseline stats; opaque object whose internal shape is detector-specific.
+          additionalProperties: true
+        baseline_window_id:
+          type: string
+        magnitude:
+          type: number
+        status:
+          $ref: '#/components/schemas/DriftStatusBand'
+        computation_mode:
+          $ref: '#/components/schemas/DriftPointComputationMode'
+        computed_at:
+          type: string
+          format: date-time
+        backfill_run_id:
+          type: string
+        source_window_complete:
+          type: boolean
+        provenance_envelope_ids:
+          type: array
+          items:
+            type: string
+        created_at:
+          type: string
+          format: date-time
+    DriftDefinition:
+      type: object
+      description: 'Governed, versioned drift specification. Composite (id, version) identity. Apply persists Status=''review''; activation lives in a future approval-endpoint tranche.
+
+        '
+      required:
+      - id
+      - version
+      - name
+      - status
+      - effective_date
+      - business_owner
+      - technical_owner
+      - target
+      - metrics
+      - origin
+      - managed
+      - created_at
+      - updated_at
+      properties:
+        id:
+          type: string
+        version:
+          type: integer
+          minimum: 1
+        name:
+          type: string
+        description:
+          type: string
+        status:
+          $ref: '#/components/schemas/DriftDefinitionStatus'
+        effective_date:
+          type: string
+          format: date-time
+        effective_until:
+          type: string
+          format: date-time
+          nullable: true
+        retired_at:
+          type: string
+          format: date-time
+          nullable: true
+        business_owner:
+          type: string
+        technical_owner:
+          type: string
+        target:
+          $ref: '#/components/schemas/DriftTargetRef'
+        metrics:
+          type: array
+          items:
+            $ref: '#/components/schemas/DriftMetricDefinition'
+        origin:
+          $ref: '#/components/schemas/DriftOrigin'
+        managed:
+          type: boolean
+        replaces:
+          type: string
+        successor_definition_id:
+          type: string
+        successor_version:
+          type: integer
+          minimum: 0
+        created_at:
+          type: string
+          format: date-time
+        updated_at:
+          type: string
+          format: date-time
+        created_by:
+          type: string
+        approved_by:
+          type: string
+        approved_at:
+          type: string
+          format: date-time
+          nullable: true
+    Error:
+      type: object
+      required:
+      - error
+      properties:
+        error:
+          type: string
+    DriftDefinitionStatus:
+      description: 'Lifecycle state of a DriftDefinition. Delegates to the canonical LifecycleStatus posture.
+
+        '
+      allOf:
+      - $ref: '#/components/schemas/LifecycleStatus'
+    DriftObservationOperatorStatus:
+      type: string
+      enum:
+      - open
+      - triaged
+      - resolved
+      - accepted
+      - superseded
+    DriftAnnotationStatus:
+      type: string
+      enum:
+      - active
+      - superseded
     DriftAnalyticsResponse:
       type: object
       required:
@@ -977,46 +1259,13 @@ components:
           format: date-time
         dataAvailable:
           type: boolean
-    DriftDefinitionListResponse:
-      type: object
-      required:
-      - drift_definitions
-      properties:
-        drift_definitions:
-          type: array
-          items:
-            $ref: '#/components/schemas/DriftDefinition'
-    DriftBaselineStrategy:
-      type: string
-      description: 'V1 baseline strategies. champion_challenger and seasonality_aware are deferred to V2 and MUST NOT appear here.
-
-        '
-      enum:
-      - rolling
-      - fixed_governed
-      - previous_equivalent
-      - since_last_governed_change
-      - manually_pinned
-    DriftOrigin:
+    DriftAnnotationType:
       type: string
       enum:
-      - manual
-      - inferred
-      - auto_instrumented
-    DriftObservationListResponse:
-      type: object
-      required:
-      - drift_observations
-      properties:
-        drift_observations:
-          type: array
-          items:
-            $ref: '#/components/schemas/DriftObservation'
-    DriftAnnotationStatus:
-      type: string
-      enum:
-      - active
-      - superseded
+      - known_business_change
+      - suppression
+      - remediation_note
+      - acknowledgement
     DriftAnalyticsPoint:
       type: object
       required:
@@ -1029,112 +1278,17 @@ components:
         value:
           type: number
           format: double
-    DriftSeries:
+    DriftTargetRef:
       type: object
-      description: One time-ordered stream for a (definition revision, metric, cadence) tuple.
-      required:
-      - id
-      - definition_id
-      - definition_version
-      - metric_id
-      - cadence
-      - status
-      - continuity_group_id
-      - created_at
-      - updated_at
-      properties:
-        id:
-          type: string
-        definition_id:
-          type: string
-        definition_version:
-          type: integer
-          minimum: 1
-        metric_id:
-          type: string
-        cadence:
-          $ref: '#/components/schemas/DriftCadence'
-        status:
-          $ref: '#/components/schemas/DriftStatusBand'
-        continuity_group_id:
-          type: string
-        previous_series_id:
-          type: string
-        superseded_by_series_id:
-          type: string
-        cutover_at:
-          type: string
-          format: date-time
-          nullable: true
-        sealed_at:
-          type: string
-          format: date-time
-          nullable: true
-        created_at:
-          type: string
-          format: date-time
-        updated_at:
-          type: string
-          format: date-time
-    DriftCadence:
-      type: string
-      enum:
-      - minute
-      - hour
-      - day
-      - week
-    DriftAnnotationTargetRef:
-      type: object
+      description: Discriminated reference to a governed entity.
       required:
       - kind
       - id
       properties:
         kind:
-          $ref: '#/components/schemas/DriftAnnotationTargetKind'
+          $ref: '#/components/schemas/DriftTargetEntityKind'
         id:
           type: string
-    DriftAnnotation:
-      type: object
-      description: Operator commentary against a series or observation.
-      required:
-      - id
-      - target
-      - annotation_type
-      - body
-      - reference_envelope_ids
-      - status
-      - author_id
-      - created_at
-      - updated_at
-      properties:
-        id:
-          type: string
-        target:
-          $ref: '#/components/schemas/DriftAnnotationTargetRef'
-        annotation_type:
-          $ref: '#/components/schemas/DriftAnnotationType'
-        body:
-          type: string
-        suppression_until:
-          type: string
-          format: date-time
-          nullable: true
-        reference_envelope_ids:
-          type: array
-          items:
-            type: string
-        status:
-          $ref: '#/components/schemas/DriftAnnotationStatus'
-        superseded_by_id:
-          type: string
-        author_id:
-          type: string
-        created_at:
-          type: string
-          format: date-time
-        updated_at:
-          type: string
-          format: date-time
     DriftAnnotationListResponse:
       type: object
       required:
@@ -1144,24 +1298,6 @@ components:
           type: array
           items:
             $ref: '#/components/schemas/DriftAnnotation'
-    LifecycleStatus:
-      type: string
-      description: 'Canonical lifecycle posture for versioned governance resources (Surface, Profile, FailModePolicy, EscalationTarget). Every governed configuration entity in MIDAS follows the same draft -> review -> active -> deprecated -> retired progression. Only `active` versions participate in runtime resolution.
-
-        '
-      enum:
-      - draft
-      - review
-      - active
-      - deprecated
-      - retired
-    DriftAnnotationType:
-      type: string
-      enum:
-      - known_business_change
-      - suppression
-      - remediation_note
-      - acknowledgement
     DriftMetricDefinition:
       type: object
       description: Embedded metric inside a DriftDefinition revision.
@@ -1202,70 +1338,17 @@ components:
           minimum: 0
         description:
           type: string
-    DriftSeriesPoint:
-      type: object
-      description: 'Append-only window summary. summary_stats and baseline_stats are opaque JSON objects whose internal shape is detector- specific. Backfill state is encoded on computation_mode + backfill_run_id, NOT on status.
+    LifecycleStatus:
+      type: string
+      description: 'Canonical lifecycle posture for versioned governance resources (Surface, Profile, FailModePolicy, EscalationTarget). Every governed configuration entity in MIDAS follows the same draft -> review -> active -> deprecated -> retired progression. Only `active` versions participate in runtime resolution.
 
         '
-      required:
-      - id
-      - series_id
-      - window_start
-      - window_end
-      - sample_count
-      - summary_stats
-      - baseline_stats
-      - magnitude
-      - status
-      - computation_mode
-      - computed_at
-      - source_window_complete
-      - provenance_envelope_ids
-      - created_at
-      properties:
-        id:
-          type: string
-        series_id:
-          type: string
-        window_start:
-          type: string
-          format: date-time
-        window_end:
-          type: string
-          format: date-time
-        sample_count:
-          type: integer
-          minimum: 0
-        summary_stats:
-          type: object
-          description: Detector-specific summary stats; opaque object whose internal shape is detector-specific.
-          additionalProperties: true
-        baseline_stats:
-          type: object
-          description: Detector-specific baseline stats; opaque object whose internal shape is detector-specific.
-          additionalProperties: true
-        baseline_window_id:
-          type: string
-        magnitude:
-          type: number
-        status:
-          $ref: '#/components/schemas/DriftStatusBand'
-        computation_mode:
-          $ref: '#/components/schemas/DriftPointComputationMode'
-        computed_at:
-          type: string
-          format: date-time
-        backfill_run_id:
-          type: string
-        source_window_complete:
-          type: boolean
-        provenance_envelope_ids:
-          type: array
-          items:
-            type: string
-        created_at:
-          type: string
-          format: date-time
+      enum:
+      - draft
+      - review
+      - active
+      - deprecated
+      - retired
     DriftSeriesPointListResponse:
       type: object
       required:
@@ -1275,111 +1358,58 @@ components:
           type: array
           items:
             $ref: '#/components/schemas/DriftSeriesPoint'
-    DriftDefinition:
+    DriftAnalyticsObservedPoint:
       type: object
-      description: 'Governed, versioned drift specification. Composite (id, version) identity. Apply persists Status=''review''; activation lives in a future approval-endpoint tranche.
-
-        '
       required:
-      - id
-      - version
-      - name
-      - status
-      - effective_date
-      - business_owner
-      - technical_owner
-      - target
-      - metrics
-      - origin
-      - managed
-      - created_at
-      - updated_at
+      - t
+      - value
       properties:
-        id:
+        t:
           type: string
-        version:
-          type: integer
-          minimum: 1
-        name:
-          type: string
-        description:
-          type: string
+          format: date-time
+        value:
+          type: number
+          format: double
         status:
-          $ref: '#/components/schemas/DriftDefinitionStatus'
-        effective_date:
           type: string
-          format: date-time
-        effective_until:
-          type: string
-          format: date-time
-          nullable: true
-        retired_at:
-          type: string
-          format: date-time
-          nullable: true
-        business_owner:
-          type: string
-        technical_owner:
-          type: string
-        target:
-          $ref: '#/components/schemas/DriftTargetRef'
-        metrics:
-          type: array
-          items:
-            $ref: '#/components/schemas/DriftMetricDefinition'
-        origin:
-          $ref: '#/components/schemas/DriftOrigin'
-        managed:
-          type: boolean
-        replaces:
-          type: string
-        successor_definition_id:
-          type: string
-        successor_version:
-          type: integer
-          minimum: 0
-        created_at:
-          type: string
-          format: date-time
-        updated_at:
-          type: string
-          format: date-time
-        created_by:
-          type: string
-        approved_by:
-          type: string
-        approved_at:
-          type: string
-          format: date-time
-          nullable: true
-    DriftStatusBand:
+        magnitude:
+          type: number
+          format: double
+    DriftAnnotationTargetKind:
       type: string
-      description: 'Five-band status used by DriftSeries, DriftSeriesPoint, and DriftObservation.detector_status. The split into unknown_insufficient_data and unknown_detector_error is deliberate; there is no single ''unknown'' value.
+      enum:
+      - series
+      - observation
+    DriftPointComputationMode:
+      type: string
+      description: 'Computation provenance for a series point. Backfill state lives on this enum; it is not encoded on detector_status.
 
         '
       enum:
-      - healthy
-      - warning
-      - breached
-      - unknown_insufficient_data
-      - unknown_detector_error
-    DriftTargetRef:
-      type: object
-      description: Discriminated reference to a governed entity.
-      required:
-      - kind
-      - id
-      properties:
-        kind:
-          $ref: '#/components/schemas/DriftTargetEntityKind'
-        id:
-          type: string
-    DriftDefinitionStatus:
-      description: 'Lifecycle state of a DriftDefinition. Delegates to the canonical LifecycleStatus posture.
+      - realtime
+      - backfilled
+      - corrected
+      - imported
+    DriftThresholdDirection:
+      type: string
+      enum:
+      - ascending
+      - descending
+    DriftTargetEntityKind:
+      type: string
+      description: 'The nine governed entity kinds a DriftDefinition may target.
 
         '
-      allOf:
-      - $ref: '#/components/schemas/LifecycleStatus'
+      enum:
+      - business_service
+      - capability
+      - process
+      - decision_surface
+      - ai_system
+      - ai_system_binding
+      - agent
+      - authority_profile
+      - authority_grant
     DriftObservation:
       type: object
       description: 'Audit-chain-bearing detector result. The observation itself does not mutate runtime state; future FailModePolicy resolvers may consume it as evidence input.
@@ -1460,33 +1490,24 @@ components:
         updated_at:
           type: string
           format: date-time
-    DriftAnnotationTargetKind:
+    DriftCadence:
       type: string
       enum:
-      - series
-      - observation
-    DriftType:
+      - minute
+      - hour
+      - day
+      - week
+    DriftStatusBand:
       type: string
-      description: 'V1 drift taxonomy. Population, data, prediction, performance, and concept drift are deferred to V2 and MUST NOT appear here.
+      description: 'Five-band status used by DriftSeries, DriftSeriesPoint, and DriftObservation.detector_status. The split into unknown_insufficient_data and unknown_detector_error is deliberate; there is no single ''unknown'' value.
 
         '
       enum:
-      - invocation
-      - outcome
-      - confidence
-      - latency
-      - evidence
-      - authority
-      - policy
-      - coverage
-      - process_path
-    Error:
-      type: object
-      required:
-      - error
-      properties:
-        error:
-          type: string
+      - healthy
+      - warning
+      - breached
+      - unknown_insufficient_data
+      - unknown_detector_error
     DriftSeriesListResponse:
       type: object
       required:
@@ -1496,29 +1517,6 @@ components:
           type: array
           items:
             $ref: '#/components/schemas/DriftSeries'
-    DriftTargetEntityKind:
-      type: string
-      description: 'The nine governed entity kinds a DriftDefinition may target.
-
-        '
-      enum:
-      - business_service
-      - capability
-      - process
-      - decision_surface
-      - ai_system
-      - ai_system_binding
-      - agent
-      - authority_profile
-      - authority_grant
-    DriftObservationOperatorStatus:
-      type: string
-      enum:
-      - open
-      - triaged
-      - resolved
-      - accepted
-      - superseded
   securitySchemes:
     BearerAuth:
       type: http

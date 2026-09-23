@@ -1,10 +1,8 @@
-openapi: 3.1.0
+openapi: 3.2.0
 info:
-  title: MIDAS Agents Platform API
+  title: MIDAS Platform API
   version: 1.1.0-rc.1
-  description: 'Authority governance engine for autonomous decisions. Every evaluation produces exactly one outcome and one tamper-evident audit envelope.
-
-    '
+  description: Authority governance engine for autonomous decisions. Every evaluation produces exactly one outcome and one tamper-evident audit envelope.
 servers:
 - url: http://localhost:8080
   description: Local development
@@ -17,9 +15,7 @@ paths:
     get:
       operationId: listAdminAudit
       summary: List platform-administrative audit events
-      description: 'Returns the append-only platform-administrative audit trail covering apply invocations, password changes, and bootstrap admin creation. Records are returned in descending occurred_at order (newest first). Requires platform.admin role — more restrictive than /v1/controlplane/audit because the trail includes password and bootstrap events. See Issue #41.
-
-        '
+      description: 'Returns the append-only platform-administrative audit trail covering apply invocations, password changes, and bootstrap admin creation. Records are returned in descending occurred_at order (newest first). Requires platform.admin role — more restrictive than /v1/controlplane/audit because the trail includes password and bootstrap events. See Issue #41.'
       parameters:
       - name: action
         in: query
@@ -155,15 +151,6 @@ components:
           description: Authz permission the request was gated on. Omitted for non-permission-gated events.
         details:
           $ref: '#/components/schemas/AdminAuditDetails'
-    AdminAuditListResponse:
-      type: object
-      required:
-      - entries
-      properties:
-        entries:
-          type: array
-          items:
-            $ref: '#/components/schemas/AdminAuditEntry'
     Error:
       type: object
       required:
@@ -210,6 +197,15 @@ components:
         error:
           type: string
           description: Human-readable failure message; never secret.
+    AdminAuditListResponse:
+      type: object
+      required:
+      - entries
+      properties:
+        entries:
+          type: array
+          items:
+            $ref: '#/components/schemas/AdminAuditEntry'
   securitySchemes:
     BearerAuth:
       type: http

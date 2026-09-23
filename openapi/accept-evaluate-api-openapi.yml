@@ -1,10 +1,8 @@
-openapi: 3.1.0
+openapi: 3.2.0
 info:
-  title: MIDAS Agents Evaluate API
+  title: MIDAS Evaluate API
   version: 1.1.0-rc.1
-  description: 'Authority governance engine for autonomous decisions. Every evaluation produces exactly one outcome and one tamper-evident audit envelope.
-
-    '
+  description: Authority governance engine for autonomous decisions. Every evaluation produces exactly one outcome and one tamper-evident audit envelope.
 servers:
 - url: http://localhost:8080
   description: Local development
@@ -17,9 +15,7 @@ paths:
     post:
       operationId: evaluate
       summary: Evaluate a decision request
-      description: 'Evaluates whether an agent is within authority to perform an action on a governed decision surface. Produces exactly one outcome and one tamper-evident audit envelope. Idempotent by request_id within a source.
-
-        '
+      description: Evaluates whether an agent is within authority to perform an action on a governed decision surface. Produces exactly one outcome and one tamper-evident audit envelope. Idempotent by request_id within a source.
       requestBody:
         required: true
         content:
@@ -61,30 +57,48 @@ paths:
       - Evaluate
 components:
   schemas:
-    Consequence:
+    EvaluateResponse:
       type: object
       required:
-      - type
+      - outcome
+      - reason
+      - audit_status
       properties:
-        type:
+        outcome:
           type: string
           enum:
-          - monetary
-          - risk_rating
-        amount:
-          type: number
-          description: Monetary amount. Required when type=monetary.
-        currency:
+          - accept
+          - escalate
+          - reject
+          - request_clarification
+        reason:
           type: string
-          description: ISO 4217 currency code. Required when type=monetary.
-        risk_rating:
+          description: Typed reason code (e.g. WITHIN_AUTHORITY, CONFIDENCE_BELOW_THRESHOLD).
+        envelope_id:
+          type: string
+          description: ID of the persisted governance envelope. Omitted on simulation.
+        explanation:
+          type: string
+          description: Human-readable explanation of the outcome.
+        policy_mode:
+          type: string
+          description: Active policy evaluator mode (e.g. noop).
+        policy_reference:
+          type: string
+          description: Policy bundle reference used during evaluation.
+        policy_skipped:
+          type: boolean
+          description: True when no policy was attached to the profile.
+        simulated:
+          type: boolean
+          description: True when the result was produced by the non-persistent simulate path.
+        audit_status:
           type: string
           enum:
-          - low
-          - medium
-          - high
-          - critical
-          description: Risk rating value. Required when type=risk_rating.
+          - recorded
+          description: 'Mandatory audit-record marker on successful /v1/evaluate responses (D27i-c chunk 3). Constrained to the single value "recorded" in F1 — the governed evaluate path always persists a tamper-evident audit envelope. Failure responses do not carry this field. The Explorer success path emits "explorer_recorded" but is not part of the v1 public contract; OpenAPI coverage of /explorer is a future tranche.
+
+            '
     EvaluateRequest:
       type: object
       required:
@@ -137,48 +151,30 @@ components:
       properties:
         error:
           type: string
-    EvaluateResponse:
+    Consequence:
       type: object
       required:
-      - outcome
-      - reason
-      - audit_status
+      - type
       properties:
-        outcome:
+        type:
           type: string
           enum:
-          - accept
-          - escalate
-          - reject
-          - request_clarification
-        reason:
+          - monetary
+          - risk_rating
+        amount:
+          type: number
+          description: Monetary amount. Required when type=monetary.
+        currency:
           type: string
-          description: Typed reason code (e.g. WITHIN_AUTHORITY, CONFIDENCE_BELOW_THRESHOLD).
-        envelope_id:
-          type: string
-          description: ID of the persisted governance envelope. Omitted on simulation.
-        explanation:
-          type: string
-          description: Human-readable explanation of the outcome.
-        policy_mode:
-          type: string
-          description: Active policy evaluator mode (e.g. noop).
-        policy_reference:
-          type: string
-          description: Policy bundle reference used during evaluation.
-        policy_skipped:
-          type: boolean
-          description: True when no policy was attached to the profile.
-        simulated:
-          type: boolean
-          description: True when the result was produced by the non-persistent simulate path.
-        audit_status:
+          description: ISO 4217 currency code. Required when type=monetary.
+        risk_rating:
           type: string
           enum:
-          - recorded
-          description: 'Mandatory audit-record marker on successful /v1/evaluate responses (D27i-c chunk 3). Constrained to the single value "recorded" in F1 — the governed evaluate path always persists a tamper-evident audit envelope. Failure responses do not carry this field. The Explorer success path emits "explorer_recorded" but is not part of the v1 public contract; OpenAPI coverage of /explorer is a future tranche.
-
-            '
+          - low
+          - medium
+          - high
+          - critical
+          description: Risk rating value. Required when type=risk_rating.
   securitySchemes:
     BearerAuth:
       type: http

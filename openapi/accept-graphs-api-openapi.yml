@@ -1,10 +1,8 @@
-openapi: 3.1.0
+openapi: 3.2.0
 info:
-  title: MIDAS Agents Graphs API
+  title: MIDAS Graphs API
   version: 1.1.0-rc.1
-  description: 'Authority governance engine for autonomous decisions. Every evaluation produces exactly one outcome and one tamper-evident audit envelope.
-
-    '
+  description: Authority governance engine for autonomous decisions. Every evaluation produces exactly one outcome and one tamper-evident audit envelope.
 servers:
 - url: http://localhost:8080
   description: Local development
@@ -23,9 +21,7 @@ paths:
 
         Edge kinds (all directed): relates_to, has_capability, has_process, has_surface, bound_to (ai_system_binding to most-specific scope), system_of (ai_system_binding to ai_system), summarises, reports_coverage.
 
-        The `depth` parameter is interpreted as undirected BFS hops from the root. Default is 3; values above 5 are silently clamped to 5. Per-entity authority detail (authority_profile, authority_grant, agent, fail_mode_policy) is intentionally absent from the Context Graph and will be first-class on the future /v1/graphs/authority endpoint.
-
-        '
+        The `depth` parameter is interpreted as undirected BFS hops from the root. Default is 3; values above 5 are silently clamped to 5. Per-entity authority detail (authority_profile, authority_grant, agent, fail_mode_policy) is intentionally absent from the Context Graph and will be first-class on the future /v1/graphs/authority endpoint.'
       parameters:
       - name: view
         in: query
@@ -119,9 +115,7 @@ paths:
 
         The `depth` parameter is interpreted as undirected BFS hops from the root. Default is 4 (one higher than the Context Graph''s 3) so the default view reaches agent nodes at the end of the BS → Surface → Profile → Grant → Agent chain. Values above 5 are silently clamped to 5.
 
-        MVP supports view=service only. Per-entity views (agent, surface) are reserved for later tranches.
-
-        '
+        MVP supports view=service only. Per-entity views (agent, surface) are reserved for later tranches.'
       parameters:
       - name: view
         in: query
@@ -520,38 +514,6 @@ paths:
       - Graphs
 components:
   schemas:
-    AuthorityGraphSeverityRollupValue:
-      type: string
-      description: 'Severity-rollup vocabulary used by DiagnosticSummary.highest_severity and SurfaceAuthorityPosture.highest_severity. The three non-"none" values share string identity with AuthorityGraphDiagnosticSeverity.
-
-        '
-      enum:
-      - none
-      - info
-      - warning
-      - critical
-    ContextGraphCapabilityData:
-      type: object
-      description: Typed data for a node of kind `capability`.
-      required:
-      - id
-      - name
-      - status
-      properties:
-        id:
-          type: string
-        name:
-          type: string
-        description:
-          type: string
-        status:
-          type: string
-        owner:
-          type: string
-        parent_capability_id:
-          type: string
-        external_ref:
-          $ref: '#/components/schemas/ContextGraphExternalRefData'
     AuthorityGraphDiagnostic:
       type: object
       description: 'One operator-actionable condition observed during projection. node_refs identifies the entities the diagnostic applies to (most-specific entity first, supporting context refs trailing).
@@ -571,532 +533,6 @@ components:
             $ref: '#/components/schemas/AuthorityGraphNodeRef'
         message:
           type: string
-    ContextGraphExternalRefData:
-      type: object
-      description: 'External reference structure mirroring the governance-map external_ref wire shape (httpapi.externalRefResponse). Same field names and JSON tags so consumers can share parsing logic across both endpoints.
-
-        '
-      required:
-      - source_system
-      - source_id
-      properties:
-        source_system:
-          type: string
-        source_id:
-          type: string
-        source_url:
-          type: string
-        source_version:
-          type: string
-        last_synced_at:
-          type: string
-          format: date-time
-          description: RFC3339 UTC timestamp.
-    ContextGraphAuthoritySummaryData:
-      type: object
-      description: 'Typed data for the synthetic `authority_summary` node. Mirrors the governance-map AuthoritySummary DTO field-for-field so the values are directly comparable across both endpoints.
-
-        '
-      required:
-      - surface_count
-      - active_profile_count
-      - active_grant_count
-      - active_agent_count
-      properties:
-        surface_count:
-          type: integer
-        active_profile_count:
-          type: integer
-        active_grant_count:
-          type: integer
-        active_agent_count:
-          type: integer
-    AuthorityGraphFailModePolicyStatus:
-      type: string
-      description: 'Surface-level fail-mode posture. "override" — surface''s own FailModePolicyID resolved. "inherited" — BS default supplies the effective policy. "missing" — no effective policy at any level. "dangling" — any non-empty policy reference (surface override or BS default) failed to resolve. Dangling wins over inherited and missing.
-
-        '
-      enum:
-      - override
-      - inherited
-      - missing
-      - dangling
-    AuthorityGraphValidityStatus:
-      type: string
-      description: 'Time-window classification an authority profile or grant carries on its typed data. Emitted nodes always carry "effective"; future-dated and expired entities are filtered out of the node set and produce diagnostics instead.
-
-        '
-      enum:
-      - effective
-      - future_dated
-      - expired
-    AuthorityGraphConsequenceThreshold:
-      type: object
-      description: 'Typed value object representing an authority profile''s consequence threshold. Exactly one variant is populated based on type — monetary (amount + currency) or risk_rating (risk_rating). monetary is the canonical control-plane/API value for amount/currency thresholds; financial is accepted as a compatibility alias in control-plane Profile bundle input and is persisted as the Postgres storage value. Profile reads and graph projections use the canonical monetary form.
-
-        '
-      required:
-      - type
-      properties:
-        type:
-          type: string
-          enum:
-          - monetary
-          - financial
-          - risk_rating
-          description: 'monetary is canonical, financial is a compatibility alias for control-plane Profile bundle input, and risk_rating uses the risk_rating field.
-
-            '
-        amount:
-          type: number
-        currency:
-          type: string
-        risk_rating:
-          type: string
-    AuthorityGraphSurfaceAuthorityPosture:
-      type: object
-      description: 'Per-surface authority posture (D31m). One record per emitted active decision surface in the FULL pre-depth-filter projection. Frontends consume this to render per-surface health without walking edges or interpreting diagnostics.
-
-        '
-      required:
-      - surface
-      - authority_status
-      - profile_status
-      - grant_status
-      - agent_status
-      - fail_mode_policy_status
-      - escalation_status
-      - complete_paths
-      - incomplete_paths
-      - highest_severity
-      properties:
-        surface:
-          $ref: '#/components/schemas/AuthorityGraphNodeRef'
-        authority_status:
-          $ref: '#/components/schemas/AuthorityGraphAuthorityStatus'
-        profile_status:
-          $ref: '#/components/schemas/AuthorityGraphProfileStatus'
-        grant_status:
-          $ref: '#/components/schemas/AuthorityGraphGrantStatus'
-        agent_status:
-          $ref: '#/components/schemas/AuthorityGraphAgentStatus'
-        fail_mode_policy_status:
-          $ref: '#/components/schemas/AuthorityGraphFailModePolicyStatus'
-        escalation_status:
-          $ref: '#/components/schemas/AuthorityGraphEscalationStatus'
-        complete_paths:
-          type: integer
-        incomplete_paths:
-          type: integer
-        highest_severity:
-          $ref: '#/components/schemas/AuthorityGraphSeverityRollupValue'
-        diagnostic_kinds:
-          type: array
-          items:
-            $ref: '#/components/schemas/AuthorityGraphDiagnosticKind'
-          description: 'Unique diagnostic kinds whose NodeRefs associate with this surface (direct surface ref, or profile/grant/agent ref anchored to this surface). Sorted alphabetically.
-
-            '
-    AuthorityGraphNodeRef:
-      type: object
-      description: 'Reference to a node by its (kind, id) pair. Used by edge endpoints and the projection root.
-
-        '
-      required:
-      - kind
-      - id
-      properties:
-        kind:
-          type: string
-          description: Node kind (one of the AuthorityGraphNode kinds).
-          enum:
-          - business_service
-          - decision_surface
-          - authority_profile
-          - authority_grant
-          - agent
-          - fail_mode_policy
-        id:
-          type: string
-    AuthorityGraphFailModePolicyData:
-      type: object
-      description: 'Typed data for a fail_mode_policy node. Carries identity, lifecycle, and ownership; the full Rules array is omitted (operator-noisy) but the per-class rule count is exposed so operators see coverage at a glance.
-
-        '
-      required:
-      - id
-      - version
-      - name
-      - status
-      - managed
-      properties:
-        id:
-          type: string
-        version:
-          type: integer
-        name:
-          type: string
-        status:
-          type: string
-        effective_date:
-          type: string
-          format: date-time
-        effective_until:
-          type: string
-          format: date-time
-          description: 'Validity-window upper bound. Policy version is no longer active at or after this instant.
-
-            '
-        business_owner:
-          type: string
-        technical_owner:
-          type: string
-        origin:
-          type: string
-        managed:
-          type: boolean
-        rule_count_by_class:
-          $ref: '#/components/schemas/AuthorityGraphRuleCountByClass'
-    AuthorityConstraint:
-      type: object
-      description: 'One typed runtime constraint attached to an AuthorityGrant. The orchestrator evaluates each constraint on every request; the first violation rejects with reason_code CONSTRAINT_VIOLATED and emits an AUTHORITY_CONSTRAINT_VIOLATED audit event.
-
-        '
-      required:
-      - kind
-      properties:
-        kind:
-          $ref: '#/components/schemas/AuthorityConstraintKind'
-        min_confidence:
-          type: number
-          description: 'confidence_threshold_min variant: minimum allowed request.confidence (in [0,1]).
-
-            '
-        max_consequence:
-          $ref: '#/components/schemas/AuthorityGraphConsequenceThreshold'
-        start_time:
-          type: string
-          format: date-time
-          description: 'time_window variant: inclusive lower bound of the permitted window.
-
-            '
-        end_time:
-          type: string
-          format: date-time
-          description: 'time_window variant: exclusive upper bound of the permitted window.
-
-            '
-    AuthorityGraphEffectivePolicySource:
-      type: string
-      description: 'Resolved fail-mode-policy origin per decision surface. "override" — the surface had a non-empty FailModePolicyID that resolved to an active version. "business_service_default" — the surface inherits from the BS-level default (surface had no override OR its override was dangling). "none" — no effective fail-mode policy resolves for this surface.
-
-        '
-      enum:
-      - override
-      - business_service_default
-      - none
-    ContextGraphCoverageData:
-      type: object
-      description: 'Typed data for the synthetic `coverage` node. Mirrors the governance-map Coverage DTO (Phase 9 explicit field naming); the three AI-binding counters are mutually exclusive at the surface level and sum to surface_count by construction.
-
-        '
-      required:
-      - surface_count
-      - surfaces_with_direct_ai_binding
-      - surfaces_with_scoped_ai_binding
-      - surfaces_with_no_ai_binding
-      properties:
-        surface_count:
-          type: integer
-        surfaces_with_direct_ai_binding:
-          type: integer
-        surfaces_with_scoped_ai_binding:
-          type: integer
-        surfaces_with_no_ai_binding:
-          type: integer
-    AuthorityGraphDiagnosticSeverity:
-      type: string
-      description: Operator-facing severity for diagnostics.
-      enum:
-      - info
-      - warning
-      - critical
-    AuthorityConstraintKind:
-      type: string
-      description: 'Discriminator for the AuthorityConstraint value object. Each kind populates exactly the fields relevant to its variant:
-
-
-        - confidence_threshold_min:  uses min_confidence
-
-        - consequence_threshold_max: uses max_consequence
-
-        - human_only / ai_only:      no payload fields
-
-        - time_window:               uses start_time + end_time
-
-        '
-      enum:
-      - confidence_threshold_min
-      - consequence_threshold_max
-      - human_only
-      - ai_only
-      - time_window
-    ContextGraphAISystemBindingData:
-      type: object
-      description: 'Typed data for a node of kind `ai_system_binding`. The four scope-id pointers mirror the governance-map binding DTO; `scope_kind` / `scope_id` / `scope_label` record the most-specific scope (matching the bound_to edge target and the node label format `binding: <ai_system> → <scope>`).
-
-        '
-      required:
-      - id
-      - ai_system_id
-      - business_service_id
-      - capability_id
-      - process_id
-      - surface_id
-      - scope_kind
-      - scope_id
-      - scope_label
-      properties:
-        id:
-          type: string
-        ai_system_id:
-          type: string
-        ai_system_name:
-          type: string
-        business_service_id:
-          type: string
-          nullable: true
-        capability_id:
-          type: string
-          nullable: true
-        process_id:
-          type: string
-          nullable: true
-        surface_id:
-          type: string
-          nullable: true
-        role:
-          type: string
-          description: 'Optional role marker on the binding (e.g. primary, shadow). Mirrors the governance-map binding.role field.
-
-            '
-        description:
-          type: string
-          description: 'Optional free-form description. Mirrors the governance-map binding.description field.
-
-            '
-        scope_kind:
-          type: string
-          description: One of decision_surface, process, capability, business_service. Always set unless the binding has no scope (which the schema's chk_ai_bindings_at_least_one_target prevents at apply time).
-        scope_id:
-          type: string
-        scope_label:
-          type: string
-          description: Human-readable token in the form `<short_kind>:<id>` (e.g. `surface:surf-x`). `unscoped` when no scope is set.
-    ContextGraphDecisionSurfaceData:
-      type: object
-      description: 'Typed data for a node of kind `decision_surface`. The two binding-id arrays are non-nil (possibly empty) and disjoint per the governance-map contract.
-
-        '
-      required:
-      - id
-      - version
-      - name
-      - status
-      - process_id
-      - ai_binding_ids
-      - inherited_ai_binding_ids
-      - profile_count
-      - grant_count
-      - agent_count
-      properties:
-        id:
-          type: string
-        version:
-          type: integer
-        name:
-          type: string
-        description:
-          type: string
-        status:
-          type: string
-        process_id:
-          type: string
-        fail_mode_policy_id:
-          type: string
-          description: 'Optional surface-level FailModePolicy override. Empty / omitted when unset; runtime resolution then falls back to the parent BusinessService''s `fail_mode_policy_id`. Apply-time validation rejects references to missing, review, deprecated, or retired policies. The projection carries the reference verbatim — no policy lookup or rule inspection is performed on the read path.
-
-            '
-        ai_binding_ids:
-          type: array
-          items:
-            type: string
-        inherited_ai_binding_ids:
-          type: array
-          items:
-            type: string
-        profile_count:
-          type: integer
-        grant_count:
-          type: integer
-        agent_count:
-          type: integer
-    AuthorityGraphDiagnosticSummary:
-      type: object
-      description: 'Per-severity rollup over the full pre-depth diagnostics array (D31m). Counts sum to len(diagnostics). highest_severity is "none" when the array is empty, otherwise the most-severe present (critical > warning > info). by_kind is omitted when no diagnostics exist.
-
-        '
-      required:
-      - info
-      - warning
-      - critical
-      - highest_severity
-      properties:
-        info:
-          type: integer
-        warning:
-          type: integer
-        critical:
-          type: integer
-        highest_severity:
-          $ref: '#/components/schemas/AuthorityGraphSeverityRollupValue'
-        by_kind:
-          type: object
-          additionalProperties:
-            type: integer
-          description: 'Per-diagnostic-kind count. Keys are AuthorityGraphDiagnosticKind values. Omitted when no diagnostics are present.
-
-            '
-    ContextGraphRelatedBusinessServiceRow:
-      type: object
-      description: 'Per-direction relationship row data carried on a `related_business_service` node. Mirrors the governance-map relationship DTO''s per-row fields for the fields available on the businessservice.BusinessServiceRelationship domain type.
-
-        '
-      required:
-      - relationship_id
-      - relationship_type
-      properties:
-        relationship_id:
-          type: string
-          description: The relationship row id from business_service_relationships.
-        relationship_type:
-          type: string
-          description: e.g. depends_on, supports, part_of
-        description:
-          type: string
-    AuthorityGraphDiagnosticKind:
-      type: string
-      description: Operator-facing diagnostic vocabulary.
-      enum:
-      - business_service_has_no_active_surface
-      - surface_has_no_active_profile
-      - profile_has_no_active_grant
-      - grant_references_missing_agent
-      - grant_references_inactive_agent
-      - fail_mode_policy_reference_dangling
-      - surface_inherits_business_service_policy
-      - surface_overrides_business_service_default
-      - surface_override_matches_business_service_default
-      - profile_future_dated
-      - profile_expired
-      - grant_future_dated
-      - grant_expired
-      - duplicate_active_profile_versions_for_surface
-      - grant_has_no_capabilities
-      - profile_has_no_escalation_target
-      - escalation_target_reference_dangling
-    ContextGraphBusinessServiceData:
-      type: object
-      description: 'Typed data for a node of kind `business_service`. Mirrors the governance-map businessService DTO for the fields available on the businessservice.BusinessService domain type.
-
-        '
-      required:
-      - id
-      - name
-      - status
-      properties:
-        id:
-          type: string
-        name:
-          type: string
-        description:
-          type: string
-        status:
-          type: string
-        owner:
-          type: string
-        service_type:
-          type: string
-          description: 'Classification of the service (e.g. customer_facing, internal, technical). Mirrors the governance-map business_service.service_type field.
-
-            '
-        regulatory_scope:
-          type: string
-          description: 'Free-form regulatory-scope label. Mirrors the governance-map business_service.regulatory_scope field.
-
-            '
-        fail_mode_policy_id:
-          type: string
-          description: 'Optional logical reference to a closed-only FailModePolicy that supplies the default fail-mode posture for surfaces under this service when those surfaces have no explicit override. Empty / omitted when unset. Apply-time validation rejects references to missing, review, deprecated, or retired policies. The projection carries the reference verbatim — no policy lookup or rule inspection is performed on the read path.
-
-            '
-        external_ref:
-          $ref: '#/components/schemas/ContextGraphExternalRefData'
-    AuthorityGraphBusinessServiceData:
-      type: object
-      description: Typed data for a business_service node.
-      required:
-      - id
-      - name
-      - status
-      properties:
-        id:
-          type: string
-        name:
-          type: string
-        status:
-          type: string
-        owner:
-          type: string
-        service_type:
-          type: string
-        external_ref:
-          $ref: '#/components/schemas/AuthorityGraphExternalRefData'
-        fail_mode_policy_id:
-          type: string
-          description: 'Optional reference to a FailModePolicy logical id used as the BS-level default. The projection emits a separate fail_mode_policy node and business_service_has_fail_mode_policy edge when this reference resolves to an active version.
-
-            '
-    ContextGraphEdge:
-      type: object
-      description: 'One directed link in the projection. Direction is encoded as (src → dst) per the kind contract documented on /v1/graphs/context.
-
-        '
-      required:
-      - kind
-      - src
-      - dst
-      properties:
-        kind:
-          type: string
-          enum:
-          - relates_to
-          - has_capability
-          - has_process
-          - has_surface
-          - bound_to
-          - system_of
-          - summarises
-          - reports_coverage
-        src:
-          $ref: '#/components/schemas/ContextGraphNodeRef'
-        dst:
-          $ref: '#/components/schemas/ContextGraphNodeRef'
-        label:
-          type: string
-          description: 'Optional human-readable description. Omitted (rather than empty) when not populated. Phase 1 emits no edge labels; reserved for the inline edge explanation epic.
-
-            '
     ContextGraphNode:
       type: object
       description: 'One projected entity. Phase 1 fields (kind, id, label) are always populated. Phase 2A adds typed per-kind data pointers — exactly one is populated per node and matches the node''s kind. Unused pointers are omitted from the wire payload, so a node carries only its kind''s data block. There is no generic attrs map.
@@ -1143,28 +579,235 @@ components:
           $ref: '#/components/schemas/ContextGraphAuthoritySummaryData'
         coverage:
           $ref: '#/components/schemas/ContextGraphCoverageData'
-    AuthorityGraphRuleCountByClass:
+    AuthorityGraphProjection:
       type: object
-      description: 'Per-correctness-class rule count summary for a FailModePolicy. All five CorrectnessClass values are present, defaulting to zero. Provides at-a-glance coverage without pushing the full rules array into the graph payload.
+      description: 'Top-level response shape for GET /v1/graphs/authority. Nodes are sorted by (kind, id) ascending; edges are sorted by (kind, src.kind, src.id, dst.kind, dst.id) ascending. Both arrays are always present (never null); an empty depth=0 projection still carries the root in `nodes`.
+
+
+        D31g adds `summary` and `diagnostics`. Both are optional on the wire (omitempty when empty) and describe the FULL pre- depth-filter projection — they remain meaningful at depth=0.
 
         '
       required:
-      - governance_integrity
-      - persistence
-      - input
-      - resource
-      - consistency
+      - root
+      - view
+      - depth
+      - nodes
+      - edges
       properties:
-        governance_integrity:
+        root:
+          $ref: '#/components/schemas/AuthorityGraphNodeRef'
+        view:
+          type: string
+          enum:
+          - service
+          description: 'Perspective the projection was computed in. MVP supports only `service`.
+
+            '
+        depth:
           type: integer
-        persistence:
+          description: 'Maximum BFS hops from the root applied to this projection. May differ from the request''s depth when the caller-supplied value was silently clamped to MaxDepth.
+
+            '
+        nodes:
+          type: array
+          items:
+            $ref: '#/components/schemas/AuthorityGraphNode'
+        edges:
+          type: array
+          items:
+            $ref: '#/components/schemas/AuthorityGraphEdge'
+        summary:
+          $ref: '#/components/schemas/AuthorityGraphSummary'
+        diagnostics:
+          type: array
+          items:
+            $ref: '#/components/schemas/AuthorityGraphDiagnostic'
+          description: 'Operator-actionable conditions observed during projection. Sorted by (severity rank, kind, first node ref). Severity rank is critical < warning < info.
+
+            '
+        diagnostic_summary:
+          $ref: '#/components/schemas/AuthorityGraphDiagnosticSummary'
+        surface_posture:
+          type: array
+          items:
+            $ref: '#/components/schemas/AuthorityGraphSurfaceAuthorityPosture'
+          description: 'Per-surface authority posture rollup (D31m). One entry per emitted active decision surface, sorted by surface id ascending. Describes the FULL pre-depth-filter projection — depth=0 callers still see posture for every surface.
+
+            '
+    AuthorityGraphFailModePolicyData:
+      type: object
+      description: 'Typed data for a fail_mode_policy node. Carries identity, lifecycle, and ownership; the full Rules array is omitted (operator-noisy) but the per-class rule count is exposed so operators see coverage at a glance.
+
+        '
+      required:
+      - id
+      - version
+      - name
+      - status
+      - managed
+      properties:
+        id:
+          type: string
+        version:
           type: integer
-        input:
+        name:
+          type: string
+        status:
+          type: string
+        effective_date:
+          type: string
+          format: date-time
+        effective_until:
+          type: string
+          format: date-time
+          description: 'Validity-window upper bound. Policy version is no longer active at or after this instant.
+
+            '
+        business_owner:
+          type: string
+        technical_owner:
+          type: string
+        origin:
+          type: string
+        managed:
+          type: boolean
+        rule_count_by_class:
+          $ref: '#/components/schemas/AuthorityGraphRuleCountByClass'
+    ContextGraphNodeRef:
+      type: object
+      description: '(kind, id) pair uniquely identifying a node within a single projection.
+
+        '
+      required:
+      - kind
+      - id
+      properties:
+        kind:
+          type: string
+          description: Node kind (one of the ContextGraphNode kinds).
+        id:
+          type: string
+          description: Entity identifier within its kind.
+    AuthorityGraphSeverityRollupValue:
+      type: string
+      description: 'Severity-rollup vocabulary used by DiagnosticSummary.highest_severity and SurfaceAuthorityPosture.highest_severity. The three non-"none" values share string identity with AuthorityGraphDiagnosticSeverity.
+
+        '
+      enum:
+      - none
+      - info
+      - warning
+      - critical
+    AuthorityGraphDecisionSurfaceData:
+      type: object
+      description: 'Typed data for a decision_surface node.
+
+        D31g adds resolved fail-mode-policy metadata (effective_policy_source, effective_policy_id, effective_policy_version, inherits_bs_policy). Operators see at a glance whether a surface has an explicit override, inherits the BS-level default, or has no effective policy.
+
+        business_service_id is derived during projection from the parent process; the surface domain type does not own a BS pointer directly. process_id is carried for traceability even though the Authority Graph collapses process traversal into the BS → Surface edge.
+
+        '
+      required:
+      - id
+      - version
+      - name
+      - status
+      properties:
+        id:
+          type: string
+        version:
           type: integer
-        resource:
+        name:
+          type: string
+        status:
+          type: string
+        process_id:
+          type: string
+        business_service_id:
+          type: string
+        fail_mode_policy_id:
+          type: string
+          description: 'Optional reference to a FailModePolicy logical id used as a surface-level override. The projection emits a separate fail_mode_policy node and surface_has_fail_mode_policy edge when this reference resolves to an active version.
+
+            '
+        effective_policy_source:
+          $ref: '#/components/schemas/AuthorityGraphEffectivePolicySource'
+        effective_policy_id:
+          type: string
+          description: 'Resolved fail-mode policy id. Set when effective_policy_source is "override" (= surface override) or "business_service_default" (= BS-level fallback). Empty when source is "none".
+
+            '
+        effective_policy_version:
           type: integer
-        consistency:
+          description: 'Resolved policy version corresponding to effective_policy_id.
+
+            '
+        inherits_bs_policy:
+          type: boolean
+          description: 'True when the surface inherits the BS-level default (either because it has no override or its override is dangling and BS-default is available). False when the surface has its own override OR no effective policy at all.
+
+            '
+    Error:
+      type: object
+      required:
+      - error
+      properties:
+        error:
+          type: string
+    AuthorityGraphSurfaceAuthorityPosture:
+      type: object
+      description: 'Per-surface authority posture (D31m). One record per emitted active decision surface in the FULL pre-depth-filter projection. Frontends consume this to render per-surface health without walking edges or interpreting diagnostics.
+
+        '
+      required:
+      - surface
+      - authority_status
+      - profile_status
+      - grant_status
+      - agent_status
+      - fail_mode_policy_status
+      - escalation_status
+      - complete_paths
+      - incomplete_paths
+      - highest_severity
+      properties:
+        surface:
+          $ref: '#/components/schemas/AuthorityGraphNodeRef'
+        authority_status:
+          $ref: '#/components/schemas/AuthorityGraphAuthorityStatus'
+        profile_status:
+          $ref: '#/components/schemas/AuthorityGraphProfileStatus'
+        grant_status:
+          $ref: '#/components/schemas/AuthorityGraphGrantStatus'
+        agent_status:
+          $ref: '#/components/schemas/AuthorityGraphAgentStatus'
+        fail_mode_policy_status:
+          $ref: '#/components/schemas/AuthorityGraphFailModePolicyStatus'
+        escalation_status:
+          $ref: '#/components/schemas/AuthorityGraphEscalationStatus'
+        complete_paths:
           type: integer
+        incomplete_paths:
+          type: integer
+        highest_severity:
+          $ref: '#/components/schemas/AuthorityGraphSeverityRollupValue'
+        diagnostic_kinds:
+          type: array
+          items:
+            $ref: '#/components/schemas/AuthorityGraphDiagnosticKind'
+          description: 'Unique diagnostic kinds whose NodeRefs associate with this surface (direct surface ref, or profile/grant/agent ref anchored to this surface). Sorted alphabetically.
+
+            '
+    AuthorityGraphFailModePolicyStatus:
+      type: string
+      description: 'Surface-level fail-mode posture. "override" — surface''s own FailModePolicyID resolved. "inherited" — BS default supplies the effective policy. "missing" — no effective policy at any level. "dangling" — any non-empty policy reference (surface override or BS default) failed to resolve. Dangling wins over inherited and missing.
+
+        '
+      enum:
+      - override
+      - inherited
+      - missing
+      - dangling
     ContextGraphRelatedBusinessServiceData:
       type: object
       description: 'Typed data for a node of kind `related_business_service`. One node is emitted per related-BS id, even when the same other-BS appears in both outgoing and incoming relationships (the schema''s uniq_bsr_triple constraint allows root↔X via two distinct rows). Direction is *implicit* in which sub-row pointer is non-nil — `outgoing` for root → related, `incoming` for related → root. At least one of the two sub-rows is populated; both may be populated for bidirectional cases.
@@ -1191,41 +834,27 @@ components:
       - targeted
       - not_targeted
       - dangling
-    AuthorityGraphGrantStatus:
-      type: string
-      description: 'Surface-level grant coverage. "covered" when at least one effective profile under the surface has at least one effective grant; "missing" otherwise.
-
-        '
-      enum:
-      - covered
-      - missing
-    AuthorityGraphExternalRefData:
+    AuthorityGraphNodeRef:
       type: object
-      description: 'Optional external reference for a business service node. Mirrors the externalref domain type. Field set matches ContextGraphExternalRefData but is kept as a sibling so the Authority Graph schema family stays self-contained.
+      description: 'Reference to a node by its (kind, id) pair. Used by edge endpoints and the projection root.
 
         '
+      required:
+      - kind
+      - id
       properties:
-        source_system:
+        kind:
           type: string
-        source_id:
+          description: Node kind (one of the AuthorityGraphNode kinds).
+          enum:
+          - business_service
+          - decision_surface
+          - authority_profile
+          - authority_grant
+          - agent
+          - fail_mode_policy
+        id:
           type: string
-        source_url:
-          type: string
-        source_version:
-          type: string
-        last_synced_at:
-          type: string
-    AuthorityCapability:
-      type: string
-      description: 'One of the five canonical capabilities an AuthorityGrant may authorise. The set is fixed; new capability values require a domain change. Stop is intentionally a CAPABILITY VALUE — it is enforced by the orchestrator the same way as the other four (the grant must explicitly carry "stop" for the agent to invoke a stop action).
-
-        '
-      enum:
-      - recommend
-      - approve
-      - reject
-      - escalate
-      - stop
     AuthorityGraphSummary:
       type: object
       description: 'Backend-computed posture rollup for a service-view Authority Graph projection. Count fields are always present; per-entity gap lists use omitempty. Summary describes the FULL pre-depth-filter projection — operators at depth=0 still see the authority posture.
@@ -1334,6 +963,179 @@ components:
           description: 'Effective profiles whose configured EscalationTargetID did not resolve to an active target. Paired with the escalation_target_reference_dangling warning diagnostic.
 
             '
+    AuthorityGraphGrantStatus:
+      type: string
+      description: 'Surface-level grant coverage. "covered" when at least one effective profile under the surface has at least one effective grant; "missing" otherwise.
+
+        '
+      enum:
+      - covered
+      - missing
+    ContextGraphProcessData:
+      type: object
+      description: 'Typed data for a node of kind `process`. The process domain type does not currently carry an external_ref field, so this struct has no external_ref attribute. If the domain gains it, the schema will be extended additively.
+
+        '
+      required:
+      - id
+      - name
+      - status
+      - business_service_id
+      properties:
+        id:
+          type: string
+        name:
+          type: string
+        description:
+          type: string
+        status:
+          type: string
+        owner:
+          type: string
+        business_service_id:
+          type: string
+    AuthorityGraphDiagnosticKind:
+      type: string
+      description: Operator-facing diagnostic vocabulary.
+      enum:
+      - business_service_has_no_active_surface
+      - surface_has_no_active_profile
+      - profile_has_no_active_grant
+      - grant_references_missing_agent
+      - grant_references_inactive_agent
+      - fail_mode_policy_reference_dangling
+      - surface_inherits_business_service_policy
+      - surface_overrides_business_service_default
+      - surface_override_matches_business_service_default
+      - profile_future_dated
+      - profile_expired
+      - grant_future_dated
+      - grant_expired
+      - duplicate_active_profile_versions_for_surface
+      - grant_has_no_capabilities
+      - profile_has_no_escalation_target
+      - escalation_target_reference_dangling
+    AuthorityConstraintKind:
+      type: string
+      description: 'Discriminator for the AuthorityConstraint value object. Each kind populates exactly the fields relevant to its variant:
+
+
+        - confidence_threshold_min:  uses min_confidence
+
+        - consequence_threshold_max: uses max_consequence
+
+        - human_only / ai_only:      no payload fields
+
+        - time_window:               uses start_time + end_time
+
+        '
+      enum:
+      - confidence_threshold_min
+      - consequence_threshold_max
+      - human_only
+      - ai_only
+      - time_window
+    AuthorityConstraint:
+      type: object
+      description: 'One typed runtime constraint attached to an AuthorityGrant. The orchestrator evaluates each constraint on every request; the first violation rejects with reason_code CONSTRAINT_VIOLATED and emits an AUTHORITY_CONSTRAINT_VIOLATED audit event.
+
+        '
+      required:
+      - kind
+      properties:
+        kind:
+          $ref: '#/components/schemas/AuthorityConstraintKind'
+        min_confidence:
+          type: number
+          description: 'confidence_threshold_min variant: minimum allowed request.confidence (in [0,1]).
+
+            '
+        max_consequence:
+          $ref: '#/components/schemas/AuthorityGraphConsequenceThreshold'
+        start_time:
+          type: string
+          format: date-time
+          description: 'time_window variant: inclusive lower bound of the permitted window.
+
+            '
+        end_time:
+          type: string
+          format: date-time
+          description: 'time_window variant: exclusive upper bound of the permitted window.
+
+            '
+    ContextGraphAISystemData:
+      type: object
+      description: 'Typed data for a node of kind `ai_system`. `active_version`, `active_version_label`, and `active_version_status` are populated when the AI system has an active version on the governance map, omitted otherwise.
+
+        '
+      required:
+      - id
+      - name
+      - status
+      properties:
+        id:
+          type: string
+        name:
+          type: string
+        description:
+          type: string
+        status:
+          type: string
+        vendor:
+          type: string
+        system_type:
+          type: string
+        active_version:
+          type: integer
+          description: The integer version number of the active AISystemVersion. Omitted when no active version exists.
+        active_version_label:
+          type: string
+          description: Optional release label associated with the active version.
+        active_version_status:
+          type: string
+          description: Status of the active AISystemVersion (e.g. draft, active, retired). Mirrors the governance-map ai_systems[].active_version.status field.
+        external_ref:
+          $ref: '#/components/schemas/ContextGraphExternalRefData'
+    ContextGraphRelatedBusinessServiceRow:
+      type: object
+      description: 'Per-direction relationship row data carried on a `related_business_service` node. Mirrors the governance-map relationship DTO''s per-row fields for the fields available on the businessservice.BusinessServiceRelationship domain type.
+
+        '
+      required:
+      - relationship_id
+      - relationship_type
+      properties:
+        relationship_id:
+          type: string
+          description: The relationship row id from business_service_relationships.
+        relationship_type:
+          type: string
+          description: e.g. depends_on, supports, part_of
+        description:
+          type: string
+    ContextGraphCapabilityData:
+      type: object
+      description: Typed data for a node of kind `capability`.
+      required:
+      - id
+      - name
+      - status
+      properties:
+        id:
+          type: string
+        name:
+          type: string
+        description:
+          type: string
+        status:
+          type: string
+        owner:
+          type: string
+        parent_capability_id:
+          type: string
+        external_ref:
+          $ref: '#/components/schemas/ContextGraphExternalRefData'
     AuthorityGraphNode:
       type: object
       description: 'One entity in the projected Authority Graph. Exactly one typed-data slot is populated per node, matched to kind. Unused slots are omitted from the wire payload via omitempty so a node serialises to a compact shape with only its kind''s data block.
@@ -1372,6 +1174,187 @@ components:
           $ref: '#/components/schemas/AuthorityGraphFailModePolicyData'
         escalation_target:
           $ref: '#/components/schemas/AuthorityGraphEscalationTargetData'
+    AuthorityGraphDiagnosticSeverity:
+      type: string
+      description: Operator-facing severity for diagnostics.
+      enum:
+      - info
+      - warning
+      - critical
+    AuthorityCapability:
+      type: string
+      description: 'One of the five canonical capabilities an AuthorityGrant may authorise. The set is fixed; new capability values require a domain change. Stop is intentionally a CAPABILITY VALUE — it is enforced by the orchestrator the same way as the other four (the grant must explicitly carry "stop" for the agent to invoke a stop action).
+
+        '
+      enum:
+      - recommend
+      - approve
+      - reject
+      - escalate
+      - stop
+    ContextGraphAISystemBindingData:
+      type: object
+      description: 'Typed data for a node of kind `ai_system_binding`. The four scope-id pointers mirror the governance-map binding DTO; `scope_kind` / `scope_id` / `scope_label` record the most-specific scope (matching the bound_to edge target and the node label format `binding: <ai_system> → <scope>`).
+
+        '
+      required:
+      - id
+      - ai_system_id
+      - business_service_id
+      - capability_id
+      - process_id
+      - surface_id
+      - scope_kind
+      - scope_id
+      - scope_label
+      properties:
+        id:
+          type: string
+        ai_system_id:
+          type: string
+        ai_system_name:
+          type: string
+        business_service_id:
+          type: string
+          nullable: true
+        capability_id:
+          type: string
+          nullable: true
+        process_id:
+          type: string
+          nullable: true
+        surface_id:
+          type: string
+          nullable: true
+        role:
+          type: string
+          description: 'Optional role marker on the binding (e.g. primary, shadow). Mirrors the governance-map binding.role field.
+
+            '
+        description:
+          type: string
+          description: 'Optional free-form description. Mirrors the governance-map binding.description field.
+
+            '
+        scope_kind:
+          type: string
+          description: One of decision_surface, process, capability, business_service. Always set unless the binding has no scope (which the schema's chk_ai_bindings_at_least_one_target prevents at apply time).
+        scope_id:
+          type: string
+        scope_label:
+          type: string
+          description: Human-readable token in the form `<short_kind>:<id>` (e.g. `surface:surf-x`). `unscoped` when no scope is set.
+    AuthorityGraphExternalRefData:
+      type: object
+      description: 'Optional external reference for a business service node. Mirrors the externalref domain type. Field set matches ContextGraphExternalRefData but is kept as a sibling so the Authority Graph schema family stays self-contained.
+
+        '
+      properties:
+        source_system:
+          type: string
+        source_id:
+          type: string
+        source_url:
+          type: string
+        source_version:
+          type: string
+        last_synced_at:
+          type: string
+    ContextGraphEdge:
+      type: object
+      description: 'One directed link in the projection. Direction is encoded as (src → dst) per the kind contract documented on /v1/graphs/context.
+
+        '
+      required:
+      - kind
+      - src
+      - dst
+      properties:
+        kind:
+          type: string
+          enum:
+          - relates_to
+          - has_capability
+          - has_process
+          - has_surface
+          - bound_to
+          - system_of
+          - summarises
+          - reports_coverage
+        src:
+          $ref: '#/components/schemas/ContextGraphNodeRef'
+        dst:
+          $ref: '#/components/schemas/ContextGraphNodeRef'
+        label:
+          type: string
+          description: 'Optional human-readable description. Omitted (rather than empty) when not populated. Phase 1 emits no edge labels; reserved for the inline edge explanation epic.
+
+            '
+    AuthorityGraphAgentStatus:
+      type: string
+      description: 'Surface-level agent coverage. Precedence: blocked > missing > covered. "blocked" when any grant under the surface fires a critical missing/inactive-agent diagnostic; "covered" when at least one complete path resolves with an active agent; "missing" when profiles/grants exist but no agent resolves.
+
+        '
+      enum:
+      - covered
+      - missing
+      - blocked
+    AuthorityGraphAuthorityStatus:
+      type: string
+      description: 'Surface-level authority posture roll-up. Precedence (worst → best): uncovered > incomplete > degraded > complete. Info-only diagnostics do NOT degrade a complete surface.
+
+        '
+      enum:
+      - complete
+      - incomplete
+      - degraded
+      - uncovered
+    AuthorityGraphAuthorityGrantData:
+      type: object
+      description: 'Typed data for an authority_grant node. Grant references the profile by logical id (not by version). Noisy lifecycle fields (suspend/revoke metadata, GrantReason) are intentionally excluded from the graph wire shape.
+
+
+        D31i adds `capabilities` and `constraints`. Capabilities is the SET of canonical Capability values the grant authorises (omitempty when empty — the projection also emits a grant_has_no_capabilities warning diagnostic). Constraints is the typed list of grant constraints (omitempty when empty).
+
+        '
+      required:
+      - id
+      - profile_id
+      - agent_id
+      - status
+      properties:
+        id:
+          type: string
+        profile_id:
+          type: string
+        agent_id:
+          type: string
+        status:
+          type: string
+        effective_date:
+          type: string
+          format: date-time
+        expires_at:
+          type: string
+          format: date-time
+        validity_status:
+          $ref: '#/components/schemas/AuthorityGraphValidityStatus'
+        granted_by:
+          type: string
+        capabilities:
+          type: array
+          items:
+            $ref: '#/components/schemas/AuthorityCapability'
+          description: 'The SET of authority Capability values this grant authorises. Empty / omitted when the grant carries no capabilities.
+
+            '
+        constraints:
+          type: array
+          items:
+            $ref: '#/components/schemas/AuthorityConstraint'
+          description: 'Typed runtime constraints that narrow the grant on every request. Empty / omitted when the grant has no constraints.
+
+            '
     AuthorityGraphAgentData:
       type: object
       description: 'Typed data for an agent node. Agent.Endpoint is intentionally not exposed via the graph — it is an internal URL not appropriate for a read-only projection.
@@ -1396,125 +1379,94 @@ components:
           type: string
         operational_state:
           type: string
-    AuthorityGraphAgentStatus:
-      type: string
-      description: 'Surface-level agent coverage. Precedence: blocked > missing > covered. "blocked" when any grant under the surface fires a critical missing/inactive-agent diagnostic; "covered" when at least one complete path resolves with an active agent; "missing" when profiles/grants exist but no agent resolves.
-
-        '
-      enum:
-      - covered
-      - missing
-      - blocked
-    AuthorityGraphDecisionSurfaceData:
+    ContextGraphBusinessServiceData:
       type: object
-      description: 'Typed data for a decision_surface node.
-
-        D31g adds resolved fail-mode-policy metadata (effective_policy_source, effective_policy_id, effective_policy_version, inherits_bs_policy). Operators see at a glance whether a surface has an explicit override, inherits the BS-level default, or has no effective policy.
-
-        business_service_id is derived during projection from the parent process; the surface domain type does not own a BS pointer directly. process_id is carried for traceability even though the Authority Graph collapses process traversal into the BS → Surface edge.
+      description: 'Typed data for a node of kind `business_service`. Mirrors the governance-map businessService DTO for the fields available on the businessservice.BusinessService domain type.
 
         '
       required:
       - id
-      - version
       - name
       - status
       properties:
         id:
           type: string
-        version:
+        name:
+          type: string
+        description:
+          type: string
+        status:
+          type: string
+        owner:
+          type: string
+        service_type:
+          type: string
+          description: 'Classification of the service (e.g. customer_facing, internal, technical). Mirrors the governance-map business_service.service_type field.
+
+            '
+        regulatory_scope:
+          type: string
+          description: 'Free-form regulatory-scope label. Mirrors the governance-map business_service.regulatory_scope field.
+
+            '
+        fail_mode_policy_id:
+          type: string
+          description: 'Optional logical reference to a closed-only FailModePolicy that supplies the default fail-mode posture for surfaces under this service when those surfaces have no explicit override. Empty / omitted when unset. Apply-time validation rejects references to missing, review, deprecated, or retired policies. The projection carries the reference verbatim — no policy lookup or rule inspection is performed on the read path.
+
+            '
+        external_ref:
+          $ref: '#/components/schemas/ContextGraphExternalRefData'
+    AuthorityGraphDiagnosticSummary:
+      type: object
+      description: 'Per-severity rollup over the full pre-depth diagnostics array (D31m). Counts sum to len(diagnostics). highest_severity is "none" when the array is empty, otherwise the most-severe present (critical > warning > info). by_kind is omitted when no diagnostics exist.
+
+        '
+      required:
+      - info
+      - warning
+      - critical
+      - highest_severity
+      properties:
+        info:
           type: integer
+        warning:
+          type: integer
+        critical:
+          type: integer
+        highest_severity:
+          $ref: '#/components/schemas/AuthorityGraphSeverityRollupValue'
+        by_kind:
+          type: object
+          additionalProperties:
+            type: integer
+          description: 'Per-diagnostic-kind count. Keys are AuthorityGraphDiagnosticKind values. Omitted when no diagnostics are present.
+
+            '
+    AuthorityGraphBusinessServiceData:
+      type: object
+      description: Typed data for a business_service node.
+      required:
+      - id
+      - name
+      - status
+      properties:
+        id:
+          type: string
         name:
           type: string
         status:
           type: string
-        process_id:
+        owner:
           type: string
-        business_service_id:
+        service_type:
           type: string
+        external_ref:
+          $ref: '#/components/schemas/AuthorityGraphExternalRefData'
         fail_mode_policy_id:
           type: string
-          description: 'Optional reference to a FailModePolicy logical id used as a surface-level override. The projection emits a separate fail_mode_policy node and surface_has_fail_mode_policy edge when this reference resolves to an active version.
+          description: 'Optional reference to a FailModePolicy logical id used as the BS-level default. The projection emits a separate fail_mode_policy node and business_service_has_fail_mode_policy edge when this reference resolves to an active version.
 
             '
-        effective_policy_source:
-          $ref: '#/components/schemas/AuthorityGraphEffectivePolicySource'
-        effective_policy_id:
-          type: string
-          description: 'Resolved fail-mode policy id. Set when effective_policy_source is "override" (= surface override) or "business_service_default" (= BS-level fallback). Empty when source is "none".
-
-            '
-        effective_policy_version:
-          type: integer
-          description: 'Resolved policy version corresponding to effective_policy_id.
-
-            '
-        inherits_bs_policy:
-          type: boolean
-          description: 'True when the surface inherits the BS-level default (either because it has no override or its override is dangling and BS-default is available). False when the surface has its own override OR no effective policy at all.
-
-            '
-    AuthorityGraphAuthorityStatus:
-      type: string
-      description: 'Surface-level authority posture roll-up. Precedence (worst → best): uncovered > incomplete > degraded > complete. Info-only diagnostics do NOT degrade a complete surface.
-
-        '
-      enum:
-      - complete
-      - incomplete
-      - degraded
-      - uncovered
-    AuthorityGraphEdge:
-      type: object
-      description: 'One directed link in the Authority Graph. Direction is encoded as (src → dst) per the kind contract documented on /v1/graphs/authority. The fail-mode-policy edges carry a label of "default" (BS-level) or "override" (surface-level); other edge kinds leave label empty.
-
-        '
-      required:
-      - kind
-      - src
-      - dst
-      properties:
-        kind:
-          type: string
-          enum:
-          - business_service_has_surface
-          - surface_uses_profile
-          - profile_has_grant
-          - grant_authorises_agent
-          - surface_has_fail_mode_policy
-          - business_service_has_fail_mode_policy
-          - profile_escalates_to
-        src:
-          $ref: '#/components/schemas/AuthorityGraphNodeRef'
-        dst:
-          $ref: '#/components/schemas/AuthorityGraphNodeRef'
-        label:
-          type: string
-          description: 'For fail-mode-policy edges, one of "default" or "override". Empty for other kinds.
-
-            '
-    ContextGraphNodeRef:
-      type: object
-      description: '(kind, id) pair uniquely identifying a node within a single projection.
-
-        '
-      required:
-      - kind
-      - id
-      properties:
-        kind:
-          type: string
-          description: Node kind (one of the ContextGraphNode kinds).
-        id:
-          type: string
-          description: Entity identifier within its kind.
-    Error:
-      type: object
-      required:
-      - error
-      properties:
-        error:
-          type: string
     AuthorityGraphAuthorityProfileData:
       type: object
       description: 'Typed data for an authority_profile node. Includes lifecycle fields (status, effective_date, approved_by/at) plus the runtime-relevant configuration (thresholds, escalation_mode, fail_mode, policy_reference).
@@ -1569,62 +1521,153 @@ components:
           description: 'Configured EscalationTargetID carried verbatim from the domain (D31l). Empty when the profile has no explicit target. The resolved active target — if any — appears as a separate escalation_target node + profile_escalates_to edge.
 
             '
-    ContextGraphAISystemData:
+    AuthorityGraphRuleCountByClass:
       type: object
-      description: 'Typed data for a node of kind `ai_system`. `active_version`, `active_version_label`, and `active_version_status` are populated when the AI system has an active version on the governance map, omitted otherwise.
+      description: 'Per-correctness-class rule count summary for a FailModePolicy. All five CorrectnessClass values are present, defaulting to zero. Provides at-a-glance coverage without pushing the full rules array into the graph payload.
 
         '
       required:
-      - id
-      - name
-      - status
+      - governance_integrity
+      - persistence
+      - input
+      - resource
+      - consistency
       properties:
-        id:
-          type: string
-        name:
-          type: string
-        description:
-          type: string
-        status:
-          type: string
-        vendor:
-          type: string
-        system_type:
-          type: string
-        active_version:
+        governance_integrity:
           type: integer
-          description: The integer version number of the active AISystemVersion. Omitted when no active version exists.
-        active_version_label:
-          type: string
-          description: Optional release label associated with the active version.
-        active_version_status:
-          type: string
-          description: Status of the active AISystemVersion (e.g. draft, active, retired). Mirrors the governance-map ai_systems[].active_version.status field.
-        external_ref:
-          $ref: '#/components/schemas/ContextGraphExternalRefData'
-    ContextGraphProcessData:
+        persistence:
+          type: integer
+        input:
+          type: integer
+        resource:
+          type: integer
+        consistency:
+          type: integer
+    AuthorityGraphProfileStatus:
+      type: string
+      description: 'Surface-level profile coverage. "covered" when at least one effective profile attaches to the surface; "missing" otherwise.
+
+        '
+      enum:
+      - covered
+      - missing
+    ContextGraphAuthoritySummaryData:
       type: object
-      description: 'Typed data for a node of kind `process`. The process domain type does not currently carry an external_ref field, so this struct has no external_ref attribute. If the domain gains it, the schema will be extended additively.
+      description: 'Typed data for the synthetic `authority_summary` node. Mirrors the governance-map AuthoritySummary DTO field-for-field so the values are directly comparable across both endpoints.
+
+        '
+      required:
+      - surface_count
+      - active_profile_count
+      - active_grant_count
+      - active_agent_count
+      properties:
+        surface_count:
+          type: integer
+        active_profile_count:
+          type: integer
+        active_grant_count:
+          type: integer
+        active_agent_count:
+          type: integer
+    ContextGraphExternalRefData:
+      type: object
+      description: 'External reference structure mirroring the governance-map external_ref wire shape (httpapi.externalRefResponse). Same field names and JSON tags so consumers can share parsing logic across both endpoints.
+
+        '
+      required:
+      - source_system
+      - source_id
+      properties:
+        source_system:
+          type: string
+        source_id:
+          type: string
+        source_url:
+          type: string
+        source_version:
+          type: string
+        last_synced_at:
+          type: string
+          format: date-time
+          description: RFC3339 UTC timestamp.
+    ContextGraphDecisionSurfaceData:
+      type: object
+      description: 'Typed data for a node of kind `decision_surface`. The two binding-id arrays are non-nil (possibly empty) and disjoint per the governance-map contract.
 
         '
       required:
       - id
+      - version
       - name
       - status
-      - business_service_id
+      - process_id
+      - ai_binding_ids
+      - inherited_ai_binding_ids
+      - profile_count
+      - grant_count
+      - agent_count
       properties:
         id:
           type: string
+        version:
+          type: integer
         name:
           type: string
         description:
           type: string
         status:
           type: string
-        owner:
+        process_id:
           type: string
-        business_service_id:
+        fail_mode_policy_id:
           type: string
+          description: 'Optional surface-level FailModePolicy override. Empty / omitted when unset; runtime resolution then falls back to the parent BusinessService''s `fail_mode_policy_id`. Apply-time validation rejects references to missing, review, deprecated, or retired policies. The projection carries the reference verbatim — no policy lookup or rule inspection is performed on the read path.
+
+            '
+        ai_binding_ids:
+          type: array
+          items:
+            type: string
+        inherited_ai_binding_ids:
+          type: array
+          items:
+            type: string
+        profile_count:
+          type: integer
+        grant_count:
+          type: integer
+        agent_count:
+          type: integer
+    AuthorityGraphEdge:
+      type: object
+      description: 'One directed link in the Authority Graph. Direction is encoded as (src → dst) per the kind contract documented on /v1/graphs/authority. The fail-mode-policy edges carry a label of "default" (BS-level) or "override" (surface-level); other edge kinds leave label empty.
+
+        '
+      required:
+      - kind
+      - src
+      - dst
+      properties:
+        kind:
+          type: string
+          enum:
+          - business_service_has_surface
+          - surface_uses_profile
+          - profile_has_grant
+          - grant_authorises_agent
+          - surface_has_fail_mode_policy
+          - business_service_has_fail_mode_policy
+          - profile_escalates_to
+        src:
+          $ref: '#/components/schemas/AuthorityGraphNodeRef'
+        dst:
+          $ref: '#/components/schemas/AuthorityGraphNodeRef'
+        label:
+          type: string
+          description: 'For fail-mode-policy edges, one of "default" or "override". Empty for other kinds.
+
+            '
     ContextGraphProjection:
       type: object
       description: 'Top-level response shape for GET /v1/graphs/context. Nodes are sorted by (kind, id) ascending; edges are sorted by (kind, src.kind, src.id, dst.kind, dst.id) ascending. Both arrays are always present (never null); an empty depth=0 projection still carries the root in `nodes`.
@@ -1663,107 +1706,57 @@ components:
           type: array
           items:
             $ref: '#/components/schemas/ContextGraphEdge'
-    AuthorityGraphProjection:
+    AuthorityGraphConsequenceThreshold:
       type: object
-      description: 'Top-level response shape for GET /v1/graphs/authority. Nodes are sorted by (kind, id) ascending; edges are sorted by (kind, src.kind, src.id, dst.kind, dst.id) ascending. Both arrays are always present (never null); an empty depth=0 projection still carries the root in `nodes`.
-
-
-        D31g adds `summary` and `diagnostics`. Both are optional on the wire (omitempty when empty) and describe the FULL pre- depth-filter projection — they remain meaningful at depth=0.
+      description: 'Typed value object representing an authority profile''s consequence threshold. Exactly one variant is populated based on type — monetary (amount + currency) or risk_rating (risk_rating). monetary is the canonical control-plane/API value for amount/currency thresholds; financial is accepted as a compatibility alias in control-plane Profile bundle input and is persisted as the Postgres storage value. Profile reads and graph projections use the canonical monetary form.
 
         '
       required:
-      - root
-      - view
-      - depth
-      - nodes
-      - edges
+      - type
       properties:
-        root:
-          $ref: '#/components/schemas/AuthorityGraphNodeRef'
-        view:
+        type:
           type: string
           enum:
-          - service
-          description: 'Perspective the projection was computed in. MVP supports only `service`.
+          - monetary
+          - financial
+          - risk_rating
+          description: 'monetary is canonical, financial is a compatibility alias for control-plane Profile bundle input, and risk_rating uses the risk_rating field.
 
             '
-        depth:
-          type: integer
-          description: 'Maximum BFS hops from the root applied to this projection. May differ from the request''s depth when the caller-supplied value was silently clamped to MaxDepth.
+        amount:
+          type: number
+        currency:
+          type: string
+        risk_rating:
+          type: string
+    AuthorityGraphValidityStatus:
+      type: string
+      description: 'Time-window classification an authority profile or grant carries on its typed data. Emitted nodes always carry "effective"; future-dated and expired entities are filtered out of the node set and produce diagnostics instead.
 
-            '
-        nodes:
-          type: array
-          items:
-            $ref: '#/components/schemas/AuthorityGraphNode'
-        edges:
-          type: array
-          items:
-            $ref: '#/components/schemas/AuthorityGraphEdge'
-        summary:
-          $ref: '#/components/schemas/AuthorityGraphSummary'
-        diagnostics:
-          type: array
-          items:
-            $ref: '#/components/schemas/AuthorityGraphDiagnostic'
-          description: 'Operator-actionable conditions observed during projection. Sorted by (severity rank, kind, first node ref). Severity rank is critical < warning < info.
-
-            '
-        diagnostic_summary:
-          $ref: '#/components/schemas/AuthorityGraphDiagnosticSummary'
-        surface_posture:
-          type: array
-          items:
-            $ref: '#/components/schemas/AuthorityGraphSurfaceAuthorityPosture'
-          description: 'Per-surface authority posture rollup (D31m). One entry per emitted active decision surface, sorted by surface id ascending. Describes the FULL pre-depth-filter projection — depth=0 callers still see posture for every surface.
-
-            '
-    AuthorityGraphAuthorityGrantData:
+        '
+      enum:
+      - effective
+      - future_dated
+      - expired
+    ContextGraphCoverageData:
       type: object
-      description: 'Typed data for an authority_grant node. Grant references the profile by logical id (not by version). Noisy lifecycle fields (suspend/revoke metadata, GrantReason) are intentionally excluded from the graph wire shape.
-
-
-        D31i adds `capabilities` and `constraints`. Capabilities is the SET of canonical Capability values the grant authorises (omitempty when empty — the projection also emits a grant_has_no_capabilities warning diagnostic). Constraints is the typed list of grant constraints (omitempty when empty).
+      description: 'Typed data for the synthetic `coverage` node. Mirrors the governance-map Coverage DTO (Phase 9 explicit field naming); the three AI-binding counters are mutually exclusive at the surface level and sum to surface_count by construction.
 
         '
       required:
-      - id
-      - profile_id
-      - agent_id
-      - status
+      - surface_count
+      - surfaces_with_direct_ai_binding
+      - surfaces_with_scoped_ai_binding
+      - surfaces_with_no_ai_binding
       properties:
-        id:
-          type: string
-        profile_id:
-          type: string
-        agent_id:
-          type: string
-        status:
-          type: string
-        effective_date:
-          type: string
-          format: date-time
-        expires_at:
-          type: string
-          format: date-time
-        validity_status:
-          $ref: '#/components/schemas/AuthorityGraphValidityStatus'
-        granted_by:
-          type: string
-        capabilities:
-          type: array
-          items:
-            $ref: '#/components/schemas/AuthorityCapability'
-          description: 'The SET of authority Capability values this grant authorises. Empty / omitted when the grant carries no capabilities.
-
-            '
-        constraints:
-          type: array
-          items:
-            $ref: '#/components/schemas/AuthorityConstraint'
-          description: 'Typed runtime constraints that narrow the grant on every request. Empty / omitted when the grant has no constraints.
-
-            '
+        surface_count:
+          type: integer
+        surfaces_with_direct_ai_binding:
+          type: integer
+        surfaces_with_scoped_ai_binding:
+          type: integer
+        surfaces_with_no_ai_binding:
+          type: integer
     AuthorityGraphEscalationTargetData:
       type: object
       description: 'Typed data for an escalation_target node (D31l). Mirrors the escalation.EscalationTarget domain fields the graph projects as a read model. The escalation context owns the authoritative EscalationTarget schema under /v1/escalation_targets; this is the graph-specific projection.
@@ -1813,14 +1806,15 @@ components:
         approved_at:
           type: string
           format: date-time
-    AuthorityGraphProfileStatus:
+    AuthorityGraphEffectivePolicySource:
       type: string
-      description: 'Surface-level profile coverage. "covered" when at least one effective profile attaches to the surface; "missing" otherwise.
+      description: 'Resolved fail-mode-policy origin per decision surface. "override" — the surface had a non-empty FailModePolicyID that resolved to an active version. "business_service_default" — the surface inherits from the BS-level default (surface had no override OR its override was dangling). "none" — no effective fail-mode policy resolves for this surface.
 
         '
       enum:
-      - covered
-      - missing
+      - override
+      - business_service_default
+      - none
   securitySchemes:
     BearerAuth:
       type: http

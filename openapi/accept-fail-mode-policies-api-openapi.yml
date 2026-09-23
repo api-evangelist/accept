@@ -1,10 +1,8 @@
-openapi: 3.1.0
+openapi: 3.2.0
 info:
-  title: MIDAS Agents Fail Mode Policies API
+  title: MIDAS Fail Mode Policies API
   version: 1.1.0-rc.1
-  description: 'Authority governance engine for autonomous decisions. Every evaluation produces exactly one outcome and one tamper-evident audit envelope.
-
-    '
+  description: Authority governance engine for autonomous decisions. Every evaluation produces exactly one outcome and one tamper-evident audit envelope.
 servers:
 - url: http://localhost:8080
   description: Local development
@@ -17,9 +15,7 @@ paths:
     get:
       operationId: getFailModePolicy
       summary: Get the latest version of a FailModePolicy by ID
-      description: 'Returns the highest-numbered FailModePolicy version for the given id regardless of lifecycle status. Read-only; the runtime resolver remains evidence-only and rule contents do not influence outcome computation.
-
-        '
+      description: Returns the highest-numbered FailModePolicy version for the given id regardless of lifecycle status. Read-only; the runtime resolver remains evidence-only and rule contents do not influence outcome computation.
       parameters:
       - name: id
         in: path
@@ -69,9 +65,7 @@ paths:
     get:
       operationId: listFailModePolicyVersions
       summary: List all versions of a FailModePolicy
-      description: 'Returns every persisted revision of the FailModePolicy id in descending version order. 404 when the id is unknown.
-
-        '
+      description: Returns every persisted revision of the FailModePolicy id in descending version order. 404 when the id is unknown.
       parameters:
       - name: id
         in: path
@@ -121,9 +115,7 @@ paths:
     get:
       operationId: getFailModePolicyVersion
       summary: Get a specific FailModePolicy revision
-      description: 'Returns the exact (id, version) revision. 404 when the pair does not exist. The runtime resolver remains evidence-only.
-
-        '
+      description: Returns the exact (id, version) revision. 404 when the pair does not exist. The runtime resolver remains evidence-only.
       parameters:
       - name: id
         in: path
@@ -258,36 +250,6 @@ components:
           type: string
           format: date-time
           nullable: true
-    Error:
-      type: object
-      required:
-      - error
-      properties:
-        error:
-          type: string
-    FailModePolicyListResponse:
-      type: object
-      description: 'Versions list wrapper for FailModePolicy GET endpoints. The array always serialises non-null (empty list when the resource is unknown is mapped to 404 by the handler).
-
-        '
-      required:
-      - fail_mode_policies
-      properties:
-        fail_mode_policies:
-          type: array
-          items:
-            $ref: '#/components/schemas/FailModePolicy'
-    LifecycleStatus:
-      type: string
-      description: 'Canonical lifecycle posture for versioned governance resources (Surface, Profile, FailModePolicy, EscalationTarget). Every governed configuration entity in MIDAS follows the same draft -> review -> active -> deprecated -> retired progression. Only `active` versions participate in runtime resolution.
-
-        '
-      enum:
-      - draft
-      - review
-      - active
-      - deprecated
-      - retired
     FailModePolicyRule:
       type: object
       description: 'A single rule binding a correctness class to a three-axis runtime-degradation posture (D29b): permitted_mode (Axis A), enforcement_state (Axis B), and outcome (Axis C). Validation enforces a per-posture matrix of permitted (enforcement_state, outcome) combinations; the runtime continues to record the resolved policy as evidence only and does not enforce rule contents in this tranche.
@@ -335,6 +297,36 @@ components:
         reason:
           type: string
           description: Optional free-form note explaining the rule.
+    Error:
+      type: object
+      required:
+      - error
+      properties:
+        error:
+          type: string
+    LifecycleStatus:
+      type: string
+      description: 'Canonical lifecycle posture for versioned governance resources (Surface, Profile, FailModePolicy, EscalationTarget). Every governed configuration entity in MIDAS follows the same draft -> review -> active -> deprecated -> retired progression. Only `active` versions participate in runtime resolution.
+
+        '
+      enum:
+      - draft
+      - review
+      - active
+      - deprecated
+      - retired
+    FailModePolicyListResponse:
+      type: object
+      description: 'Versions list wrapper for FailModePolicy GET endpoints. The array always serialises non-null (empty list when the resource is unknown is mapped to 404 by the handler).
+
+        '
+      required:
+      - fail_mode_policies
+      properties:
+        fail_mode_policies:
+          type: array
+          items:
+            $ref: '#/components/schemas/FailModePolicy'
   securitySchemes:
     BearerAuth:
       type: http
