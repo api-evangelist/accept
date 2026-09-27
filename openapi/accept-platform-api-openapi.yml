@@ -101,6 +101,13 @@ paths:
       - Platform
 components:
   schemas:
+    Error:
+      type: object
+      required:
+      - error
+      properties:
+        error:
+          type: string
     AdminAuditEntry:
       type: object
       required:
@@ -151,13 +158,6 @@ components:
           description: Authz permission the request was gated on. Omitted for non-permission-gated events.
         details:
           $ref: '#/components/schemas/AdminAuditDetails'
-    Error:
-      type: object
-      required:
-      - error
-      properties:
-        error:
-          type: string
     AdminAuditDetails:
       type: object
       description: 'Action-specific structured context. All fields are optional and present only when the emitting action populated them. Never carries secret material.

@@ -125,13 +125,6 @@ paths:
       - Processes
 components:
   schemas:
-    Error:
-      type: object
-      required:
-      - error
-      properties:
-        error:
-          type: string
     LifecycleStatus:
       type: string
       description: 'Canonical lifecycle posture for versioned governance resources (Surface, Profile, FailModePolicy, EscalationTarget). Every governed configuration entity in MIDAS follows the same draft -> review -> active -> deprecated -> retired progression. Only `active` versions participate in runtime resolution.
@@ -143,6 +136,42 @@ components:
       - active
       - deprecated
       - retired
+    Error:
+      type: object
+      required:
+      - error
+      properties:
+        error:
+          type: string
+    Surface:
+      type: object
+      properties:
+        id:
+          type: string
+        name:
+          type: string
+        status:
+          $ref: '#/components/schemas/LifecycleStatus'
+        version:
+          type: integer
+        domain:
+          type: string
+        business_owner:
+          type: string
+        technical_owner:
+          type: string
+        effective_from:
+          type: string
+          format: date-time
+        approved_by:
+          type: string
+        approved_at:
+          type: string
+          format: date-time
+        deprecation_reason:
+          type: string
+        successor_surface_id:
+          type: string
     Process:
       type: object
       properties:
@@ -173,35 +202,6 @@ components:
         updated_at:
           type: string
           format: date-time
-    Surface:
-      type: object
-      properties:
-        id:
-          type: string
-        name:
-          type: string
-        status:
-          $ref: '#/components/schemas/LifecycleStatus'
-        version:
-          type: integer
-        domain:
-          type: string
-        business_owner:
-          type: string
-        technical_owner:
-          type: string
-        effective_from:
-          type: string
-          format: date-time
-        approved_by:
-          type: string
-        approved_at:
-          type: string
-          format: date-time
-        deprecation_reason:
-          type: string
-        successor_surface_id:
-          type: string
   securitySchemes:
     BearerAuth:
       type: http

@@ -250,6 +250,24 @@ components:
           type: string
           format: date-time
           nullable: true
+    Error:
+      type: object
+      required:
+      - error
+      properties:
+        error:
+          type: string
+    LifecycleStatus:
+      type: string
+      description: 'Canonical lifecycle posture for versioned governance resources (Surface, Profile, FailModePolicy, EscalationTarget). Every governed configuration entity in MIDAS follows the same draft -> review -> active -> deprecated -> retired progression. Only `active` versions participate in runtime resolution.
+
+        '
+      enum:
+      - draft
+      - review
+      - active
+      - deprecated
+      - retired
     FailModePolicyRule:
       type: object
       description: 'A single rule binding a correctness class to a three-axis runtime-degradation posture (D29b): permitted_mode (Axis A), enforcement_state (Axis B), and outcome (Axis C). Validation enforces a per-posture matrix of permitted (enforcement_state, outcome) combinations; the runtime continues to record the resolved policy as evidence only and does not enforce rule contents in this tranche.
@@ -297,24 +315,6 @@ components:
         reason:
           type: string
           description: Optional free-form note explaining the rule.
-    Error:
-      type: object
-      required:
-      - error
-      properties:
-        error:
-          type: string
-    LifecycleStatus:
-      type: string
-      description: 'Canonical lifecycle posture for versioned governance resources (Surface, Profile, FailModePolicy, EscalationTarget). Every governed configuration entity in MIDAS follows the same draft -> review -> active -> deprecated -> retired progression. Only `active` versions participate in runtime resolution.
-
-        '
-      enum:
-      - draft
-      - review
-      - active
-      - deprecated
-      - retired
     FailModePolicyListResponse:
       type: object
       description: 'Versions list wrapper for FailModePolicy GET endpoints. The array always serialises non-null (empty list when the resource is unknown is mapped to 404 by the handler).

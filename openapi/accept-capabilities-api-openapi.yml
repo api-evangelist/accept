@@ -229,53 +229,13 @@ paths:
       - Capabilities
 components:
   schemas:
-    ExternalRef:
+    Error:
       type: object
-      description: 'Structured reference to an entity in an external system (ServiceNow, LeanIX, GitHub, internal catalogues, custom). MIDAS records the reference but never validates the source_system against an enum and never resolves the reference by calling the external system. source_system and source_id must either both be present or both be absent — the consistency rule is enforced by a CHECK constraint on each consuming table. Wire-format nullability: the parent response renders `external_ref: null` when no external reference is recorded.
-
-        '
       required:
-      - source_system
-      - source_id
+      - error
       properties:
-        source_system:
+        error:
           type: string
-          description: 'Caller-asserted label identifying the external system that
-
-            produced this reference. Vendor-neutral; MIDAS does not
-
-            validate or resolve this value.
-
-            '
-        source_id:
-          type: string
-          description: Identifier of the entity in the source system.
-        source_url:
-          type: string
-          description: Optional deep link to the entity in the source system.
-        source_version:
-          type: string
-          description: Optional version label assigned by the source system.
-        last_synced_at:
-          type: string
-          format: date-time
-          description: Optional timestamp of the last sync from the source system.
-    CapabilityAIBindingsResponse:
-      type: object
-      description: 'Envelope for the Capability-scoped AI bindings endpoint (GET /v1/capabilities/{id}/ai-bindings, Phase 3C). Both keys are always present. The `bindings` array contains the AI System bindings whose `capability_id` matches the path id — direct Capability scope only. Bindings that reference the capability indirectly (e.g. via a Process whose BS is BSC-linked) are NOT inferred. Each binding uses the same shape as items in AISystemBindingsResponse, so consumers can share the AISystemBinding model across both endpoints.
-
-        '
-      required:
-      - capability_id
-      - bindings
-      properties:
-        capability_id:
-          type: string
-          description: The capability identifier.
-        bindings:
-          type: array
-          items:
-            $ref: '#/components/schemas/AISystemBinding'
     BusinessService:
       type: object
       description: 'A business service grouping for processes (V2 structural layer). Mirrors the businessServiceResponse wire format.
@@ -393,29 +353,53 @@ components:
           description: 'Optional structured reference to an external system. Always present in the response; rendered as null when no external reference is recorded. See ExternalRef (Epic 1, PR 3 — Phase 0B-2 extended the pattern to Capability).
 
             '
-    Error:
+    ExternalRef:
       type: object
+      description: 'Structured reference to an entity in an external system (ServiceNow, LeanIX, GitHub, internal catalogues, custom). MIDAS records the reference but never validates the source_system against an enum and never resolves the reference by calling the external system. source_system and source_id must either both be present or both be absent — the consistency rule is enforced by a CHECK constraint on each consuming table. Wire-format nullability: the parent response renders `external_ref: null` when no external reference is recorded.
+
+        '
       required:
-      - error
+      - source_system
+      - source_id
       properties:
-        error:
+        source_system:
           type: string
-    CapabilityBusinessServicesResponse:
+          description: 'Caller-asserted label identifying the external system that
+
+            produced this reference. Vendor-neutral; MIDAS does not
+
+            validate or resolve this value.
+
+            '
+        source_id:
+          type: string
+          description: Identifier of the entity in the source system.
+        source_url:
+          type: string
+          description: Optional deep link to the entity in the source system.
+        source_version:
+          type: string
+          description: Optional version label assigned by the source system.
+        last_synced_at:
+          type: string
+          format: date-time
+          description: Optional timestamp of the last sync from the source system.
+    CapabilityAIBindingsResponse:
       type: object
-      description: 'Envelope for the reverse Capability → BusinessService lookup (GET /v1/capabilities/{id}/businessservices, Phase 3B). Both keys are always present. The `business_services` array contains the Business Services directly linked to the capability via the canonical BusinessServiceCapability M:N junction. Business Services are NOT inferred through Processes, Surfaces, or AI bindings. The array is empty when the capability has no BSC links. Dangling links (BSC row whose business_service_id resolves to a deleted BS) are silently skipped, matching governancemap''s read-service convention.
+      description: 'Envelope for the Capability-scoped AI bindings endpoint (GET /v1/capabilities/{id}/ai-bindings, Phase 3C). Both keys are always present. The `bindings` array contains the AI System bindings whose `capability_id` matches the path id — direct Capability scope only. Bindings that reference the capability indirectly (e.g. via a Process whose BS is BSC-linked) are NOT inferred. Each binding uses the same shape as items in AISystemBindingsResponse, so consumers can share the AISystemBinding model across both endpoints.
 
         '
       required:
       - capability_id
-      - business_services
+      - bindings
       properties:
         capability_id:
           type: string
           description: The capability identifier.
-        business_services:
+        bindings:
           type: array
           items:
-            $ref: '#/components/schemas/BusinessService'
+            $ref: '#/components/schemas/AISystemBinding'
     CapabilityChildrenResponse:
       type: object
       description: 'Envelope for the children read endpoint (GET /v1/capabilities/{id}/children, Phase 3A). Both keys are always present. The `capabilities` array contains direct children only — recursive descendants are NOT returned. The array is empty when the parent has no children.
@@ -476,6 +460,22 @@ components:
           - $ref: '#/components/schemas/ExternalRef'
           nullable: true
           description: Optional structured external reference. See ExternalRef (Epic 1, PR 3).
+    CapabilityBusinessServicesResponse:
+      type: object
+      description: 'Envelope for the reverse Capability → BusinessService lookup (GET /v1/capabilities/{id}/businessservices, Phase 3B). Both keys are always present. The `business_services` array contains the Business Services directly linked to the capability via the canonical BusinessServiceCapability M:N junction. Business Services are NOT inferred through Processes, Surfaces, or AI bindings. The array is empty when the capability has no BSC links. Dangling links (BSC row whose business_service_id resolves to a deleted BS) are silently skipped, matching governancemap''s read-service convention.
+
+        '
+      required:
+      - capability_id
+      - business_services
+      properties:
+        capability_id:
+          type: string
+          description: The capability identifier.
+        business_services:
+          type: array
+          items:
+            $ref: '#/components/schemas/BusinessService'
   securitySchemes:
     BearerAuth:
       type: http

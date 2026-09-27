@@ -147,49 +147,13 @@ paths:
       - Business Services
 components:
   schemas:
-    BusinessServicesResponse:
+    Error:
       type: object
-      description: 'Envelope wrapping the GET /v1/businessservices list payload. The `business_services` array is always present (never null); empty store returns []. The envelope shape replaced the previous bare array when the live Explorer Business-Service selector landed.
-
-        '
       required:
-      - business_services
+      - error
       properties:
-        business_services:
-          type: array
-          items:
-            $ref: '#/components/schemas/BusinessService'
-    ExternalRef:
-      type: object
-      description: 'Structured reference to an entity in an external system (ServiceNow, LeanIX, GitHub, internal catalogues, custom). MIDAS records the reference but never validates the source_system against an enum and never resolves the reference by calling the external system. source_system and source_id must either both be present or both be absent — the consistency rule is enforced by a CHECK constraint on each consuming table. Wire-format nullability: the parent response renders `external_ref: null` when no external reference is recorded.
-
-        '
-      required:
-      - source_system
-      - source_id
-      properties:
-        source_system:
+        error:
           type: string
-          description: 'Caller-asserted label identifying the external system that
-
-            produced this reference. Vendor-neutral; MIDAS does not
-
-            validate or resolve this value.
-
-            '
-        source_id:
-          type: string
-          description: Identifier of the entity in the source system.
-        source_url:
-          type: string
-          description: Optional deep link to the entity in the source system.
-        source_version:
-          type: string
-          description: Optional version label assigned by the source system.
-        last_synced_at:
-          type: string
-          format: date-time
-          description: Optional timestamp of the last sync from the source system.
     BusinessService:
       type: object
       description: 'A business service grouping for processes (V2 structural layer). Mirrors the businessServiceResponse wire format.
@@ -240,13 +204,49 @@ components:
           description: 'Optional default FailModePolicy identifier for this business service (D27j-impl-2). When set, processes/surfaces under this BusinessService inherit this policy unless the surface declares its own override. Validated at apply time: must reference a FailModePolicy whose status is `active` at the time of apply. Omitted when no default is configured. In this tranche the resolver records the policy as observability metadata only — it does not affect outcomes or appear in the /v1/evaluate response.
 
             '
-    Error:
+    BusinessServicesResponse:
       type: object
+      description: 'Envelope wrapping the GET /v1/businessservices list payload. The `business_services` array is always present (never null); empty store returns []. The envelope shape replaced the previous bare array when the live Explorer Business-Service selector landed.
+
+        '
       required:
-      - error
+      - business_services
       properties:
-        error:
+        business_services:
+          type: array
+          items:
+            $ref: '#/components/schemas/BusinessService'
+    ExternalRef:
+      type: object
+      description: 'Structured reference to an entity in an external system (ServiceNow, LeanIX, GitHub, internal catalogues, custom). MIDAS records the reference but never validates the source_system against an enum and never resolves the reference by calling the external system. source_system and source_id must either both be present or both be absent — the consistency rule is enforced by a CHECK constraint on each consuming table. Wire-format nullability: the parent response renders `external_ref: null` when no external reference is recorded.
+
+        '
+      required:
+      - source_system
+      - source_id
+      properties:
+        source_system:
           type: string
+          description: 'Caller-asserted label identifying the external system that
+
+            produced this reference. Vendor-neutral; MIDAS does not
+
+            validate or resolve this value.
+
+            '
+        source_id:
+          type: string
+          description: Identifier of the entity in the source system.
+        source_url:
+          type: string
+          description: Optional deep link to the entity in the source system.
+        source_version:
+          type: string
+          description: Optional version label assigned by the source system.
+        last_synced_at:
+          type: string
+          format: date-time
+          description: Optional timestamp of the last sync from the source system.
     BusinessServiceRelationship:
       type: object
       description: 'A directed link between two BusinessServices (Epic 1, PR 1). The junction has no lifecycle of its own; description is the only mutable field.

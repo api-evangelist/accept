@@ -10,16 +10,19 @@ description: >-
   evidence and integrity API, drift detection, an Explorer UI, and OIDC/local IAM. It is
   positioned for enterprise teams governing what automated actors are authorised to decide.
 deliveryModel:
-  model: unknown
+  model: library
+  license_evidence:
+    not_product:
+    - accept-io/midas
   open_source: unknown
   commercial: false
   callable_host: false
-  label: Delivery model not determined — needs a product licence on record
+  label: Library · distributed through package registries, no callable service
   confidence: low
   source:
   - openapi
-  - repository-unlicensed
-  generated: '2026-08-28'
+  - repository-not-product
+  generated: '2026-09-25'
   method: derived
 accessModel:
   pricing: unknown
@@ -54,7 +57,8 @@ tags:
 - Authority
 - Decision Governance
 - Audit
-- Open-Source
+- Open Source
+- Real-Time
 tags_raw:
 - Company
 - Enterprise
@@ -64,6 +68,8 @@ tags_raw:
 - Decision Governance
 - Audit
 - Open Source
+- Open-Source
+- Real-Time
 maintainers:
 - FN: Kin Lane
   email: kin@apievangelist.com
