@@ -213,36 +213,12 @@ paths:
       - Escalation Targets
 components:
   schemas:
-    Error:
-      type: object
-      required:
-      - error
-      properties:
-        error:
-          type: string
-    EscalationTargetListResponse:
-      type: object
-      description: 'List wrapper for EscalationTarget GET endpoints. The array always serialises non-null (empty list when no targets exist).
+    EscalationTargetStatus:
+      description: 'Lifecycle state of an EscalationTarget version. Delegates to the canonical LifecycleStatus posture. Only `active` versions participate in runtime escalation resolution.
 
         '
-      required:
-      - escalation_targets
-      properties:
-        escalation_targets:
-          type: array
-          items:
-            $ref: '#/components/schemas/EscalationTarget'
-    LifecycleStatus:
-      type: string
-      description: 'Canonical lifecycle posture for versioned governance resources (Surface, Profile, FailModePolicy, EscalationTarget). Every governed configuration entity in MIDAS follows the same draft -> review -> active -> deprecated -> retired progression. Only `active` versions participate in runtime resolution.
-
-        '
-      enum:
-      - draft
-      - review
-      - active
-      - deprecated
-      - retired
+      allOf:
+      - $ref: '#/components/schemas/LifecycleStatus'
     EscalationTargetKind:
       type: string
       description: 'Discriminator for the EscalationTarget Handle field. role = identity role name (e.g. governance.approver); agent = registered agent id; surface = decision surface id; external = external system or URI identifier. Cross-context existence is not enforced at the repository layer.
@@ -311,12 +287,36 @@ components:
           type: string
           format: date-time
           nullable: true
-    EscalationTargetStatus:
-      description: 'Lifecycle state of an EscalationTarget version. Delegates to the canonical LifecycleStatus posture. Only `active` versions participate in runtime escalation resolution.
+    Error:
+      type: object
+      required:
+      - error
+      properties:
+        error:
+          type: string
+    EscalationTargetListResponse:
+      type: object
+      description: 'List wrapper for EscalationTarget GET endpoints. The array always serialises non-null (empty list when no targets exist).
 
         '
-      allOf:
-      - $ref: '#/components/schemas/LifecycleStatus'
+      required:
+      - escalation_targets
+      properties:
+        escalation_targets:
+          type: array
+          items:
+            $ref: '#/components/schemas/EscalationTarget'
+    LifecycleStatus:
+      type: string
+      description: 'Canonical lifecycle posture for versioned governance resources (Surface, Profile, FailModePolicy, EscalationTarget). Every governed configuration entity in MIDAS follows the same draft -> review -> active -> deprecated -> retired progression. Only `active` versions participate in runtime resolution.
+
+        '
+      enum:
+      - draft
+      - review
+      - active
+      - deprecated
+      - retired
   securitySchemes:
     BearerAuth:
       type: http

@@ -57,6 +57,51 @@ paths:
       - Evaluate
 components:
   schemas:
+    EvaluateRequest:
+      type: object
+      required:
+      - surface_id
+      - agent_id
+      - confidence
+      properties:
+        surface_id:
+          type: string
+          description: ID of the governed decision surface.
+        agent_id:
+          type: string
+          description: ID of the acting agent.
+        confidence:
+          type: number
+          format: float
+          minimum: 0
+          maximum: 1
+          description: Agent's confidence in the decision (0.0–1.0).
+        consequence:
+          $ref: '#/components/schemas/Consequence'
+        context:
+          type: object
+          additionalProperties: true
+          description: Key-value pairs satisfying the surface's required context keys.
+        request_id:
+          type: string
+          description: Caller-supplied idempotency key. Auto-generated if omitted.
+        request_source:
+          type: string
+          description: Logical source system identifier. Defaults to "api".
+        process_id:
+          type: string
+          description: 'Process ID for evaluation. Required in enforced structural mode;
+
+            optional in permissive mode (the default).
+
+
+            MIDAS validates that the process exists, that the surface exists
+
+            (latest version), and that the surface belongs to this process.
+
+            The request fails with 400 if any validation fails.
+
+            '
     EvaluateResponse:
       type: object
       required:
@@ -130,51 +175,6 @@ components:
           - high
           - critical
           description: Risk rating value. Required when type=risk_rating.
-    EvaluateRequest:
-      type: object
-      required:
-      - surface_id
-      - agent_id
-      - confidence
-      properties:
-        surface_id:
-          type: string
-          description: ID of the governed decision surface.
-        agent_id:
-          type: string
-          description: ID of the acting agent.
-        confidence:
-          type: number
-          format: float
-          minimum: 0
-          maximum: 1
-          description: Agent's confidence in the decision (0.0–1.0).
-        consequence:
-          $ref: '#/components/schemas/Consequence'
-        context:
-          type: object
-          additionalProperties: true
-          description: Key-value pairs satisfying the surface's required context keys.
-        request_id:
-          type: string
-          description: Caller-supplied idempotency key. Auto-generated if omitted.
-        request_source:
-          type: string
-          description: Logical source system identifier. Defaults to "api".
-        process_id:
-          type: string
-          description: 'Process ID for evaluation. Required in enforced structural mode;
-
-            optional in permissive mode (the default).
-
-
-            MIDAS validates that the process exists, that the surface exists
-
-            (latest version), and that the surface belongs to this process.
-
-            The request fails with 400 if any validation fails.
-
-            '
   securitySchemes:
     BearerAuth:
       type: http

@@ -57,12 +57,15 @@ paths:
       - Reviews
 components:
   schemas:
-    Error:
+    ReviewResponse:
       type: object
       required:
-      - error
+      - envelope_id
+      - status
       properties:
-        error:
+        envelope_id:
+          type: string
+        status:
           type: string
     ReviewRequest:
       type: object
@@ -83,15 +86,12 @@ components:
           description: Reviewer identifier.
         notes:
           type: string
-    ReviewResponse:
+    Error:
       type: object
       required:
-      - envelope_id
-      - status
+      - error
       properties:
-        envelope_id:
-          type: string
-        status:
+        error:
           type: string
   securitySchemes:
     BearerAuth:

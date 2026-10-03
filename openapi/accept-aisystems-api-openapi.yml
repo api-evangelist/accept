@@ -261,28 +261,6 @@ paths:
       - Aisystems
 components:
   schemas:
-    Error:
-      type: object
-      required:
-      - error
-      properties:
-        error:
-          type: string
-    AISystemVersionsResponse:
-      type: object
-      description: 'Top-level response shape for GET /v1/aisystems/{id}/versions. The `versions` array is always present (never null).
-
-        '
-      required:
-      - ai_system_id
-      - versions
-      properties:
-        ai_system_id:
-          type: string
-        versions:
-          type: array
-          items:
-            $ref: '#/components/schemas/AISystemVersion'
     ExternalRef:
       type: object
       description: 'Structured reference to an entity in an external system (ServiceNow, LeanIX, GitHub, internal catalogues, custom). MIDAS records the reference but never validates the source_system against an enum and never resolves the reference by calling the external system. source_system and source_id must either both be present or both be absent — the consistency rule is enforced by a CHECK constraint on each consuming table. Wire-format nullability: the parent response renders `external_ref: null` when no external reference is recorded.
@@ -314,18 +292,130 @@ components:
           type: string
           format: date-time
           description: Optional timestamp of the last sync from the source system.
-    AISystemsResponse:
+    AISystemBinding:
       type: object
-      description: 'Top-level response shape for GET /v1/aisystems. The `ai_systems` array is always present (never null).
+      description: 'Immediate-apply junction linking an AI system (optionally pinned to a specific version) to one or more existing MIDAS context entities (BusinessService, Capability, Process, DecisionSurface). At least one of business_service_id, capability_id, process_id, or surface_id is set; unset fields are returned as JSON null rather than empty strings.
 
         '
       required:
-      - ai_systems
+      - id
+      - ai_system_id
+      - created_at
       properties:
-        ai_systems:
+        id:
+          type: string
+        ai_system_id:
+          type: string
+        ai_system_version:
+          type: integer
+          nullable: true
+          minimum: 1
+        business_service_id:
+          type: string
+          nullable: true
+        capability_id:
+          type: string
+          nullable: true
+        process_id:
+          type: string
+          nullable: true
+        surface_id:
+          type: string
+          nullable: true
+        role:
+          type: string
+        description:
+          type: string
+        created_at:
+          type: string
+          format: date-time
+        created_by:
+          type: string
+        external_ref:
+          allOf:
+          - $ref: '#/components/schemas/ExternalRef'
+          nullable: true
+          description: Optional structured external reference. See ExternalRef (Epic 1, PR 3).
+    Error:
+      type: object
+      required:
+      - error
+      properties:
+        error:
+          type: string
+    AISystem:
+      type: object
+      description: 'AI System registry entry. Identity-only; risk classification and external references are deferred to follow-up epics. Status is honoured at apply time (no review-forcing).
+
+        '
+      required:
+      - id
+      - name
+      - status
+      - origin
+      - managed
+      - created_at
+      - updated_at
+      properties:
+        id:
+          type: string
+          description: Logical AI system identifier.
+        name:
+          type: string
+        description:
+          type: string
+        owner:
+          type: string
+        vendor:
+          type: string
+        system_type:
+          type: string
+          description: Free-form classifier (e.g. "llm", "classifier").
+        status:
+          type: string
+          enum:
+          - active
+          - deprecated
+          - retired
+        origin:
+          type: string
+          enum:
+          - manual
+          - inferred
+        managed:
+          type: boolean
+        replaces:
+          type: string
+          nullable: true
+          description: Logical ID of the AI system this one supersedes, if any.
+        created_at:
+          type: string
+          format: date-time
+        updated_at:
+          type: string
+          format: date-time
+        created_by:
+          type: string
+        external_ref:
+          allOf:
+          - $ref: '#/components/schemas/ExternalRef'
+          nullable: true
+          description: Optional structured external reference. See ExternalRef (Epic 1, PR 3).
+    AISystemBindingsResponse:
+      type: object
+      description: 'Top-level response shape for GET /v1/aisystems/{id}/bindings. The `bindings` array is always present (never null).
+
+        '
+      required:
+      - ai_system_id
+      - bindings
+      properties:
+        ai_system_id:
+          type: string
+        bindings:
           type: array
           items:
-            $ref: '#/components/schemas/AISystem'
+            $ref: '#/components/schemas/AISystemBinding'
     AISystemVersion:
       type: object
       description: 'Versioned snapshot of an AISystem. Identified by composite (ai_system_id, version). Status is honoured at apply time.
@@ -390,123 +480,33 @@ components:
           - $ref: '#/components/schemas/ExternalRef'
           nullable: true
           description: Optional structured external reference. See ExternalRef (Epic 1, PR 3).
-    AISystemBindingsResponse:
+    AISystemVersionsResponse:
       type: object
-      description: 'Top-level response shape for GET /v1/aisystems/{id}/bindings. The `bindings` array is always present (never null).
+      description: 'Top-level response shape for GET /v1/aisystems/{id}/versions. The `versions` array is always present (never null).
 
         '
       required:
       - ai_system_id
-      - bindings
+      - versions
       properties:
         ai_system_id:
           type: string
-        bindings:
+        versions:
           type: array
           items:
-            $ref: '#/components/schemas/AISystemBinding'
-    AISystem:
+            $ref: '#/components/schemas/AISystemVersion'
+    AISystemsResponse:
       type: object
-      description: 'AI System registry entry. Identity-only; risk classification and external references are deferred to follow-up epics. Status is honoured at apply time (no review-forcing).
+      description: 'Top-level response shape for GET /v1/aisystems. The `ai_systems` array is always present (never null).
 
         '
       required:
-      - id
-      - name
-      - status
-      - origin
-      - managed
-      - created_at
-      - updated_at
+      - ai_systems
       properties:
-        id:
-          type: string
-          description: Logical AI system identifier.
-        name:
-          type: string
-        description:
-          type: string
-        owner:
-          type: string
-        vendor:
-          type: string
-        system_type:
-          type: string
-          description: Free-form classifier (e.g. "llm", "classifier").
-        status:
-          type: string
-          enum:
-          - active
-          - deprecated
-          - retired
-        origin:
-          type: string
-          enum:
-          - manual
-          - inferred
-        managed:
-          type: boolean
-        replaces:
-          type: string
-          nullable: true
-          description: Logical ID of the AI system this one supersedes, if any.
-        created_at:
-          type: string
-          format: date-time
-        updated_at:
-          type: string
-          format: date-time
-        created_by:
-          type: string
-        external_ref:
-          allOf:
-          - $ref: '#/components/schemas/ExternalRef'
-          nullable: true
-          description: Optional structured external reference. See ExternalRef (Epic 1, PR 3).
-    AISystemBinding:
-      type: object
-      description: 'Immediate-apply junction linking an AI system (optionally pinned to a specific version) to one or more existing MIDAS context entities (BusinessService, Capability, Process, DecisionSurface). At least one of business_service_id, capability_id, process_id, or surface_id is set; unset fields are returned as JSON null rather than empty strings.
-
-        '
-      required:
-      - id
-      - ai_system_id
-      - created_at
-      properties:
-        id:
-          type: string
-        ai_system_id:
-          type: string
-        ai_system_version:
-          type: integer
-          nullable: true
-          minimum: 1
-        business_service_id:
-          type: string
-          nullable: true
-        capability_id:
-          type: string
-          nullable: true
-        process_id:
-          type: string
-          nullable: true
-        surface_id:
-          type: string
-          nullable: true
-        role:
-          type: string
-        description:
-          type: string
-        created_at:
-          type: string
-          format: date-time
-        created_by:
-          type: string
-        external_ref:
-          allOf:
-          - $ref: '#/components/schemas/ExternalRef'
-          nullable: true
-          description: Optional structured external reference. See ExternalRef (Epic 1, PR 3).
+        ai_systems:
+          type: array
+          items:
+            $ref: '#/components/schemas/AISystem'
   securitySchemes:
     BearerAuth:
       type: http

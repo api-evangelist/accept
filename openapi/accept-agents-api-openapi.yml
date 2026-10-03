@@ -50,13 +50,6 @@ paths:
       - Agents
 components:
   schemas:
-    Error:
-      type: object
-      required:
-      - error
-      properties:
-        error:
-          type: string
     Agent:
       type: object
       properties:
@@ -88,6 +81,13 @@ components:
         updated_at:
           type: string
           format: date-time
+    Error:
+      type: object
+      required:
+      - error
+      properties:
+        error:
+          type: string
   securitySchemes:
     BearerAuth:
       type: http

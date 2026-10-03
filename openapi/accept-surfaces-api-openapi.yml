@@ -167,56 +167,6 @@ paths:
       - Surfaces
 components:
   schemas:
-    Error:
-      type: object
-      required:
-      - error
-      properties:
-        error:
-          type: string
-    SurfaceRecovery:
-      type: object
-      description: Read-only recovery analysis for a decision surface.
-      properties:
-        surface_id:
-          type: string
-        latest_version:
-          type: integer
-        latest_status:
-          type: string
-        active_version:
-          type: integer
-          nullable: true
-          description: Null when no version is currently effective.
-        active_status:
-          type: string
-          nullable: true
-          description: Null when no version is currently effective.
-        successor_surface_id:
-          type: string
-        deprecation_reason:
-          type: string
-        version_count:
-          type: integer
-        warnings:
-          type: array
-          items:
-            type: string
-        recommended_next_actions:
-          type: array
-          items:
-            type: string
-    LifecycleStatus:
-      type: string
-      description: 'Canonical lifecycle posture for versioned governance resources (Surface, Profile, FailModePolicy, EscalationTarget). Every governed configuration entity in MIDAS follows the same draft -> review -> active -> deprecated -> retired progression. Only `active` versions participate in runtime resolution.
-
-        '
-      enum:
-      - draft
-      - review
-      - active
-      - deprecated
-      - retired
     SurfaceVersionItem:
       type: object
       description: A single entry in the surface version history list.
@@ -362,6 +312,24 @@ components:
           items:
             type: string
           description: Operator warnings. Empty array when none apply.
+    Error:
+      type: object
+      required:
+      - error
+      properties:
+        error:
+          type: string
+    LifecycleStatus:
+      type: string
+      description: 'Canonical lifecycle posture for versioned governance resources (Surface, Profile, FailModePolicy, EscalationTarget). Every governed configuration entity in MIDAS follows the same draft -> review -> active -> deprecated -> retired progression. Only `active` versions participate in runtime resolution.
+
+        '
+      enum:
+      - draft
+      - review
+      - active
+      - deprecated
+      - retired
     Surface:
       type: object
       properties:
@@ -391,6 +359,38 @@ components:
           type: string
         successor_surface_id:
           type: string
+    SurfaceRecovery:
+      type: object
+      description: Read-only recovery analysis for a decision surface.
+      properties:
+        surface_id:
+          type: string
+        latest_version:
+          type: integer
+        latest_status:
+          type: string
+        active_version:
+          type: integer
+          nullable: true
+          description: Null when no version is currently effective.
+        active_status:
+          type: string
+          nullable: true
+          description: Null when no version is currently effective.
+        successor_surface_id:
+          type: string
+        deprecation_reason:
+          type: string
+        version_count:
+          type: integer
+        warnings:
+          type: array
+          items:
+            type: string
+        recommended_next_actions:
+          type: array
+          items:
+            type: string
   securitySchemes:
     BearerAuth:
       type: http

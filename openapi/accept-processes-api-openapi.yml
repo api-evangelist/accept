@@ -136,13 +136,6 @@ components:
       - active
       - deprecated
       - retired
-    Error:
-      type: object
-      required:
-      - error
-      properties:
-        error:
-          type: string
     Surface:
       type: object
       properties:
@@ -171,6 +164,13 @@ components:
         deprecation_reason:
           type: string
         successor_surface_id:
+          type: string
+    Error:
+      type: object
+      required:
+      - error
+      properties:
+        error:
           type: string
     Process:
       type: object

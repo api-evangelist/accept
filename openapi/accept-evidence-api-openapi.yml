@@ -335,25 +335,47 @@ paths:
       - Evidence
 components:
   schemas:
-    ResolvedBusinessServiceSnapshot:
+    RuntimeEvidencePacket:
       type: object
-      description: 'Point-in-time snapshot of the BusinessService that owned the resolved Process at evaluation time. See ADR-0001.
+      description: 'Response wrapper for GET /v1/evidence/envelopes/{id}/packet (D30e). Composes three existing runtime evidence reads — envelope detail, the ordered audit-event chain, and the per-envelope integrity verification result — into one export-friendly object. Adds no new shapes: each composed section uses the same schema as its standalone endpoint.
+
+
+        Integrity findings are reported in-band via the embedded `integrity.valid` field. A `valid: false` result indicates a broken audit chain; the packet itself still completed successfully and returns HTTP 200. Repository or verification read failures produce HTTP 500 — the packet is never returned partially.
+
+
+        `submitted.raw` appears only inside the embedded envelope object, preserving the GET /v1/envelopes/{id} contract. The wrapper has no top-level submitted / raw / submitted_hash field. D30e adds no redaction mode.
 
         '
+      required:
+      - envelope_id
+      - generated_at
+      - envelope
+      - audit_events
+      - integrity
       properties:
-        id:
+        envelope_id:
           type: string
-        origin:
+          description: Envelope the packet was composed for. Matches Envelope.identity.id.
+        generated_at:
           type: string
-        managed:
-          type: boolean
-        replaces:
+          format: date-time
+          description: UTC timestamp at which the handler composed the packet.
+        envelope:
+          $ref: '#/components/schemas/Envelope'
+        audit_events:
+          type: array
+          description: Ordered audit-event chain for the envelope (SequenceNo ascending). Same item shape as GET /v1/evidence/envelopes/{id}/audit-events.
+          items:
+            $ref: '#/components/schemas/RuntimeAuditEvent'
+        integrity:
+          $ref: '#/components/schemas/RuntimeEvidenceIntegrityResponse'
+    Error:
+      type: object
+      required:
+      - error
+      properties:
+        error:
           type: string
-        status:
-          type: string
-          enum:
-          - active
-          - deprecated
     RuntimeEvidenceIntegrityResponse:
       type: object
       description: 'Response wrapper for GET /v1/evidence/envelopes/{id}/integrity (D30d). Reports the integrity status of the audit-event chain for one envelope. `valid` is true only when every check passes. On `valid: false`, `error_kind` and `error_message` describe the finding; on `valid: true` those fields are omitted.
@@ -400,135 +422,6 @@ components:
         error_message:
           type: string
           description: Human-readable diagnostic for the integrity finding. Omitted when `valid` is true.
-    RuntimeAuditEventSearchResponse:
-      type: object
-      description: 'Response wrapper for GET /v1/evidence/audit-events (D30c). Cross-envelope search results: items may span multiple envelopes, so the wrapper deliberately omits the envelope_id field that the per-envelope chain response carries. items is always present (empty list is an empty array). count equals len(items). The endpoint applies the audit-list default page size (100) when limit is unset, capped at the maximum (500).
-
-
-        D30j adds next_cursor: an opaque pagination token clients pass back verbatim as the cursor query parameter to retrieve the next page under the same query. The field is absent when no further pages exist; clients use field presence as the stop signal rather than comparing counts.
-
-        '
-      required:
-      - items
-      - count
-      properties:
-        items:
-          type: array
-          description: Audit events matching the filter, ordered by occurred_at per the order query parameter.
-          items:
-            $ref: '#/components/schemas/RuntimeAuditEvent'
-        count:
-          type: integer
-          description: Number of events returned. Equals len(items).
-        next_cursor:
-          type: string
-          description: 'Opaque pagination token (D30j). Pass verbatim as the cursor query parameter to retrieve the next page under the same query. Absent when no further pages exist. Bound to the order direction of the originating request: replaying a desc-bound cursor against an asc query is rejected with 400.
-
-            '
-    Error:
-      type: object
-      required:
-      - error
-      properties:
-        error:
-          type: string
-    ResolvedCapabilitySnapshot:
-      type: object
-      description: 'Point-in-time snapshot of one Capability in the BusinessService''s enabling set at evaluation time. The set as a whole is captured as a JSONB array on the envelope; individual entries retain the historical Capability ID even if the live row is later renamed or deleted.
-
-        '
-      properties:
-        id:
-          type: string
-        name:
-          type: string
-        origin:
-          type: string
-        managed:
-          type: boolean
-        replaces:
-          type: string
-        status:
-          type: string
-          enum:
-          - active
-          - deprecated
-    Envelope:
-      type: object
-      description: Tamper-evident governance record for a single evaluation.
-      properties:
-        id:
-          type: string
-        state:
-          type: string
-          enum:
-          - received
-          - evaluating
-          - outcome_recorded
-          - escalated
-          - awaiting_review
-          - closed
-        surface_id:
-          type: string
-        agent_id:
-          type: string
-        request_id:
-          type: string
-        request_source:
-          type: string
-        confidence:
-          type: number
-        outcome:
-          type: string
-        reason_code:
-          type: string
-        explanation:
-          type: string
-        profile_id:
-          type: string
-        grant_id:
-          type: string
-        surface_version:
-          type: integer
-        first_event_hash:
-          type: string
-        final_event_hash:
-          type: string
-        resolved:
-          type: object
-          description: 'Resolved facts captured at evaluation time. Currently exposes the service-led structural context added by ADR-0001; existing authority-chain fields remain at the top level for backwards compatibility.
-
-            '
-          properties:
-            structure:
-              $ref: '#/components/schemas/ResolvedStructure'
-        created_at:
-          type: string
-          format: date-time
-        closed_at:
-          type: string
-          format: date-time
-    RuntimeAuditEventListResponse:
-      type: object
-      description: 'Response wrapper for GET /v1/evidence/envelopes/{id}/audit-events. items is always present (empty list for envelopes with no events recorded — an operationally-impossible state in practice, since every persisted envelope has at least lifecycle events). count equals len(items). The endpoint does not paginate; audit chains are bounded by evaluation step count.
-
-        '
-      required:
-      - envelope_id
-      - items
-      - count
-      properties:
-        envelope_id:
-          type: string
-          description: Envelope the chain was retrieved for.
-        items:
-          type: array
-          description: Ordered audit events (SequenceNo ascending).
-          items:
-            $ref: '#/components/schemas/RuntimeAuditEvent'
-        count:
-          type: integer
-          description: Number of events returned. Equals len(items).
     RuntimeAuditEvent:
       type: object
       description: 'One audit event in the runtime evidence chain for a governance envelope. Returned by GET /v1/evidence/envelopes/{id}/audit-events (D30b). The shape mirrors the workbench Explorer audit-event response so SIEM and integration consumers can target either route with no transform. Payload is returned as recorded; no redaction is applied at this endpoint.
@@ -591,6 +484,31 @@ components:
           description: 'SHA-256 hash of the previous event in the chain. Omitted on the first event of an envelope''s chain (sequence_no=1).
 
             '
+    RuntimeAuditEventSearchResponse:
+      type: object
+      description: 'Response wrapper for GET /v1/evidence/audit-events (D30c). Cross-envelope search results: items may span multiple envelopes, so the wrapper deliberately omits the envelope_id field that the per-envelope chain response carries. items is always present (empty list is an empty array). count equals len(items). The endpoint applies the audit-list default page size (100) when limit is unset, capped at the maximum (500).
+
+
+        D30j adds next_cursor: an opaque pagination token clients pass back verbatim as the cursor query parameter to retrieve the next page under the same query. The field is absent when no further pages exist; clients use field presence as the stop signal rather than comparing counts.
+
+        '
+      required:
+      - items
+      - count
+      properties:
+        items:
+          type: array
+          description: Audit events matching the filter, ordered by occurred_at per the order query parameter.
+          items:
+            $ref: '#/components/schemas/RuntimeAuditEvent'
+        count:
+          type: integer
+          description: Number of events returned. Equals len(items).
+        next_cursor:
+          type: string
+          description: 'Opaque pagination token (D30j). Pass verbatim as the cursor query parameter to retrieve the next page under the same query. Absent when no further pages exist. Bound to the order direction of the originating request: replaying a desc-bound cursor against an asc query is rejected with 400.
+
+            '
     ResolvedProcessSnapshot:
       type: object
       description: 'Point-in-time snapshot of the Process the resolved Surface belonged to at evaluation time. Captured as evidence on the envelope per ADR-0001; not derived from live joins after the envelope is written.
@@ -607,6 +525,25 @@ components:
         replaces:
           type: string
           description: ID of a previously-superseded Process; empty string when none.
+        status:
+          type: string
+          enum:
+          - active
+          - deprecated
+    ResolvedBusinessServiceSnapshot:
+      type: object
+      description: 'Point-in-time snapshot of the BusinessService that owned the resolved Process at evaluation time. See ADR-0001.
+
+        '
+      properties:
+        id:
+          type: string
+        origin:
+          type: string
+        managed:
+          type: boolean
+        replaces:
+          type: string
         status:
           type: string
           enum:
@@ -629,40 +566,103 @@ components:
           description: 'Capabilities enabling this BusinessService at evaluation time, sorted by id ascending for deterministic byte-level evidence.
 
             '
-    RuntimeEvidencePacket:
+    ResolvedCapabilitySnapshot:
       type: object
-      description: 'Response wrapper for GET /v1/evidence/envelopes/{id}/packet (D30e). Composes three existing runtime evidence reads — envelope detail, the ordered audit-event chain, and the per-envelope integrity verification result — into one export-friendly object. Adds no new shapes: each composed section uses the same schema as its standalone endpoint.
+      description: 'Point-in-time snapshot of one Capability in the BusinessService''s enabling set at evaluation time. The set as a whole is captured as a JSONB array on the envelope; individual entries retain the historical Capability ID even if the live row is later renamed or deleted.
 
-
-        Integrity findings are reported in-band via the embedded `integrity.valid` field. A `valid: false` result indicates a broken audit chain; the packet itself still completed successfully and returns HTTP 200. Repository or verification read failures produce HTTP 500 — the packet is never returned partially.
-
-
-        `submitted.raw` appears only inside the embedded envelope object, preserving the GET /v1/envelopes/{id} contract. The wrapper has no top-level submitted / raw / submitted_hash field. D30e adds no redaction mode.
+        '
+      properties:
+        id:
+          type: string
+        name:
+          type: string
+        origin:
+          type: string
+        managed:
+          type: boolean
+        replaces:
+          type: string
+        status:
+          type: string
+          enum:
+          - active
+          - deprecated
+    RuntimeAuditEventListResponse:
+      type: object
+      description: 'Response wrapper for GET /v1/evidence/envelopes/{id}/audit-events. items is always present (empty list for envelopes with no events recorded — an operationally-impossible state in practice, since every persisted envelope has at least lifecycle events). count equals len(items). The endpoint does not paginate; audit chains are bounded by evaluation step count.
 
         '
       required:
       - envelope_id
-      - generated_at
-      - envelope
-      - audit_events
-      - integrity
+      - items
+      - count
       properties:
         envelope_id:
           type: string
-          description: Envelope the packet was composed for. Matches Envelope.identity.id.
-        generated_at:
-          type: string
-          format: date-time
-          description: UTC timestamp at which the handler composed the packet.
-        envelope:
-          $ref: '#/components/schemas/Envelope'
-        audit_events:
+          description: Envelope the chain was retrieved for.
+        items:
           type: array
-          description: Ordered audit-event chain for the envelope (SequenceNo ascending). Same item shape as GET /v1/evidence/envelopes/{id}/audit-events.
+          description: Ordered audit events (SequenceNo ascending).
           items:
             $ref: '#/components/schemas/RuntimeAuditEvent'
-        integrity:
-          $ref: '#/components/schemas/RuntimeEvidenceIntegrityResponse'
+        count:
+          type: integer
+          description: Number of events returned. Equals len(items).
+    Envelope:
+      type: object
+      description: Tamper-evident governance record for a single evaluation.
+      properties:
+        id:
+          type: string
+        state:
+          type: string
+          enum:
+          - received
+          - evaluating
+          - outcome_recorded
+          - escalated
+          - awaiting_review
+          - closed
+        surface_id:
+          type: string
+        agent_id:
+          type: string
+        request_id:
+          type: string
+        request_source:
+          type: string
+        confidence:
+          type: number
+        outcome:
+          type: string
+        reason_code:
+          type: string
+        explanation:
+          type: string
+        profile_id:
+          type: string
+        grant_id:
+          type: string
+        surface_version:
+          type: integer
+        first_event_hash:
+          type: string
+        final_event_hash:
+          type: string
+        resolved:
+          type: object
+          description: 'Resolved facts captured at evaluation time. Currently exposes the service-led structural context added by ADR-0001; existing authority-chain fields remain at the top level for backwards compatibility.
+
+            '
+          properties:
+            structure:
+              $ref: '#/components/schemas/ResolvedStructure'
+        created_at:
+          type: string
+          format: date-time
+        closed_at:
+          type: string
+          format: date-time
   securitySchemes:
     BearerAuth:
       type: http

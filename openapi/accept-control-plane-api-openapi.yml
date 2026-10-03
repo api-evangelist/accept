@@ -1101,151 +1101,6 @@ paths:
       - Control Plane
 components:
   schemas:
-    RetireDriftDefinitionRequest:
-      type: object
-      description: 'DriftDefinition retirement request. Allowed source states: draft, review, active, deprecated. Retired is terminal.
-
-        '
-      required:
-      - version
-      properties:
-        version:
-          type: integer
-          minimum: 1
-        retired_by:
-          type: string
-        reason:
-          type: string
-    DriftBaselineStrategy:
-      type: string
-      description: 'V1 baseline strategies. champion_challenger and seasonality_aware are deferred to V2 and MUST NOT appear here.
-
-        '
-      enum:
-      - rolling
-      - fixed_governed
-      - previous_equivalent
-      - since_last_governed_change
-      - manually_pinned
-    DriftOrigin:
-      type: string
-      enum:
-      - manual
-      - inferred
-      - auto_instrumented
-    ApproveProfileRequest:
-      type: object
-      required:
-      - version
-      - approved_by
-      properties:
-        version:
-          type: integer
-          minimum: 1
-        approved_by:
-          type: string
-    DeprecateFailModePolicyRequest:
-      type: object
-      description: 'FailModePolicy has no DeprecationReason field on the persisted row; the operator-supplied reason is captured in the control-audit record only.
-
-        '
-      required:
-      - version
-      - deprecated_by
-      properties:
-        version:
-          type: integer
-          minimum: 1
-        deprecated_by:
-          type: string
-        reason:
-          type: string
-    DriftMetricDefinition:
-      type: object
-      description: Embedded metric inside a DriftDefinition revision.
-      required:
-      - metric_id
-      - drift_type
-      - baseline_strategy
-      - window_seconds
-      - cadence
-      - threshold_direction
-      - warning_threshold
-      - breached_threshold
-      properties:
-        metric_id:
-          type: string
-        drift_type:
-          $ref: '#/components/schemas/DriftType'
-        baseline_strategy:
-          $ref: '#/components/schemas/DriftBaselineStrategy'
-        baseline_window_seconds:
-          type: integer
-          minimum: 0
-        window_seconds:
-          type: integer
-          minimum: 1
-        cadence:
-          $ref: '#/components/schemas/DriftCadence'
-        warning_threshold:
-          type: number
-        breached_threshold:
-          type: number
-        threshold_direction:
-          $ref: '#/components/schemas/DriftThresholdDirection'
-        governance_expectation_ref:
-          type: string
-        governance_expectation_ver:
-          type: integer
-          minimum: 0
-        description:
-          type: string
-    DriftType:
-      type: string
-      description: 'V1 drift taxonomy. Population, data, prediction, performance, and concept drift are deferred to V2 and MUST NOT appear here.
-
-        '
-      enum:
-      - invocation
-      - outcome
-      - confidence
-      - latency
-      - evidence
-      - authority
-      - policy
-      - coverage
-      - process_path
-    LifecycleStatus:
-      type: string
-      description: 'Canonical lifecycle posture for versioned governance resources (Surface, Profile, FailModePolicy, EscalationTarget). Every governed configuration entity in MIDAS follows the same draft -> review -> active -> deprecated -> retired progression. Only `active` versions participate in runtime resolution.
-
-        '
-      enum:
-      - draft
-      - review
-      - active
-      - deprecated
-      - retired
-    DriftTargetEntityKind:
-      type: string
-      description: 'The nine governed entity kinds a DriftDefinition may target.
-
-        '
-      enum:
-      - business_service
-      - capability
-      - process
-      - decision_surface
-      - ai_system
-      - ai_system_binding
-      - agent
-      - authority_profile
-      - authority_grant
-    DriftThresholdDirection:
-      type: string
-      enum:
-      - ascending
-      - descending
     ApproveFailModePolicyRequest:
       type: object
       required:
@@ -1257,25 +1112,6 @@ components:
           minimum: 1
         approved_by:
           type: string
-    DriftCadence:
-      type: string
-      enum:
-      - minute
-      - hour
-      - day
-      - week
-    ApproveSurfaceRequest:
-      type: object
-      required:
-      - approver_id
-      properties:
-        approver_id:
-          type: string
-        approver_name:
-          type: string
-        submitted_by:
-          type: string
-          description: ID of the principal who submitted the surface for review.
     Error:
       type: object
       required:
@@ -1283,26 +1119,29 @@ components:
       properties:
         error:
           type: string
-    DeprecateDriftDefinitionRequest:
+    RejectDriftDefinitionRequest:
       type: object
-      description: 'DriftDefinition deprecation request. Successor information is optional; when supplied it is persisted on the row''s successor_definition_id and successor_version fields. The operator-supplied reason is captured in the control-audit record only.
-
-        '
       required:
       - version
       properties:
         version:
           type: integer
           minimum: 1
-        deprecated_by:
+        rejected_by:
           type: string
         reason:
           type: string
-        successor_definition_id:
-          type: string
-        successor_version:
-          type: integer
-          minimum: 0
+    LifecycleStatus:
+      type: string
+      description: 'Canonical lifecycle posture for versioned governance resources (Surface, Profile, FailModePolicy, EscalationTarget). Every governed configuration entity in MIDAS follows the same draft -> review -> active -> deprecated -> retired progression. Only `active` versions participate in runtime resolution.
+
+        '
+      enum:
+      - draft
+      - review
+      - active
+      - deprecated
+      - retired
     DriftDefinition:
       type: object
       description: 'Governed, versioned drift specification. Composite (id, version) identity. Apply persists Status=''review''; activation lives in a future approval-endpoint tranche.
@@ -1380,23 +1219,6 @@ components:
           type: string
           format: date-time
           nullable: true
-    DeprecateProfileRequest:
-      type: object
-      required:
-      - version
-      - deprecated_by
-      properties:
-        version:
-          type: integer
-          minimum: 1
-        deprecated_by:
-          type: string
-    DriftDefinitionStatus:
-      description: 'Lifecycle state of a DriftDefinition. Delegates to the canonical LifecycleStatus posture.
-
-        '
-      allOf:
-      - $ref: '#/components/schemas/LifecycleStatus'
     SubmitDriftDefinitionRequest:
       type: object
       required:
@@ -1410,28 +1232,12 @@ components:
           description: Optional body fallback when the authenticated principal is not present.
         reason:
           type: string
-    ApproveGovernanceExpectationRequest:
-      type: object
-      required:
-      - version
-      - approved_by
-      properties:
-        version:
-          type: integer
-          minimum: 1
-        approved_by:
-          type: string
-    ApproveDriftDefinitionRequest:
-      type: object
-      required:
-      - version
-      properties:
-        version:
-          type: integer
-          minimum: 1
-        approved_by:
-          type: string
-          description: Optional body fallback when the authenticated principal is not present.
+    DriftDefinitionStatus:
+      description: 'Lifecycle state of a DriftDefinition. Delegates to the canonical LifecycleStatus posture.
+
+        '
+      allOf:
+      - $ref: '#/components/schemas/LifecycleStatus'
     GrantLifecycleResponse:
       type: object
       required:
@@ -1449,6 +1255,166 @@ components:
           - revoked
         agent_id:
           type: string
+    DriftCadence:
+      type: string
+      enum:
+      - minute
+      - hour
+      - day
+      - week
+    RetireDriftDefinitionRequest:
+      type: object
+      description: 'DriftDefinition retirement request. Allowed source states: draft, review, active, deprecated. Retired is terminal.
+
+        '
+      required:
+      - version
+      properties:
+        version:
+          type: integer
+          minimum: 1
+        retired_by:
+          type: string
+        reason:
+          type: string
+    DriftTargetRef:
+      type: object
+      description: Discriminated reference to a governed entity.
+      required:
+      - kind
+      - id
+      properties:
+        kind:
+          $ref: '#/components/schemas/DriftTargetEntityKind'
+        id:
+          type: string
+    DriftThresholdDirection:
+      type: string
+      enum:
+      - ascending
+      - descending
+    ApproveGovernanceExpectationRequest:
+      type: object
+      required:
+      - version
+      - approved_by
+      properties:
+        version:
+          type: integer
+          minimum: 1
+        approved_by:
+          type: string
+    DeprecateFailModePolicyRequest:
+      type: object
+      description: 'FailModePolicy has no DeprecationReason field on the persisted row; the operator-supplied reason is captured in the control-audit record only.
+
+        '
+      required:
+      - version
+      - deprecated_by
+      properties:
+        version:
+          type: integer
+          minimum: 1
+        deprecated_by:
+          type: string
+        reason:
+          type: string
+    ApproveSurfaceRequest:
+      type: object
+      required:
+      - approver_id
+      properties:
+        approver_id:
+          type: string
+        approver_name:
+          type: string
+        submitted_by:
+          type: string
+          description: ID of the principal who submitted the surface for review.
+    DriftTargetEntityKind:
+      type: string
+      description: 'The nine governed entity kinds a DriftDefinition may target.
+
+        '
+      enum:
+      - business_service
+      - capability
+      - process
+      - decision_surface
+      - ai_system
+      - ai_system_binding
+      - agent
+      - authority_profile
+      - authority_grant
+    ApproveDriftDefinitionRequest:
+      type: object
+      required:
+      - version
+      properties:
+        version:
+          type: integer
+          minimum: 1
+        approved_by:
+          type: string
+          description: Optional body fallback when the authenticated principal is not present.
+    ApproveProfileRequest:
+      type: object
+      required:
+      - version
+      - approved_by
+      properties:
+        version:
+          type: integer
+          minimum: 1
+        approved_by:
+          type: string
+    DeprecateDriftDefinitionRequest:
+      type: object
+      description: 'DriftDefinition deprecation request. Successor information is optional; when supplied it is persisted on the row''s successor_definition_id and successor_version fields. The operator-supplied reason is captured in the control-audit record only.
+
+        '
+      required:
+      - version
+      properties:
+        version:
+          type: integer
+          minimum: 1
+        deprecated_by:
+          type: string
+        reason:
+          type: string
+        successor_definition_id:
+          type: string
+        successor_version:
+          type: integer
+          minimum: 0
+    DeprecateProfileRequest:
+      type: object
+      required:
+      - version
+      - deprecated_by
+      properties:
+        version:
+          type: integer
+          minimum: 1
+        deprecated_by:
+          type: string
+    DriftType:
+      type: string
+      description: 'V1 drift taxonomy. Population, data, prediction, performance, and concept drift are deferred to V2 and MUST NOT appear here.
+
+        '
+      enum:
+      - invocation
+      - outcome
+      - confidence
+      - latency
+      - evidence
+      - authority
+      - policy
+      - coverage
+      - process_path
     DeprecateSurfaceRequest:
       type: object
       required:
@@ -1462,28 +1428,62 @@ components:
         successor_id:
           type: string
           description: Optional successor surface ID.
-    DriftTargetRef:
+    DriftOrigin:
+      type: string
+      enum:
+      - manual
+      - inferred
+      - auto_instrumented
+    DriftBaselineStrategy:
+      type: string
+      description: 'V1 baseline strategies. champion_challenger and seasonality_aware are deferred to V2 and MUST NOT appear here.
+
+        '
+      enum:
+      - rolling
+      - fixed_governed
+      - previous_equivalent
+      - since_last_governed_change
+      - manually_pinned
+    DriftMetricDefinition:
       type: object
-      description: Discriminated reference to a governed entity.
+      description: Embedded metric inside a DriftDefinition revision.
       required:
-      - kind
-      - id
+      - metric_id
+      - drift_type
+      - baseline_strategy
+      - window_seconds
+      - cadence
+      - threshold_direction
+      - warning_threshold
+      - breached_threshold
       properties:
-        kind:
-          $ref: '#/components/schemas/DriftTargetEntityKind'
-        id:
+        metric_id:
           type: string
-    RejectDriftDefinitionRequest:
-      type: object
-      required:
-      - version
-      properties:
-        version:
+        drift_type:
+          $ref: '#/components/schemas/DriftType'
+        baseline_strategy:
+          $ref: '#/components/schemas/DriftBaselineStrategy'
+        baseline_window_seconds:
+          type: integer
+          minimum: 0
+        window_seconds:
           type: integer
           minimum: 1
-        rejected_by:
+        cadence:
+          $ref: '#/components/schemas/DriftCadence'
+        warning_threshold:
+          type: number
+        breached_threshold:
+          type: number
+        threshold_direction:
+          $ref: '#/components/schemas/DriftThresholdDirection'
+        governance_expectation_ref:
           type: string
-        reason:
+        governance_expectation_ver:
+          type: integer
+          minimum: 0
+        description:
           type: string
   securitySchemes:
     BearerAuth:
