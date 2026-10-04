@@ -57,6 +57,30 @@ paths:
       - Evaluate
 components:
   schemas:
+    Consequence:
+      type: object
+      required:
+      - type
+      properties:
+        type:
+          type: string
+          enum:
+          - monetary
+          - risk_rating
+        amount:
+          type: number
+          description: Monetary amount. Required when type=monetary.
+        currency:
+          type: string
+          description: ISO 4217 currency code. Required when type=monetary.
+        risk_rating:
+          type: string
+          enum:
+          - low
+          - medium
+          - high
+          - critical
+          description: Risk rating value. Required when type=risk_rating.
     EvaluateRequest:
       type: object
       required:
@@ -151,30 +175,6 @@ components:
       properties:
         error:
           type: string
-    Consequence:
-      type: object
-      required:
-      - type
-      properties:
-        type:
-          type: string
-          enum:
-          - monetary
-          - risk_rating
-        amount:
-          type: number
-          description: Monetary amount. Required when type=monetary.
-        currency:
-          type: string
-          description: ISO 4217 currency code. Required when type=monetary.
-        risk_rating:
-          type: string
-          enum:
-          - low
-          - medium
-          - high
-          - critical
-          description: Risk rating value. Required when type=risk_rating.
   securitySchemes:
     BearerAuth:
       type: http

@@ -147,57 +147,6 @@ paths:
       - Business Services
 components:
   schemas:
-    ExternalRef:
-      type: object
-      description: 'Structured reference to an entity in an external system (ServiceNow, LeanIX, GitHub, internal catalogues, custom). MIDAS records the reference but never validates the source_system against an enum and never resolves the reference by calling the external system. source_system and source_id must either both be present or both be absent — the consistency rule is enforced by a CHECK constraint on each consuming table. Wire-format nullability: the parent response renders `external_ref: null` when no external reference is recorded.
-
-        '
-      required:
-      - source_system
-      - source_id
-      properties:
-        source_system:
-          type: string
-          description: 'Caller-asserted label identifying the external system that
-
-            produced this reference. Vendor-neutral; MIDAS does not
-
-            validate or resolve this value.
-
-            '
-        source_id:
-          type: string
-          description: Identifier of the entity in the source system.
-        source_url:
-          type: string
-          description: Optional deep link to the entity in the source system.
-        source_version:
-          type: string
-          description: Optional version label assigned by the source system.
-        last_synced_at:
-          type: string
-          format: date-time
-          description: Optional timestamp of the last sync from the source system.
-    BusinessServiceRelationshipsResponse:
-      type: object
-      description: 'Top-level response shape for GET /v1/businessservices/{id}/relationships. Outgoing rows are those where the queried service is the source; incoming rows are those where it is the target. Both arrays are always present (never null).
-
-        '
-      required:
-      - business_service_id
-      - outgoing
-      - incoming
-      properties:
-        business_service_id:
-          type: string
-        outgoing:
-          type: array
-          items:
-            $ref: '#/components/schemas/BusinessServiceRelationship'
-        incoming:
-          type: array
-          items:
-            $ref: '#/components/schemas/BusinessServiceRelationship'
     BusinessServicesResponse:
       type: object
       description: 'Envelope wrapping the GET /v1/businessservices list payload. The `business_services` array is always present (never null); empty store returns []. The envelope shape replaced the previous bare array when the live Explorer Business-Service selector landed.
@@ -210,6 +159,45 @@ components:
           type: array
           items:
             $ref: '#/components/schemas/BusinessService'
+    BusinessServiceRelationship:
+      type: object
+      description: 'A directed link between two BusinessServices (Epic 1, PR 1). The junction has no lifecycle of its own; description is the only mutable field.
+
+        '
+      required:
+      - id
+      - source_business_service_id
+      - target_business_service_id
+      - relationship_type
+      - created_at
+      properties:
+        id:
+          type: string
+          description: Synthetic relationship identifier.
+        source_business_service_id:
+          type: string
+        target_business_service_id:
+          type: string
+        relationship_type:
+          type: string
+          enum:
+          - depends_on
+          - supports
+          - part_of
+        description:
+          type: string
+          description: Optional. Omitted when empty.
+        created_at:
+          type: string
+          format: date-time
+        created_by:
+          type: string
+          description: Optional. Actor that created the row.
+        external_ref:
+          allOf:
+          - $ref: '#/components/schemas/ExternalRef'
+          nullable: true
+          description: Optional structured external reference. See ExternalRef (Epic 1, PR 3).
     BusinessService:
       type: object
       description: 'A business service grouping for processes (V2 structural layer). Mirrors the businessServiceResponse wire format.
@@ -260,6 +248,37 @@ components:
           description: 'Optional default FailModePolicy identifier for this business service (D27j-impl-2). When set, processes/surfaces under this BusinessService inherit this policy unless the surface declares its own override. Validated at apply time: must reference a FailModePolicy whose status is `active` at the time of apply. Omitted when no default is configured. In this tranche the resolver records the policy as observability metadata only — it does not affect outcomes or appear in the /v1/evaluate response.
 
             '
+    ExternalRef:
+      type: object
+      description: 'Structured reference to an entity in an external system (ServiceNow, LeanIX, GitHub, internal catalogues, custom). MIDAS records the reference but never validates the source_system against an enum and never resolves the reference by calling the external system. source_system and source_id must either both be present or both be absent — the consistency rule is enforced by a CHECK constraint on each consuming table. Wire-format nullability: the parent response renders `external_ref: null` when no external reference is recorded.
+
+        '
+      required:
+      - source_system
+      - source_id
+      properties:
+        source_system:
+          type: string
+          description: 'Caller-asserted label identifying the external system that
+
+            produced this reference. Vendor-neutral; MIDAS does not
+
+            validate or resolve this value.
+
+            '
+        source_id:
+          type: string
+          description: Identifier of the entity in the source system.
+        source_url:
+          type: string
+          description: Optional deep link to the entity in the source system.
+        source_version:
+          type: string
+          description: Optional version label assigned by the source system.
+        last_synced_at:
+          type: string
+          format: date-time
+          description: Optional timestamp of the last sync from the source system.
     Error:
       type: object
       required:
@@ -267,45 +286,26 @@ components:
       properties:
         error:
           type: string
-    BusinessServiceRelationship:
+    BusinessServiceRelationshipsResponse:
       type: object
-      description: 'A directed link between two BusinessServices (Epic 1, PR 1). The junction has no lifecycle of its own; description is the only mutable field.
+      description: 'Top-level response shape for GET /v1/businessservices/{id}/relationships. Outgoing rows are those where the queried service is the source; incoming rows are those where it is the target. Both arrays are always present (never null).
 
         '
       required:
-      - id
-      - source_business_service_id
-      - target_business_service_id
-      - relationship_type
-      - created_at
+      - business_service_id
+      - outgoing
+      - incoming
       properties:
-        id:
+        business_service_id:
           type: string
-          description: Synthetic relationship identifier.
-        source_business_service_id:
-          type: string
-        target_business_service_id:
-          type: string
-        relationship_type:
-          type: string
-          enum:
-          - depends_on
-          - supports
-          - part_of
-        description:
-          type: string
-          description: Optional. Omitted when empty.
-        created_at:
-          type: string
-          format: date-time
-        created_by:
-          type: string
-          description: Optional. Actor that created the row.
-        external_ref:
-          allOf:
-          - $ref: '#/components/schemas/ExternalRef'
-          nullable: true
-          description: Optional structured external reference. See ExternalRef (Epic 1, PR 3).
+        outgoing:
+          type: array
+          items:
+            $ref: '#/components/schemas/BusinessServiceRelationship'
+        incoming:
+          type: array
+          items:
+            $ref: '#/components/schemas/BusinessServiceRelationship'
   securitySchemes:
     BearerAuth:
       type: http

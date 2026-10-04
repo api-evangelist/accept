@@ -41,91 +41,6 @@ paths:
       - Escalations
 components:
   schemas:
-    Error:
-      type: object
-      required:
-      - error
-      properties:
-        error:
-          type: string
-    ResolvedBusinessServiceSnapshot:
-      type: object
-      description: 'Point-in-time snapshot of the BusinessService that owned the resolved Process at evaluation time. See ADR-0001.
-
-        '
-      properties:
-        id:
-          type: string
-        origin:
-          type: string
-        managed:
-          type: boolean
-        replaces:
-          type: string
-        status:
-          type: string
-          enum:
-          - active
-          - deprecated
-    ResolvedProcessSnapshot:
-      type: object
-      description: 'Point-in-time snapshot of the Process the resolved Surface belonged to at evaluation time. Captured as evidence on the envelope per ADR-0001; not derived from live joins after the envelope is written.
-
-        '
-      properties:
-        id:
-          type: string
-        origin:
-          type: string
-          description: Always "manual" in v1.
-        managed:
-          type: boolean
-        replaces:
-          type: string
-          description: ID of a previously-superseded Process; empty string when none.
-        status:
-          type: string
-          enum:
-          - active
-          - deprecated
-    ResolvedStructure:
-      type: object
-      description: 'Service-led structural context resolved at evaluation time: the Process the Surface belongs to, the BusinessService that owns the Process, and the set of Capabilities enabling the BusinessService at the moment the decision was recorded. Empty enabling_capabilities arrays are valid and are serialised as `[]` (never `null`). Per ADR-0001.
-
-        '
-      properties:
-        process:
-          $ref: '#/components/schemas/ResolvedProcessSnapshot'
-        business_service:
-          $ref: '#/components/schemas/ResolvedBusinessServiceSnapshot'
-        enabling_capabilities:
-          type: array
-          items:
-            $ref: '#/components/schemas/ResolvedCapabilitySnapshot'
-          description: 'Capabilities enabling this BusinessService at evaluation time, sorted by id ascending for deterministic byte-level evidence.
-
-            '
-    ResolvedCapabilitySnapshot:
-      type: object
-      description: 'Point-in-time snapshot of one Capability in the BusinessService''s enabling set at evaluation time. The set as a whole is captured as a JSONB array on the envelope; individual entries retain the historical Capability ID even if the live row is later renamed or deleted.
-
-        '
-      properties:
-        id:
-          type: string
-        name:
-          type: string
-        origin:
-          type: string
-        managed:
-          type: boolean
-        replaces:
-          type: string
-        status:
-          type: string
-          enum:
-          - active
-          - deprecated
     Envelope:
       type: object
       description: Tamper-evident governance record for a single evaluation.
@@ -181,6 +96,91 @@ components:
         closed_at:
           type: string
           format: date-time
+    ResolvedProcessSnapshot:
+      type: object
+      description: 'Point-in-time snapshot of the Process the resolved Surface belonged to at evaluation time. Captured as evidence on the envelope per ADR-0001; not derived from live joins after the envelope is written.
+
+        '
+      properties:
+        id:
+          type: string
+        origin:
+          type: string
+          description: Always "manual" in v1.
+        managed:
+          type: boolean
+        replaces:
+          type: string
+          description: ID of a previously-superseded Process; empty string when none.
+        status:
+          type: string
+          enum:
+          - active
+          - deprecated
+    ResolvedStructure:
+      type: object
+      description: 'Service-led structural context resolved at evaluation time: the Process the Surface belongs to, the BusinessService that owns the Process, and the set of Capabilities enabling the BusinessService at the moment the decision was recorded. Empty enabling_capabilities arrays are valid and are serialised as `[]` (never `null`). Per ADR-0001.
+
+        '
+      properties:
+        process:
+          $ref: '#/components/schemas/ResolvedProcessSnapshot'
+        business_service:
+          $ref: '#/components/schemas/ResolvedBusinessServiceSnapshot'
+        enabling_capabilities:
+          type: array
+          items:
+            $ref: '#/components/schemas/ResolvedCapabilitySnapshot'
+          description: 'Capabilities enabling this BusinessService at evaluation time, sorted by id ascending for deterministic byte-level evidence.
+
+            '
+    Error:
+      type: object
+      required:
+      - error
+      properties:
+        error:
+          type: string
+    ResolvedCapabilitySnapshot:
+      type: object
+      description: 'Point-in-time snapshot of one Capability in the BusinessService''s enabling set at evaluation time. The set as a whole is captured as a JSONB array on the envelope; individual entries retain the historical Capability ID even if the live row is later renamed or deleted.
+
+        '
+      properties:
+        id:
+          type: string
+        name:
+          type: string
+        origin:
+          type: string
+        managed:
+          type: boolean
+        replaces:
+          type: string
+        status:
+          type: string
+          enum:
+          - active
+          - deprecated
+    ResolvedBusinessServiceSnapshot:
+      type: object
+      description: 'Point-in-time snapshot of the BusinessService that owned the resolved Process at evaluation time. See ADR-0001.
+
+        '
+      properties:
+        id:
+          type: string
+        origin:
+          type: string
+        managed:
+          type: boolean
+        replaces:
+          type: string
+        status:
+          type: string
+          enum:
+          - active
+          - deprecated
   securitySchemes:
     BearerAuth:
       type: http
