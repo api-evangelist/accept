@@ -445,6 +445,9 @@ apis:
   - type: DataModel
     url: data-model/accept-data-model.yml
 common:
+- type: CapabilityMap
+  url: capabilities/accept-capability-edges.yml
+  name: Accept Business Capability Map
 - type: Website
   url: https://www.accept.io/
 - type: Overlay

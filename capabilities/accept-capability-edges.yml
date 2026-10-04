@@ -1,0 +1,78 @@
+slug: accept
+provider: Accept
+generated_by: planning/capability-mapping/scripts/classify_capabilities.py
+model: claude-opus-5
+frame:
+- Software & Technology
+min_confidence: 0.7
+capability_model:
+  source: https://github.com/vincentmakes/turbo-ea-capabilities
+  license: CC-BY-4.0
+  attribution: Turbo EA Capabilities by Vincent Verdet — Turbo EA, https://github.com/vincentmakes/turbo-ea-capabilities,
+    CC BY 4.0
+  notice: NOTICE
+edge_count: 6
+edges:
+- tag: Aisystems
+  spec_file: accept-aisystems-api-openapi.yml
+  capability_id: BC-610.60
+  capability_id_l1: BC-610
+  capability_name: Artificial Intelligence Management
+  confidence: 0.8
+  evidence: '''List AI systems'', ''List versions for an AI system'', ''List bindings for an AI system'';
+    schemas AISystem, AISystemVersion, AISystemBinding'
+  reason: An inventory of AI systems with versioning and bindings is an AI model/system lifecycle registry
+    — core to AI/ML lifecycle and responsible-AI governance (BC-610.60), not a general IT application
+    catalogue.
+- tag: Evaluate
+  spec_file: accept-evaluate-api-openapi.yml
+  capability_id: BC-610.60
+  capability_id_l1: BC-610
+  capability_name: Artificial Intelligence Management
+  confidence: 0.8
+  evidence: POST /v1/evaluate 'Evaluate a decision request'; schemas EvaluateRequest, EvaluateResponse,
+    Consequence; 'evaluates every agent or AI-system action against explicit authority'
+  reason: The core runtime control that authorises or rejects an AI/agent action before it occurs. This
+    is responsible-AI governance enforcement, squarely Artificial Intelligence Management.
+- tag: Capabilities
+  spec_file: accept-capabilities-api-openapi.yml
+  capability_id: BC-170.20
+  capability_id_l1: BC-170
+  capability_name: Business Capability Modeling
+  confidence: 0.75
+  evidence: '''List all capabilities'', ''List direct child capabilities of a parent capability'', ''List
+    Business Services that use a capability'''
+  reason: Hierarchical capability catalogue with parent/child decomposition and linkage to business services
+    is literally business capability modelling (BC-170.20); here used as the governance anchor model rather
+    than as an unrelated technical object.
+- tag: Drift
+  spec_file: accept-drift-api-openapi.yml
+  capability_id: BC-610.60
+  capability_id_l1: BC-610
+  capability_name: Artificial Intelligence Management
+  confidence: 0.75
+  evidence: '''Get node-scoped Drift Analytics read model data'', ''List DriftObservations for a DriftDefinition'',
+    schemas DriftSeries, DriftThresholdDirection, DriftStatusBand'
+  reason: Definition, observation and analytics of drift against thresholds for governed AI systems is
+    model-drift monitoring — part of AI/ML lifecycle and MLOps (BC-610.60), not generic observability
+    of IT infrastructure.
+- tag: Decisions
+  spec_file: accept-decisions-api-openapi.yml
+  capability_id: BC-610.60
+  capability_id_l1: BC-610
+  capability_name: Artificial Intelligence Management
+  confidence: 0.7
+  evidence: '''Look up a decision by request ID''; schemas Envelope, ResolvedCapabilitySnapshot, ResolvedBusinessServiceSnapshot'
+  reason: Retrieval of the authority decision taken on an AI/agent action together with its tamper-evident
+    envelope — an AI governance/audit-trail capability, i.e. responsible AI under Artificial Intelligence
+    Management.
+- tag: Envelopes
+  spec_file: accept-envelopes-api-openapi.yml
+  capability_id: BC-610.60
+  capability_id_l1: BC-610
+  capability_name: Artificial Intelligence Management
+  confidence: 0.7
+  evidence: '''List governance envelopes'', ''Get a governance envelope by ID''; description ''one tamper-evident
+    audit envelope'''
+  reason: Tamper-evident audit records of AI authority decisions. This is the evidence layer of responsible-AI
+    governance; it is not internal audit of the enterprise, so BC-610.60 rather than BC-140.
