@@ -222,6 +222,13 @@ components:
         reason:
           type: string
           description: Optional free-form note explaining the rule.
+    Error:
+      type: object
+      required:
+      - error
+      properties:
+        error:
+          type: string
     FailModePolicy:
       type: object
       description: 'Governed, versioned fail-mode policy resource. Lifecycle mirrors AuthorityProfile — review-forced apply, approval transitions to active, deprecation transitions to deprecated. The persisted version is planner-authored at apply time; lifecycle.version on the apply document is informational. See docs/operations/runtime-readiness.md §11 for the operator-facing narrow-fail-mode summary.
@@ -297,13 +304,17 @@ components:
           type: string
           format: date-time
           nullable: true
-    Error:
-      type: object
-      required:
-      - error
-      properties:
-        error:
-          type: string
+    LifecycleStatus:
+      type: string
+      description: 'Canonical lifecycle posture for versioned governance resources (Surface, Profile, FailModePolicy, EscalationTarget). Every governed configuration entity in MIDAS follows the same draft -> review -> active -> deprecated -> retired progression. Only `active` versions participate in runtime resolution.
+
+        '
+      enum:
+      - draft
+      - review
+      - active
+      - deprecated
+      - retired
     FailModePolicyListResponse:
       type: object
       description: 'Versions list wrapper for FailModePolicy GET endpoints. The array always serialises non-null (empty list when the resource is unknown is mapped to 404 by the handler).
@@ -316,17 +327,6 @@ components:
           type: array
           items:
             $ref: '#/components/schemas/FailModePolicy'
-    LifecycleStatus:
-      type: string
-      description: 'Canonical lifecycle posture for versioned governance resources (Surface, Profile, FailModePolicy, EscalationTarget). Every governed configuration entity in MIDAS follows the same draft -> review -> active -> deprecated -> retired progression. Only `active` versions participate in runtime resolution.
-
-        '
-      enum:
-      - draft
-      - review
-      - active
-      - deprecated
-      - retired
   securitySchemes:
     BearerAuth:
       type: http

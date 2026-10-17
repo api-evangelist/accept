@@ -57,6 +57,23 @@ paths:
       - Reviews
 components:
   schemas:
+    Error:
+      type: object
+      required:
+      - error
+      properties:
+        error:
+          type: string
+    ReviewResponse:
+      type: object
+      required:
+      - envelope_id
+      - status
+      properties:
+        envelope_id:
+          type: string
+        status:
+          type: string
     ReviewRequest:
       type: object
       required:
@@ -75,23 +92,6 @@ components:
           type: string
           description: Reviewer identifier.
         notes:
-          type: string
-    Error:
-      type: object
-      required:
-      - error
-      properties:
-        error:
-          type: string
-    ReviewResponse:
-      type: object
-      required:
-      - envelope_id
-      - status
-      properties:
-        envelope_id:
-          type: string
-        status:
           type: string
   securitySchemes:
     BearerAuth:

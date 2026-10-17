@@ -167,36 +167,6 @@ paths:
       - Surfaces
 components:
   schemas:
-    SurfaceVersionItem:
-      type: object
-      description: A single entry in the surface version history list.
-      properties:
-        version:
-          type: integer
-        status:
-          $ref: '#/components/schemas/LifecycleStatus'
-        effective_from:
-          type: string
-          format: date-time
-        approved_at:
-          type: string
-          format: date-time
-          nullable: true
-        approved_by:
-          type: string
-        created_at:
-          type: string
-          format: date-time
-        updated_at:
-          type: string
-          format: date-time
-    Error:
-      type: object
-      required:
-      - error
-      properties:
-        error:
-          type: string
     SurfaceRecovery:
       type: object
       description: Read-only recovery analysis for a decision surface.
@@ -229,6 +199,13 @@ components:
           type: array
           items:
             type: string
+    Error:
+      type: object
+      required:
+      - error
+      properties:
+        error:
+          type: string
     Surface:
       type: object
       properties:
@@ -258,17 +235,29 @@ components:
           type: string
         successor_surface_id:
           type: string
-    LifecycleStatus:
-      type: string
-      description: 'Canonical lifecycle posture for versioned governance resources (Surface, Profile, FailModePolicy, EscalationTarget). Every governed configuration entity in MIDAS follows the same draft -> review -> active -> deprecated -> retired progression. Only `active` versions participate in runtime resolution.
-
-        '
-      enum:
-      - draft
-      - review
-      - active
-      - deprecated
-      - retired
+    SurfaceVersionItem:
+      type: object
+      description: A single entry in the surface version history list.
+      properties:
+        version:
+          type: integer
+        status:
+          $ref: '#/components/schemas/LifecycleStatus'
+        effective_from:
+          type: string
+          format: date-time
+        approved_at:
+          type: string
+          format: date-time
+          nullable: true
+        approved_by:
+          type: string
+        created_at:
+          type: string
+          format: date-time
+        updated_at:
+          type: string
+          format: date-time
     SurfaceImpact:
       type: object
       description: 'Full dependency graph for a decision surface — all linked profiles, grants, and distinct agents. All array sections are always present (never null). Warnings are deterministic based on active-count thresholds.
@@ -391,6 +380,17 @@ components:
           items:
             type: string
           description: Operator warnings. Empty array when none apply.
+    LifecycleStatus:
+      type: string
+      description: 'Canonical lifecycle posture for versioned governance resources (Surface, Profile, FailModePolicy, EscalationTarget). Every governed configuration entity in MIDAS follows the same draft -> review -> active -> deprecated -> retired progression. Only `active` versions participate in runtime resolution.
+
+        '
+      enum:
+      - draft
+      - review
+      - active
+      - deprecated
+      - retired
   securitySchemes:
     BearerAuth:
       type: http

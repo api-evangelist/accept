@@ -41,6 +41,25 @@ paths:
       - Escalations
 components:
   schemas:
+    ResolvedBusinessServiceSnapshot:
+      type: object
+      description: 'Point-in-time snapshot of the BusinessService that owned the resolved Process at evaluation time. See ADR-0001.
+
+        '
+      properties:
+        id:
+          type: string
+        origin:
+          type: string
+        managed:
+          type: boolean
+        replaces:
+          type: string
+        status:
+          type: string
+          enum:
+          - active
+          - deprecated
     Envelope:
       type: object
       description: Tamper-evident governance record for a single evaluation.
@@ -96,6 +115,34 @@ components:
         closed_at:
           type: string
           format: date-time
+    ResolvedCapabilitySnapshot:
+      type: object
+      description: 'Point-in-time snapshot of one Capability in the BusinessService''s enabling set at evaluation time. The set as a whole is captured as a JSONB array on the envelope; individual entries retain the historical Capability ID even if the live row is later renamed or deleted.
+
+        '
+      properties:
+        id:
+          type: string
+        name:
+          type: string
+        origin:
+          type: string
+        managed:
+          type: boolean
+        replaces:
+          type: string
+        status:
+          type: string
+          enum:
+          - active
+          - deprecated
+    Error:
+      type: object
+      required:
+      - error
+      properties:
+        error:
+          type: string
     ResolvedProcessSnapshot:
       type: object
       description: 'Point-in-time snapshot of the Process the resolved Surface belonged to at evaluation time. Captured as evidence on the envelope per ADR-0001; not derived from live joins after the envelope is written.
@@ -134,53 +181,6 @@ components:
           description: 'Capabilities enabling this BusinessService at evaluation time, sorted by id ascending for deterministic byte-level evidence.
 
             '
-    Error:
-      type: object
-      required:
-      - error
-      properties:
-        error:
-          type: string
-    ResolvedCapabilitySnapshot:
-      type: object
-      description: 'Point-in-time snapshot of one Capability in the BusinessService''s enabling set at evaluation time. The set as a whole is captured as a JSONB array on the envelope; individual entries retain the historical Capability ID even if the live row is later renamed or deleted.
-
-        '
-      properties:
-        id:
-          type: string
-        name:
-          type: string
-        origin:
-          type: string
-        managed:
-          type: boolean
-        replaces:
-          type: string
-        status:
-          type: string
-          enum:
-          - active
-          - deprecated
-    ResolvedBusinessServiceSnapshot:
-      type: object
-      description: 'Point-in-time snapshot of the BusinessService that owned the resolved Process at evaluation time. See ADR-0001.
-
-        '
-      properties:
-        id:
-          type: string
-        origin:
-          type: string
-        managed:
-          type: boolean
-        replaces:
-          type: string
-        status:
-          type: string
-          enum:
-          - active
-          - deprecated
   securitySchemes:
     BearerAuth:
       type: http
